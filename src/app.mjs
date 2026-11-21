@@ -197,7 +197,7 @@ function showLesson(slug) {
 
     <section class="reading experiment">
       <h2>Run the experiment</h2>
-      <p>The browser runs the Python in the editor using a CUDA teaching model. The selected case supplies the arrays and launch settings.</p>
+      <p>The browser executes your Python code and models GPU threads and memory. The selected case supplies the arrays and launch settings.</p>
       <p id="saved-draft-note" hidden>A saved edit is open. In <strong>Editor tools</strong>, <strong>Restore starter</strong> sets your draft aside. To get it back after experimenting, restore the starter again if needed, then select <strong>Undo restore</strong>.</p>
       <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
     </section>
@@ -215,7 +215,6 @@ function showLesson(slug) {
                 <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
                 <button class="button" id="download-source" type="button">Export .py</button>
               </div>
-              <p class="trace-note">Use print() to show values in the console.</p>
               <p class="trace-note" id="target-note" role="status" hidden></p>
             </details>
           </div>
@@ -228,15 +227,13 @@ function showLesson(slug) {
               <select id="case">${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
             </label>
           </div>
-          <div id="run-status" class="run-status" role="status"></div>
-          <p id="error-text" class="error-text" hidden></p>
-          <details id="error-details" hidden><summary>Python and execution messages</summary><pre></pre></details>
         </section>
-        <section class="workbench-card" aria-labelledby="output-title">
-          <h2 id="output-title">Simulated output</h2>
-          <p id="output-hint" class="trace-note">Run the kernel to see the output from the selected case.</p>
-          <section id="result-panel" class="evidence" aria-label="Result values" hidden><div id="result-output"></div></section>
-          <section id="console-panel" class="evidence" hidden><h3>Console</h3><pre id="console-output"></pre></section>
+        <section class="workbench-card" aria-labelledby="console-title">
+          <h2 id="console-title">Console</h2>
+          <div id="run-status" class="run-status" role="status"></div>
+          <pre id="console-output" tabindex="0" role="region" aria-label="Console transcript" hidden></pre>
+          <details id="error-details" class="evidence" hidden><summary>Python traceback</summary><pre></pre></details>
+          <details id="result-panel" class="evidence" hidden><summary>Compare with starter</summary><div id="result-output"></div></details>
           <div class="inspector">
             <div class="launch-info"><h3>Thread inspector</h3><span id="launch-shape"></span></div>
             <div class="inspect-controls"><label for="block">Block <select id="block"></select></label></div>
@@ -414,10 +411,34 @@ function download(name, content, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function showConsole(stdout = "") {
-  const consolePanel = model.root.querySelector("#console-panel");
-  consolePanel.hidden = !stdout;
-  consolePanel.querySelector("pre").textContent = stdout;
+function renderConsole(stdout = "", message = "") {
+  const panel = model.root.querySelector("#console-output");
+  const gap = stdout && message ? (stdout.endsWith("\n") ? "\n" : "\n\n") : "";
+  panel.textContent = stdout + gap + message;
+  panel.hidden = !stdout && !message;
+}
+
+function formatReadback({ output, shape, counts }, arrayName, slug) {
+  const values = output.map(pretty);
+  const matrixRows = shape.length === 2 ? Array.from({ length: shape[0] }, (_, row) => {
+    const start = row * shape[1];
+    return `  [${values.slice(start, start + shape[1]).join(", ")}]`;
+  }) : null;
+  const array = matrixRows ? `[\n${matrixRows.join(",\n")}\n]` : `[${values.join(", ")}]`;
+  const lines = ["Kernel result", `${arrayName} = ${array}`];
+
+  if (slug === "softmax") {
+    const totals = Array.from({ length: shape[0] }, (_, row) => {
+      const start = row * shape[1];
+      return pretty(output.slice(start, start + shape[1]).reduce((sum, value) => sum + Number(value), 0));
+    });
+    lines.push(`Row sums [${totals.join(", ")}]`);
+  }
+  if (slug === "transfers" || slug === "matmul") {
+    const other = slug === "transfers" ? ["Global writes", counts.global_write] : ["Shared reads", counts.shared_read];
+    lines.push(`Global reads ${counts.global_read ?? 0}`, `${other[0]} ${other[1] ?? 0}`);
+  }
+  return lines.join("\n");
 }
 
 function setRunBusy(busy) {
@@ -434,14 +455,12 @@ function invalidateRun(message = "") {
   model.result = null;
   model.root.querySelector("#workbench-output").hidden = true;
   model.root.querySelector("#result-panel").hidden = true;
-  model.root.querySelector("#output-hint").hidden = false;
-  model.root.querySelector("#error-text").hidden = true;
   model.root.querySelector("#error-details").hidden = true;
   setRunBusy(false);
-  setStatus(message);
-  showConsole();
+  setStatus(message || "Run the kernel to see the result.");
+  renderConsole();
   renderThreadTrace();
-  renderOutput();
+  renderComparison();
 }
 
 function execute(source, fixture, filename) {
@@ -473,13 +492,10 @@ function execute(source, fixture, filename) {
   });
 }
 
-function showExecutionError(message) {
-  setStatus("Execution error. The kernel did not produce output.", "failure");
-  model.root.querySelector("#output-hint").hidden = true;
-  const detail = model.root.querySelector("#error-text");
+function showExecutionError(message, stdout) {
+  setStatus("Execution error.", "failure");
   const lines = message.trimEnd().split("\n");
-  detail.textContent = lines.at(-1);
-  detail.hidden = false;
+  renderConsole(stdout, lines.at(-1));
   const traceback = model.root.querySelector("#error-details");
   traceback.querySelector("pre").textContent = message;
   traceback.hidden = lines.length === 1;
@@ -497,9 +513,8 @@ async function run() {
     const source = current.editor.source;
     const { result, error, stdout } = await execute(source, current.fixture, `${current.slug}.py`);
     if (!isCurrent()) return;
-    showConsole(stdout);
     if (error) {
-      showExecutionError(error);
+      showExecutionError(error, stdout);
       return;
     }
     current.result = result;
@@ -516,10 +531,10 @@ async function run() {
     } else {
       setStatus(`Edited kernel ran. ${comparison}`);
     }
+    renderConsole(stdout, formatReadback(result, current.fixture.output, current.slug));
     renderThreadTrace();
-    renderOutput();
+    renderComparison();
     current.root.querySelector("#result-panel").hidden = false;
-    current.root.querySelector("#output-hint").hidden = true;
     current.root.querySelector("#workbench-output").hidden = false;
     if (current.lesson.evidence.includes("input")) current.root.querySelector("#input-panel").open = true;
   } catch (error) {
@@ -583,14 +598,13 @@ function renderThreadTrace() {
       : '<p class="trace-note">The selected warp recorded no global accesses.</p>');
 }
 
-function renderOutput() {
+function renderComparison() {
   const { result, root, fixture } = model;
   const panel = root.querySelector("#result-output");
   if (!result) {
     panel.replaceChildren();
     return;
   }
-  const labels = { global_read: "Global reads", global_write: "Global writes", shared_read: "Shared reads" };
   const differences = new Set(result.mismatches);
   const writers = new Map();
   for (const event of result.events) {
@@ -598,23 +612,7 @@ function renderOutput() {
       writers.set(event.offset, event);
     }
   }
-  const rowTotals = model.slug === "softmax"
-    ? Array.from({ length: result.shape[0] }, (_, row) => {
-      const width = result.shape[1];
-      const total = result.output.slice(row * width, (row + 1) * width)
-        .reduce((sum, value) => sum + Number(value), 0);
-      return `Row ${row}: ${pretty(total)}`;
-    }).join(" · ") : "";
-  const lessonCounters = {
-    transfers: ["global_read", "global_write"],
-    matmul: ["global_read", "shared_read"],
-  };
-  const counters = (lessonCounters[model.slug] ?? []).map((key) =>
-    `<span>${labels[key]} ${result.counts[key] ?? 0}</span>`).join("");
-  panel.innerHTML = `<p class="trace-note">Array ${escape(fixture.output)} · shape ${shape(result.shape)}</p>
-    ${rowTotals ? `<p class="trace-note">Row sums · ${escape(rowTotals)}</p>` : ""}
-    ${counters ? `<div class="trace-counters">${counters}</div>` : ""}`
-    + formatTable(["Index", "Actual", "Starter reference", "Last traced writer"], result.output.map((value, i) => {
+  panel.innerHTML = formatTable(["Index", "Actual", "Starter reference", "Last traced writer"], result.output.map((value, i) => {
       const writer = writers.get(i);
       return [
         formatIndex(result.shape.length === 1 ? i : [Math.floor(i / result.shape[1]), i % result.shape[1]]),

@@ -68,6 +68,10 @@ test("every browser case runs Python and matches its full reference", async (t) 
         await page.getByRole("button", { name: "Run kernel" }).click();
         await status(page, "success");
         assert.match(await page.locator("#run-status").textContent(), new RegExp(`Verified ${fixture.expected.length} output`));
+        const transcript = await page.locator("#console-output").textContent();
+        assert.ok(transcript.startsWith(`Kernel result\n${fixture.output} = [`), slug);
+        if (slug === "softmax") assert.match(transcript, /Row sums \[1, 1\]/);
+        if (slug === "transfers") assert.match(transcript, /Global reads \d+\nGlobal writes \d+/);
       }
     }
   });
@@ -88,7 +92,11 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     await page.getByRole("button", { name: "Thread 0, trace events", exact: true }).click();
     assert.deepEqual(await page.locator("#trace-output tbody tr").last().locator("td").allTextContents(),
       ["0", "write", "global", "out", "32", "32", "99", "–"]);
-    assert.match(await page.locator("#result-output tbody tr").last().textContent(), /Block 1 · thread 0/);
+    assert.equal(await page.locator("#result-panel").evaluate((details) => details.open), false);
+    await page.locator("#result-panel > summary").click();
+    const lastComparison = page.locator("#result-output tbody tr").last();
+    assert.equal(await lastComparison.isVisible(), true);
+    assert.deepEqual(await lastComparison.locator("td").allTextContents(), ["32", "99", "99", "Block 1 · thread 0"]);
     assert.match(await page.getByRole("button", { name: "Thread 1, no recorded events", exact: true }).textContent(), /1/);
 
     const modified = starter.replace("a[i] + b[i]", "a[i] - b[i]");
@@ -153,11 +161,11 @@ test("documented edits give a meaningful comparison or an execution error", asyn
       await editor.press("Control+Enter");
       await page.locator("#run-status").filter({ hasText: message }).waitFor();
       if (evidence instanceof RegExp) {
-        assert.match(await page.locator("#error-text").textContent(), evidence, slug);
+        assert.match(await page.locator("#console-output").textContent(), evidence, slug);
         assert.equal(await page.locator("#result-panel").isVisible(), false);
       } else {
         assert.equal(await page.locator("#result-panel").isVisible(), true);
-        if (evidence) assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), evidence);
+        if (evidence) assert.equal(await page.locator("#console-output").textContent(), `Kernel result\nout = [${evidence}]`);
       }
       await editorTools(page).click();
       await page.getByRole("button", { name: "Restore starter" }).click();
@@ -201,7 +209,7 @@ test("Python editor opens a saved draft, indents code, and runs the current buff
 
     await editor.press("Control+Enter");
     await page.getByText("Edited kernel ran. The output value differs from the starter reference.").waitFor();
-    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "19");
+    assert.equal(await page.locator("#console-output").textContent(), "Kernel result\nout = [19]");
 
     await editor.press("Control+f");
     await page.locator(".cm-search input[name=search]").fill("kernel");
@@ -235,15 +243,14 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     await page.keyboard.insertText("7 ** 2");
     await editor.press("Control+Enter");
     await page.locator("#run-status").filter({ hasText: "Edited kernel ran." }).waitFor();
-    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "49");
+    assert.equal(await page.locator("#console-output").textContent(), "Kernel result\nout = [49]");
 
     const starter = await readFile(new URL("../src/kernels/first-value.py", import.meta.url), "utf8");
     const printed = starter.replace("    out[0] = 42", '    out[0] = 7 ** 2\n    print("output", out[0])');
     await replaceSource(page, editor, printed);
     await page.getByRole("button", { name: "Run kernel" }).click();
     await page.locator("#console-output").waitFor();
-    assert.equal(await page.locator("#console-output").textContent(), "output 49.0\n");
-    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "49");
+    assert.equal(await page.locator("#console-output").textContent(), "output 49.0\n\nKernel result\nout = [49]");
 
     await editorTools(page).click();
     const [sourceFile] = await Promise.all([
@@ -256,9 +263,17 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     await replaceSource(page, editor, starter.replace("    out[0] = 42", '    print("before the error")\n    raise ValueError("example")'));
     await editor.press("Control+Enter");
     await status(page, "failure");
-    assert.equal(await page.locator("#console-output").textContent(), "before the error\n");
-    await page.getByText("Python and execution messages", { exact: true }).click();
+    assert.equal(await page.locator("#console-output").textContent(), "before the error\n\nValueError: example");
+    assert.equal(await page.locator("#result-panel").isVisible(), false);
+    await page.getByText("Python traceback", { exact: true }).click();
     assert.match(await page.locator("#error-details pre").textContent(), /first-value\.py.*ValueError: example/s);
+
+    const broken = starter.replace("out[0] = 42", "out[0] =");
+    await replaceSource(page, editor, broken);
+    await editor.press("Control+Enter");
+    await status(page, "failure");
+    assert.match(await page.locator("#console-output").textContent(), /^SyntaxError:/);
+    assert.equal(await readSource(editor), broken);
 
     const loop = starter.replace("    out[0] = 42", "    while True:\n        pass");
     await replaceSource(page, editor, loop);
@@ -266,13 +281,13 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     await page.getByRole("button", { name: "Stop", exact: true }).click();
     await page.locator("#run-status").filter({ hasText: "Run stopped." }).waitFor();
     assert.equal(await readSource(editor), loop);
-    assert.equal(await page.locator("#console-panel").isVisible(), false);
+    assert.equal(await page.locator("#console-output").isVisible(), false);
 
     await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
     await page.getByRole("button", { name: "Run kernel" }).click();
     await status(page, "success");
-    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "42");
+    assert.equal(await page.locator("#console-output").textContent(), "Kernel result\nout = [42]");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   });
 });

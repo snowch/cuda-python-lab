@@ -164,10 +164,8 @@ select { min-width: 0; max-width: 100%; min-height: 44px; border: 1px solid var(
 .run-status.success { color: var(--accent); }
 .run-status.failure { color: var(--danger); }
 .run-status:empty { margin: 0; }
-#error-details, .error-text { font-size: .875rem; }
-.error-text { margin: .3rem 0; color: var(--danger); overflow-wrap: anywhere; }
 #error-details pre, #console-output, .resource-page pre { margin: .4rem 0; padding: .65rem; border: 1px solid var(--line); border-radius: 6px; background: var(--soft); color: var(--ink); font: .82rem/1.55 var(--mono); overflow: auto; max-height: 18rem; white-space: pre-wrap; overflow-wrap: anywhere; }
-#error-details pre { color: var(--danger); background: var(--danger-soft); }
+#error-details pre, .run-status.failure + #console-output { color: var(--danger); background: var(--danger-soft); }
 
 .inspector { margin-top: .8rem; border-top: 1px solid var(--line); padding-top: .8rem; min-width: 0; }
 .launch-info h3 { margin: 0; }
@@ -195,7 +193,6 @@ td, th { padding: .3rem .4rem; border-bottom: 1px solid var(--line); white-space
 #result-output th, #result-output td:last-child { white-space: normal; }
 #result-output td:last-child { min-width: 6.5rem; }
 tr.difference td { background: var(--difference); }
-.trace-counters { display: flex; flex-wrap: wrap; gap: .25rem .75rem; color: var(--accent); font: .75rem/1.5 var(--mono); margin: .45rem 0 .3rem; }
 .value-list { overflow-wrap: anywhere; font: .8rem/1.65 var(--mono); margin: .45rem 0; }
 
 .concept-diagram { max-width: 53rem; margin: 1rem 0 0; padding: .85rem; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
