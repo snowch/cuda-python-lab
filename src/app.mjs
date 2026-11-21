@@ -110,7 +110,7 @@ function showCourse() {
         </ol>
       </section>`).join("")}
     </div>
-    <p class="credit">Inspired by the predict, run, and explain activities in <a href="https://snowch.github.io/gpu-lab/v2/">GPU Lab</a>.</p>
+    <p class="credit">Inspired by the predict, run, and explain activities in <a href="https://snowch.github.io/cuda-cpp-lab/v2/">CUDA C++ Lab</a>.</p>
   </div>`;
 }
 
