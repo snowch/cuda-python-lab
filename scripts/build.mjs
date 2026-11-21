@@ -8,11 +8,11 @@ const root = new URL("../", import.meta.url);
 const src = new URL("src/", root);
 const dist = new URL("dist/", root);
 
-for (const directory of ["", "runtime/", "gpu/"]) {
+for (const directory of ["", "gpu/"]) {
   await mkdir(new URL(directory, dist), { recursive: true });
 }
 await Promise.all(
-  ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs", "worker.js", "simulator.py", "browser_adapter.py"]
+  ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
 await cp(new URL("media/", src), new URL("media/", dist), { recursive: true });
@@ -36,10 +36,6 @@ const licenses = await Promise.all([...editorPackages].sort().map(async (directo
   directory + "\n" + (await readFile(new URL(directory + "LICENSE", root), "utf8")).trim(),
 ));
 await writeFile(new URL("editor.LICENSE.txt", dist), licenses.join("\n\n") + "\n");
-await Promise.all(
-  ["pyodide.js", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"]
-    .map((name) => cp(new URL(`node_modules/pyodide/${name}`, root), new URL(`runtime/${name}`, dist))),
-);
 
 const slugs = modules.flatMap((module) => module.lessons);
 if (new Set(slugs).size !== slugs.length || slugs.length !== Object.keys(lessons).length) {

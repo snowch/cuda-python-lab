@@ -6,18 +6,9 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 
-export function mountKernelEditor(parent, source, { onEdit, onRun }) {
+export function mountProgramEditor(parent, source, onEdit) {
   const extensions = [
-    keymap.of([
-      {
-        key: "Mod-Enter",
-        run() {
-          onRun();
-          return true;
-        },
-      },
-      indentWithTab,
-    ]),
+    keymap.of([indentWithTab]),
     EditorView.domEventObservers({
       keydown(event, view) {
         // Let Tab leave the editor even when Escape closes an editor panel or selection.
@@ -30,7 +21,7 @@ export function mountKernelEditor(parent, source, { onEdit, onRun }) {
     indentUnit.of("    "),
     EditorState.tabSize.of(4),
     EditorView.contentAttributes.of({
-      "aria-label": "Python kernel source",
+      "aria-label": "Python program source",
       "aria-describedby": "editor-shortcuts",
     }),
     EditorView.updateListener.of(({ docChanged }) => {
@@ -44,19 +35,19 @@ export function mountKernelEditor(parent, source, { onEdit, onRun }) {
     get source() {
       return view.state.doc.toString();
     },
-    reveal(source) {
+    reveal(source, { align = "nearest" } = {}) {
       const index = view.state.doc.toString().indexOf(source);
       if (index === -1) return false;
       view.dispatch({
         selection: { anchor: index, head: index + source.length },
-        scrollIntoView: true,
+        effects: EditorView.scrollIntoView(index, { y: align }),
       });
       view.focus();
       return true;
     },
-    reset(source) {
+    reset(source, { focus = true } = {}) {
       view.setState(createState(source));
-      view.focus();
+      if (focus) view.focus();
     },
     destroy() {
       view.destroy();

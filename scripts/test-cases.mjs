@@ -7,11 +7,10 @@ const suite = await Promise.all(Object.entries(lessons).map(async ([slug, lesson
   const source = await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8");
   return {
     slug, source,
-    cases: lesson.cases.map((fixture) => ({
-      fixture,
-      notebook: makeNotebook(lesson, source, fixture),
-      program: standaloneProgram(source, fixture),
-    })),
+    cases: lesson.cases.map((fixture) => {
+      const program = standaloneProgram(source, fixture);
+      return { fixture, notebook: makeNotebook(lesson, program, fixture), program };
+    }),
   };
 }));
 console.log(JSON.stringify(suite));

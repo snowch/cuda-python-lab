@@ -5,11 +5,11 @@
 Assume the learner can read Python functions, loops, and array indices. Teach CUDA and GPU architecture through the lessons. Review the course outline, the preceding lesson, the changed lesson, and the next lesson in the built site. Include headings, editor source and labels, cases, instructions, diagrams, feedback, and optional GPU materials in the review.
 
 - Identify what each sentence does. Keep context, explanations, automatic setup, learner actions, and result interpretation clear. Remove filler and repeated information.
-- Define technical terms at their first use. Include vocabulary in headings, simulator controls, column labels, and errors in this check. Introduce the minimum needed to run and interpret the current experiment. For example, start with one thread and one output value, introduce blocks when learners need to locate a thread, and introduce warps when learners compare groups of memory accesses.
-- Say which arrays, launch settings, and reference values the page supplies. Give the exact control, case, editable code, change, run action, and evidence to inspect. Verify each action is possible through the interface. Direct notebook edits to the exported notebook.
+- Define technical terms at their first use. Include vocabulary in headings, notebook cells, diagram labels, and errors in this check. Introduce the minimum needed to run and interpret the current experiment. For example, start with one thread and one output value, introduce blocks when learners need to locate a thread, and introduce warps when learners compare groups of memory accesses.
+- Say which arrays, launch settings, and reference values the page supplies. Give the exact case, notebook cell, code change, run action, and output to inspect. Verify each action is possible through the interface. Keep the complete kernel and host program visible in the lesson and notebook.
 - For comparisons, name the cases, fields, units, and question. Ask what changes and what pattern explains it. Clarify vague references and claims about what matters or helps by stating the goal and conditions.
-- Keep the Console as the main result surface. Show controls and trace columns when the lesson uses them. Keep essential evidence accessible and optional details behind descriptive disclosures.
-- Separate a Python execution error from a starter-reference comparison and a question about understanding. Treat an intentional output change as a valid result. State what the browser model shows, which assumptions it uses, and which conclusions need hardware measurements.
+- Use the output of the program cell for learner results. Teach hardware through the actual CUDA code, notebook output, and clearly labeled calculations or diagrams.
+- Separate a Python execution error from a starter-reference comparison and a question about understanding. Treat an intentional output change as a valid result. State the assumptions of analytical counts and which conclusions need hardware measurements.
 
 ## Decide when to use a diagram
 

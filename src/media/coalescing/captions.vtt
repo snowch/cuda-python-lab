@@ -1,53 +1,47 @@
 WEBVTT
 
-00:00:00.180 --> 00:00:04.754
+00:00:00.180 --> 00:00:04.987
 An S M executes the threads in a block in
 groups called warps.
 
-00:00:04.934 --> 00:00:09.590
+00:00:05.167 --> 00:00:09.950
 In the eight rows by thirty-two columns
 case, the block has one warp.
 
-00:00:09.770 --> 00:00:12.429
+00:00:10.130 --> 00:00:12.789
 Each lane identifies one thread in that
 warp.
 
-00:00:13.100 --> 00:00:17.001
+00:00:13.460 --> 00:00:17.303
 A word offset counts four byte values from
 the start of the array.
 
-00:00:17.181 --> 00:00:20.350
+00:00:17.483 --> 00:00:20.629
 The first eight lanes read consecutive
 columns.
 
-00:00:20.530 --> 00:00:23.700
+00:00:20.809 --> 00:00:23.921
 Their eight values fit in one thirty-two
 byte sector.
 
-00:00:24.380 --> 00:00:27.015
+00:00:24.620 --> 00:00:27.244
 The transpose swaps row and column.
 
-00:00:27.195 --> 00:00:30.795
+00:00:27.424 --> 00:00:31.035
 In the output, these lanes write eight
 words apart.
 
-00:00:30.975 --> 00:00:34.434
+00:00:31.215 --> 00:00:34.709
 The same eight lanes now touch eight
 distinct sectors.
 
-00:00:35.100 --> 00:00:40.383
-The warp address model shows four sectors
-for reads and thirty-two for writes across
+00:00:35.380 --> 00:00:41.057
+Across all lanes, the addresses cover four
+read sectors and thirty-two write sectors.
 
-00:00:40.383 --> 00:00:41.137
-all lanes.
+00:00:41.237 --> 00:00:43.606
+The calculation groups addresses.
 
-00:00:41.317 --> 00:00:43.210
-The model groups addresses.
-
-00:00:43.390 --> 00:00:48.842
-Measuring traffic on a GPU also requires
-accounting for caches and the instructions
-
-00:00:48.842 --> 00:00:50.100
-the hardware runs.
+00:00:43.786 --> 00:00:49.939
+Measured GPU traffic also depends on caches
+and the instructions the hardware runs.

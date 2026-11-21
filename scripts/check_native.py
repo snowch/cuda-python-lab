@@ -15,16 +15,16 @@ ROOT = Path(__file__).resolve().parents[1]
 def validate_notebook(case):
     import numpy as np
 
-    # Timing requires physical hardware. Run the actual exported setup and
-    # reference cells here so source, fixtures, launch, and assertions stay in sync.
     cells = [cell["source"] for cell in case["notebook"]["cells"] if cell["cell_type"] == "code"]
-    namespace = {}
-    with contextlib.redirect_stdout(io.StringIO()):
-        for cell in cells[1:-1]:
+    namespace = {"__name__": "__main__"}
+    with contextlib.redirect_stdout(io.StringIO()) as console:
+        for cell in cells[1:]:
             exec(cell, namespace)
     np.testing.assert_allclose(
         namespace["actual"].ravel(), case["fixture"]["expected"], rtol=1e-5, atol=1e-6,
     )
+    size = namespace["actual"].size
+    assert f"{size} of {size} values match the starter reference." in console.getvalue()
 
 
 def validate_program(case):

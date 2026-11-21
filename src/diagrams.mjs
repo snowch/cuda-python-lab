@@ -48,7 +48,7 @@ export const diagrams = {
           </tbody>
         </table>
       </div>
-      <p>Each sector holds eight four-byte values. The two arrays start on sector boundaries in the browser model.</p>
+      <p>Each sector holds eight four-byte values. This address calculation assumes both arrays start on sector boundaries.</p>
     </figure>`,
   reduction: `
     <figure class="concept-diagram">
@@ -97,7 +97,7 @@ export const diagrams = {
         <li><strong>GPU</strong><span>Compute out<br>66 reads, 33 writes</span></li>
         <li><strong>GPU → host</strong><span>Download out<br>132 bytes</span></li>
       </ol>
-      <p>These byte counts assume the inputs start on the host and the host needs the output. The browser Console counts the array accesses in the middle step.</p>
+      <p>In the notebook, check the copy sizes with nbytes. Count the kernel’s reads and writes by following the assignment for each active thread.</p>
     </figure>`,
   histogram: `
     <figure class="concept-diagram">

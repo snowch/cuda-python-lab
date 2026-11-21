@@ -6,74 +6,33 @@ function code(source) {
   return { cell_type: "code", metadata: {}, source, execution_count: null, outputs: [] };
 }
 
-const setup = `import json
-from time import perf_counter
+const install = '%pip install "numba-cuda[cu12]==0.30.4" "numpy>=1.26,<2.5"\n';
 
-import numpy as np
-from numba import cuda
+const checkGpu = `from numba import cuda
 
 if not cuda.is_available():
     raise RuntimeError("Select an NVIDIA GPU runtime and restart the kernel.")
 `;
 
-const hostSetup = `host = {
-    name: np.asarray(spec["values"], dtype=spec["dtype"]).reshape(spec["shape"])
-    for name, spec in case["buffers"].items()
+function checkOutput(fixture) {
+  const { shape, dtype } = fixture.buffers[fixture.output];
+  return `import numpy as np
+
+expected = np.array(${JSON.stringify(fixture.expected)}, dtype=np.${dtype}).reshape(${shape.join(", ")})
+result = globals().get("actual")
+if result is None:
+    print("Return your result from main() and assign it to actual to use this check.")
+else:
+    result = np.asarray(result)
+    if result.shape == expected.shape:
+        matches = np.${dtype === "int32" ? "equal(result, expected)" : "isclose(result, expected, rtol=1e-5, atol=1e-6)"}
+        print(f"{np.count_nonzero(matches)} of {expected.size} values match the starter reference.")
+    else:
+        print(f"Your result has shape {result.shape}. The starter result has shape {expected.shape}.")
+`;
 }
-scalars = case["scalars"].copy()
-for name, value in scalars.items():
-    if isinstance(value, float):
-        scalars[name] = np.float32(value)
-blocks, threads = case["blocks"], case["threads"]
-output_name = case["output"]
 
-def launch(device):
-    args = [device[name] if name in device else scalars[name] for name in case["args"]]
-    kernel[tuple(blocks), tuple(threads)](*args)
-
-device = {name: cuda.to_device(array) for name, array in host.items()}
-launch(device)
-actual = device[output_name].copy_to_host()
-`;
-
-const measure = `# A fresh launch needs fresh initial state for kernels that update the output.
-# Reset it ahead of each CUDA event so the kernel-only timing excludes the reset.
-start, stop = cuda.event(), cuda.event()
-kernel_times = []
-for _ in range(30):
-    if case.get("resetOutput"):
-        device[output_name].copy_to_device(host[output_name])
-    start.record()
-    launch(device)
-    stop.record()
-    stop.synchronize()
-    kernel_times.append(cuda.event_elapsed_time(start, stop))
-
-# Reuse allocated device buffers. Include both transfer directions and the
-# host-side cost of launching and waiting for the work.
-round_trip_times = []
-copy = np.empty_like(host[output_name])
-for _ in range(30):
-    before = perf_counter()
-    for name, array in host.items():
-        if name != output_name or case.get("resetOutput"):
-            device[name].copy_to_device(array)
-    launch(device)
-    device[output_name].copy_to_host(copy)
-    round_trip_times.append(1e3 * (perf_counter() - before))
-
-print(f"Median kernel time:     {np.median(kernel_times):.4f} ms")
-print(f"Median round-trip time: {np.median(round_trip_times):.4f} ms")
-`;
-
-export function makeNotebook(lesson, source, fixture, { edited = false } = {}) {
-  const integer = fixture.buffers[fixture.output].dtype === "int32";
-  const compare = edited
-    ? `matches = np.${integer ? "equal(actual, expected)" : "isclose(actual, expected, rtol=1e-5, atol=1e-6)"}
-print(f"Edited kernel ran. {np.count_nonzero(~matches)} of {actual.size} values differ from the starter reference.")`
-    : (integer ? "np.testing.assert_array_equal(actual, expected)"
-      : "np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-6)")
-      + '\nprint("Verified against the starter reference:", actual.shape)';
+export function makeNotebook(lesson, source, fixture) {
   return {
     nbformat: 4,
     nbformat_minor: 2,
@@ -87,28 +46,20 @@ print(f"Edited kernel ran. {np.count_nonzero(~matches)} of {actual.size} values 
 
 ${lesson.summary}
 
-Run this notebook on an NVIDIA GPU. In a hosted notebook, enable a GPU runtime first.
-For a local environment, use the [Numba CUDA installation guide](https://nvidia.github.io/numba-cuda/user/installation.html).
+**Case** · ${fixture.label}
 
-Run the cells in order to check the result and collect timings. Read the investigation after the timing cell.
-`),
-      code('%pip install "numba-cuda[cu12]==0.30.4" "numpy>=1.26,<2.5"\n'),
-      code(setup),
-      markdown("## Kernel\n\nThis cell contains the Python source from the browser editor."),
+${lesson.predict}
+
+Run the cells in order on an NVIDIA GPU. In Google Colab, choose **Runtime → Change runtime type** and select a GPU. In Jupyter, use a Python environment on a machine with an NVIDIA GPU.${lesson.cases.length > 1 ? " To use another case, select it on the lesson page and download its notebook." : ""}
+
+${lesson.exercise.map((step, index) => `${index + 1}. ${step}`).join("\n")}`),
+      code(install),
+      code(checkGpu),
+      markdown("## Run the program\n\nThe program below includes both the CUDA kernel and the CPU code that launches it."),
       code(source),
-      markdown(`## Check the output
-
-The selected case is **${fixture.label}**.
-
-${edited ? "Compare the edited kernel output with the NumPy result for the starter. Differences can be expected when you change the calculation." : "The notebook checks every value returned by the GPU against the expected result calculated with NumPy."}`),
-      code(`case = json.loads(${JSON.stringify(JSON.stringify(fixture))})\n\n${hostSetup}
-expected = ${lesson.reference}
-${compare}
-print(actual)
-`),
-      markdown("## Measure on hardware\n\nThe output check runs the function once before timing so the timed runs can reuse the compiled code. Compare Median kernel time, measured by the GPU, with Median round-trip time, which includes copies to and from the GPU, starting the function, and waiting for the result. Both fields report the median of 30 runs in milliseconds. For larger inputs, use the investigations in Appendix A."),
-      code(measure),
-      markdown(`## Optional investigation\n\n${lesson.native}`),
+      markdown("## Check the output\n\nCompare with the expected result for the original code and selected case. Changes to the program can change the result."),
+      code(checkOutput(fixture)),
+      markdown(`## Explain the result\n\n${lesson.explain}\n\n${lesson.native}`),
     ],
   };
 }

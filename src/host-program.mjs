@@ -1,5 +1,6 @@
 const launchDimension = (dimensions) => dimensions.length === 1
   ? String(dimensions[0]) : `(${dimensions.join(", ")})`;
+const hostMarker = "\n# Host code\n";
 
 function hostArray({ values, shape, dtype }) {
   const suffix = `dtype=np.${dtype})${shape.length === 1 ? "" : `.reshape(${shape.join(", ")})`}`;
@@ -17,8 +18,12 @@ function hostArray({ values, shape, dtype }) {
 
 export function hostProgram(fixture) {
   const { buffers, args, scalars, blocks, threads, output } = fixture;
-  const arrays = Object.entries(buffers).map(([name, spec]) =>
-    `    ${name}_host = ${hostArray(spec)}\n    ${name} = cuda.to_device(${name}_host)`);
+  const arrays = Object.entries(buffers).map(([name, spec]) => {
+    if (name === output && fixture.allocateOutput) {
+      return `    ${name} = cuda.device_array(${launchDimension(spec.shape)}, dtype=np.${spec.dtype})`;
+    }
+    return `    ${name}_host = ${hostArray(spec)}\n    ${name} = cuda.to_device(${name}_host)`;
+  });
   const argumentsList = args.map((name) => {
     if (Object.hasOwn(buffers, name)) return name;
     const value = scalars[name];
@@ -33,13 +38,27 @@ ${arrays.join("\n\n")}
     kernel[${launchDimension(blocks)}, ${launchDimension(threads)}](${argumentsList.join(", ")})
     result = ${output}.copy_to_host()
     print("${output} =", result.tolist())
+    return result
 
 
 if __name__ == "__main__":
-    main()
+    actual = main()
 `;
 }
 
-export function standaloneProgram(source, fixture) {
-  return `${source.trimEnd()}\n\n\n${hostProgram(fixture)}`;
+export function joinProgram(kernel, host) {
+  return `${kernel.trimEnd()}\n\n${hostMarker}${host}`;
+}
+
+export function splitProgram(source) {
+  const marker = source.lastIndexOf(hostMarker);
+  if (marker < 0) return null;
+  return {
+    kernel: source.slice(0, marker).trimEnd() + "\n",
+    host: source.slice(marker + hostMarker.length),
+  };
+}
+
+export function standaloneProgram(kernel, fixture) {
+  return joinProgram(kernel, hostProgram(fixture));
 }
