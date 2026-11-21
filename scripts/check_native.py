@@ -51,7 +51,8 @@ def validate_investigations():
     from numba import cuda
 
     sys.path[:0] = [str(ROOT / "src"), str(ROOT / "src/gpu")]
-    from profile_workloads import chunked_affine, make_tiled_transpose
+    from debug_workloads import shared_handoff, write_indices
+    from profile_workloads import chunked_affine, clamp_to_zero, fusion_variants, make_tiled_transpose
 
     if cuda.config.ENABLE_CUDASIM:
         values = np.arange(17 * 41, dtype=np.float32).reshape(17, 41)
@@ -65,6 +66,19 @@ def validate_investigations():
             run, out = chunked_affine(x, y, np.float32(2.5), 17, streams)
             run()
             np.testing.assert_array_equal(out, 2.5 * x + y)
+        x = np.arange(67, dtype=np.float32) - 32
+        y = -x
+        out, temp = np.empty_like(x), np.empty_like(x)
+        for width in (32, 64):
+            for _, run, _, _ in fusion_variants(x, y, temp, out, x.size, np.float32(2.5), width):
+                run()
+                np.testing.assert_array_equal(out, np.maximum(2.5 * x + y, 0))
+        out = np.empty(33, dtype=np.int32)
+        write_indices[2, 32](out, False)
+        np.testing.assert_array_equal(out, np.arange(33, dtype=np.int32))
+        out = np.empty(64, dtype=np.int32)
+        shared_handoff[1, 64](out, False)
+        np.testing.assert_array_equal(out, (np.arange(64, dtype=np.int32) + 32) % 64)
     else:
         from numba import types
 
@@ -73,6 +87,11 @@ def validate_investigations():
             cuda.compile_ptx(
                 make_tiled_transpose(pad).py_func, (array, array, types.int64, types.int64), cc=(8, 0),
             )
+        vector = types.Array(types.float32, 1, "C")
+        output = types.Array(types.int32, 1, "C")
+        cuda.compile_ptx(clamp_to_zero.py_func, (vector, vector, types.int64), cc=(8, 0))
+        for kernel in (write_indices, shared_handoff):
+            cuda.compile_ptx(kernel.py_func, (output, types.boolean), cc=(8, 0), lineinfo=True)
 
 
 def main():
@@ -92,7 +111,7 @@ def main():
                 validate_notebook(case)
                 checked += 1
     validate_investigations()
-    additional = "both native tile variants" if args.ptx else "native tile and stream variants"
+    additional = "native tile, fusion, and debugging kernels" if args.ptx else "native tile, stream, fusion, and debugging examples"
     print(f"Verified {checked} {'PTX kernels' if args.ptx else 'exported notebook cases'} and {additional}.")
 
 

@@ -72,6 +72,14 @@ test("every browser case runs Python and matches its full reference", async (t) 
         assert.ok(transcript.startsWith(`Kernel result\n${fixture.output} = [`), slug);
         if (slug === "softmax") assert.match(transcript, /Row sums \[1, 1\]/);
         if (slug === "transfers") assert.match(transcript, /Global reads \d+\nGlobal writes \d+/);
+        if (slug === "gather") {
+          assert.deepEqual(await page.locator("#warp-output td:nth-child(3)").allTextContents(), ["1", i === 0 ? "1" : "8", "1"]);
+        }
+        if (slug === "stencil") assert.match(transcript, new RegExp(`Global reads ${[46, 18, 15][i]}\nShared reads ${[0, 48, 39][i]}`));
+        if (slug === "fusion") {
+          const counts = [[24, 16], [16, 8], [26, 13]][i];
+          assert.match(transcript, new RegExp(`Global reads ${counts[0]}\nGlobal writes ${counts[1]}`));
+        }
         if (slug === "first-value") {
           assert.equal(await page.locator("#threads, #trace-output, #warp-output").count(), 0);
           await page.locator("#result-panel > summary").click();
@@ -145,6 +153,14 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.ok(files["profile_workloads.py"]);
     assert.ok(files["kernels/softmax.py"]);
     assert.ok(files["requirements.txt"]);
+    assert.ok(files["kernels/fusion.py"]);
+    assert.ok(files["debug_workloads.py"]);
+    assert.match(new TextDecoder().decode(files["INVESTIGATIONS.md"]), /Profiling capstone/);
+    assert.match(await page.locator("#resource-result").textContent(), /8 resident blocks · 16 of 64 warps · 25%/);
+    await page.getByLabel("Threads per block", { exact: true }).selectOption("256");
+    assert.match(await page.locator("#resource-result").textContent(), /6 resident blocks · 48 of 64 warps · 75%/);
+    await page.getByLabel("Shared memory per block (KiB)", { exact: true }).selectOption("16");
+    assert.match(await page.locator("#resource-result").textContent(), /4 resident blocks · 32 of 64 warps · 50%/);
   });
 });
 
@@ -299,5 +315,43 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     await status(page, "success");
     assert.equal(await page.locator("#console-output").textContent(), "Kernel result\nout = [42]");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  });
+});
+
+test("follow-up experiments use the stated cases, edits, and outputs", async (t) => {
+  await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
+    const experiments = [
+      ["gather", "1", [["values[indices[i]]", "values[i]"]], /out = \[100, 101, 102, 103, 104, 105, 106, 107\]/, /7 of 8/],
+      ["stencil", "1", [["tile[0] = values[i - 1] if i > 0 else 0.0", "tile[0] = 0.0"]], /21, 24, 19, 30/, /1 of 16/],
+      ["precision", "0", [["a[i] + b[i]", "a[i] + c[i]"], ["first + c[i]", "first + b[i]"]], /out = \[1, 1\]/, /1 of 2/],
+      ["sync-debug", "1", [["    slot[lane] =", "    if i >= n:\n        return\n    slot[lane] ="]], /out = \[1, 2, 3, 0, 5, 6, 7, 4\]/, /All 8 output values match/],
+      ["fusion", "0", [["if use_temp:", "if False:"]], /Global reads 16\nGlobal writes 8/, /All 8 output values match/],
+    ];
+    const run = page.getByRole("button", { name: "Run kernel" });
+    for (const [slug, caseIndex, changes, transcript, message] of experiments) {
+      await openLesson(page, slug);
+      const editor = sourceEditor(page);
+      const source = await readSource(editor);
+      let edited = source;
+      for (const [original, replacement] of changes) {
+        assert.ok(edited.includes(original), slug);
+        edited = edited.replace(original, replacement);
+      }
+      await page.locator("#case").selectOption(caseIndex);
+      await replaceSource(page, editor, edited);
+      await run.click();
+      await page.locator("#run-status").filter({ hasText: message }).waitFor();
+      assert.match(await page.locator("#console-output").textContent(), transcript);
+      if (slug === "sync-debug") {
+        await page.locator("#case").selectOption("0");
+        await run.click();
+        await status(page, "failure");
+        assert.match(await page.locator("#console-output").textContent(), /different barriers|returned before the barrier/);
+      }
+      await editorTools(page).click();
+      await page.getByRole("button", { name: "Restore starter" }).click();
+      await run.click();
+      await status(page, "success");
+    }
   });
 });

@@ -1,4 +1,4 @@
-"""Verify and benchmark three course investigations on an NVIDIA GPU."""
+"""Verify and benchmark course investigations on an NVIDIA GPU."""
 
 import argparse
 from statistics import median
@@ -8,6 +8,7 @@ import numpy as np
 from numba import cuda, float32
 
 from kernels.coalescing import kernel as direct_transpose
+from kernels.fusion import kernel as fused_kernel
 from kernels.softmax import kernel as block_softmax
 from kernels.transfers import kernel as affine_kernel
 
@@ -194,6 +195,49 @@ def profile_softmax(args):
     print(f"torch.softmax: {gpu_time_ms(baseline, args.repeats, stream):.4f} ms")
 
 
+@cuda.jit
+def clamp_to_zero(values, out, n):
+    i = cuda.grid(1)
+    if i < n:
+        out[i] = max(values[i], float32(0))
+
+
+def fusion_variants(dx, dy, temp, out, size, alpha, threads):
+    blocks = ceil_div(size, threads)
+
+    def split():
+        affine_kernel[blocks, threads](dx, dy, temp, size, alpha)
+        clamp_to_zero[blocks, threads](temp, out, size)
+
+    def fused():
+        fused_kernel[blocks, threads](dx, dy, temp, out, size, alpha, 0)
+
+    return (
+        ("two launches", split, 20, (affine_kernel, clamp_to_zero)),
+        ("fused", fused, 12, (fused_kernel,)),
+    )
+
+
+def profile_fusion(args):
+    print("Elements   Threads   Variant         Median GPU ms   Model bytes/element   Registers/thread")
+    rng = np.random.default_rng(17)
+    alpha = np.float32(2.5)
+    for size in args.sizes:
+        x, y = (rng.standard_normal(size, dtype=np.float32) for _ in range(2))
+        expected = np.maximum(alpha * x + y, np.float32(0))
+        dx, dy = cuda.to_device(x), cuda.to_device(y)
+        temp, out = cuda.device_array_like(dx), cuda.device_array_like(dx)
+        for threads in args.threads:
+            for label, run, bytes_per_element, kernels in fusion_variants(dx, dy, temp, out, size, alpha, threads):
+                run()
+                np.testing.assert_allclose(out.copy_to_host(), expected, rtol=1e-5, atol=1e-6)
+                elapsed = gpu_time_ms(run, args.repeats)
+                registers = " + ".join(str(next(iter(kernel.get_regs_per_thread().values()))) for kernel in kernels)
+                print(f"{size:8,d} {threads:9d}   {label:14} {elapsed:13.4f} {bytes_per_element:21d}   {registers}")
+    print("Every timed variant passed the NumPy check. Model bytes count source reads and writes.")
+    print("For two launches, register counts are listed in launch order and apply to each kernel separately.")
+
+
 def positive_int(value):
     parsed = int(value)
     if parsed < 1:
@@ -215,7 +259,11 @@ def main():
     softmax.add_argument("--rows", type=positive_int, default=4096)
     softmax.add_argument("--cols", type=positive_int, default=129)
     softmax.set_defaults(run=profile_softmax)
-    for command in (affine, transpose, softmax):
+    fusion = subparsers.add_parser("fusion", help="Compare two launches with a fused kernel.")
+    fusion.add_argument("--sizes", type=positive_int, nargs="+", default=[4096, 1048583, 4194304])
+    fusion.add_argument("--threads", type=int, nargs="+", choices=[32, 64, 128, 256, 512], default=[64, 128, 256])
+    fusion.set_defaults(run=profile_fusion)
+    for command in (affine, transpose, softmax, fusion):
         command.add_argument("--repeats", type=positive_int, default=30)
     args = parser.parse_args()
 

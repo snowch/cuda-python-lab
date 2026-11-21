@@ -1,6 +1,6 @@
 # CUDA Python Lab
 
-CUDA Python Lab teaches GPU programming to Python developers through twelve browser labs that require no physical GPU. It follows the predict, run, and explain format of [GPU Lab](https://snowch.github.io/gpu-lab/v2/).
+CUDA Python Lab teaches GPU programming to Python developers through seventeen browser labs that require no physical GPU. It follows the predict, run, and explain format of [GPU Lab](https://snowch.github.io/gpu-lab/v2/).
 
 The workbench follows GPU Lab V2’s layout and editor tools. Edit Python kernels with CodeMirror, run or stop a case, and use the console to inspect `print()` messages, kernel results, and execution errors. The workbench runs your current source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Appendix A covers optional GPU verification and profiling with exported notebooks.
 
@@ -20,7 +20,8 @@ Open [localhost:8000](http://localhost:8000). Predictions, edited kernels, case 
 | CUDA foundations | First kernel, bounds checks, grid-stride loops |
 | Memory and execution | Host/device transfers, coalescing, warp divergence |
 | Parallel patterns | Block reduction, atomic histogram, block scan |
-| Optimization and ML | Tiled transpose, tiled matrix multiplication, stable softmax |
+| Reusing data and computing probabilities | Tiled transpose, tiled matrix multiplication, stable softmax |
+| Design, debug, and tune kernels | Gather, shared-memory stencil, float32 rounding, synchronization debugging, fusion |
 
 Use `npm run build` to produce the static site in `dist/`. Serve that directory over HTTP. Assets use relative paths and Pyodide is bundled locally, so the course can run from a static host subdirectory with no runtime CDN dependency.
 
@@ -28,7 +29,7 @@ Use `npm run build` to produce the static site in `dist/`. Serve that directory 
 
 Each lesson can export a notebook with your kernel, an independent NumPy check, CUDA event timing, and a host round-trip measurement. Enable an NVIDIA GPU runtime before running the notebook.
 
-**Appendix A** also includes a downloadable archive with three larger investigations. Use it to profile an affine transform with one and two streams, measure direct and tiled transposes, and compare a Numba softmax kernel with `torch.softmax` on the same tensor buffers. [Native investigations](src/gpu/INVESTIGATIONS.md)
+**Appendix A** includes an occupancy worksheet and a downloadable archive. Debug global memory and shared-memory hazards with Compute Sanitizer. Profile streams, transpose, and Numba–PyTorch interoperability. Complete the capstone by comparing a two-launch baseline with a fused kernel across workloads and block sizes. [Native investigations](src/gpu/INVESTIGATIONS.md)
 
 The browser model executes a small CUDA subset in a worker and uses deterministic scheduling within each barrier phase. Its address and value traces are functional teaching tools. Use native compilation, GPU verification, and hardware profiling to study CUDA behavior and speed. [Numba CUDA documentation](https://nvidia.github.io/numba-cuda/)
 

@@ -209,6 +209,8 @@ tr.difference td { background: var(--difference); }
 .native-card summary, .resource-details summary { min-height: 44px; padding-block: .55rem; color: var(--accent); }
 .native-card p { margin: .4rem 0 .65rem; max-width: 72ch; }
 .native-card .actions { margin-bottom: .8rem; }
+.resource-control { display: grid; gap: .2rem; min-width: 9rem; }
+#resource-result { color: var(--accent); margin: .85rem 0 .4rem; font-weight: 650; }
 .resource-details { margin-top: 1rem; }
 .resource-details p { margin: .45rem 0; }
 .lesson-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .65rem; align-items: center; margin-top: 1.35rem; }

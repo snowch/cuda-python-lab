@@ -76,6 +76,40 @@ const softmax = (matrix) => {
     ["values", "out", "rows", "cols"], { rows, cols }, [rows], [32], expected);
 };
 
+const gather = (positions) => {
+  const n = positions.length;
+  const values = range(64).map((i) => 100 + i);
+  return fixture({ values: buffer(values), indices: buffer(positions, [n], "int32"), out: zeros([n]) },
+    "out", ["values", "indices", "out", "n"], { n }, [1], [8], positions.map((index) => values[index]));
+};
+const stencil = (n, useShared) => {
+  const values = range(n).map((i) => i + 1);
+  return fixture({ values: buffer(values), out: zeros([n]) }, "out",
+    ["values", "out", "n", "use_shared"], { n, use_shared: useShared }, [ceil(n, 8)], [8],
+    values.map((value, i) => (values[i - 1] ?? 0) + value + (values[i + 1] ?? 0)));
+};
+const precision = (a) => {
+  const n = a.length;
+  const b = a.map(() => 1);
+  const c = a.map((value) => -value);
+  return fixture({ a: buffer(a), b: buffer(b), c: buffer(c), out: zeros([n]) }, "out",
+    ["a", "b", "c", "out", "n"], { n }, [1], [4],
+    a.map((value, i) => Math.fround(Math.fround(value + b[i]) + c[i])));
+};
+const syncDebug = (n) => fixture({ out: zeros([n], "int32") }, "out", ["out", "n"],
+  { n }, [ceil(n, 4)], [4], range(n).map((i) => {
+    const next = Math.floor(i / 4) * 4 + (i + 1) % 4;
+    return next < n ? next : -1;
+  }));
+const fusion = (n, useTemp) => {
+  const x = range(n).map((i) => i - 4);
+  const y = x.map(() => 0.5);
+  const alpha = 1.5;
+  return fixture({ x: buffer(x), y: buffer(y), temp: zeros([n]), out: zeros([n]) }, "out",
+    ["x", "y", "temp", "out", "n", "alpha", "use_temp"], { n, alpha, use_temp: useTemp },
+    [ceil(n, 8)], [8], x.map((value, i) => Math.max(0, alpha * value + y[i])));
+};
+
 export const modules = [
   {
     title: "CUDA foundations",
@@ -96,6 +130,11 @@ export const modules = [
     title: "Reusing data and computing probabilities",
     description: "Share values across threads to work with matrices and turn scores into probabilities.",
     lessons: ["tiled-transpose", "matmul", "softmax"],
+  },
+  {
+    title: "Design, debug, and tune kernels",
+    description: "Continue after the twelve core labs. Work with indirect indices and neighboring data, test rounding and synchronization, then compare designs with fewer memory accesses.",
+    lessons: ["gather", "stencil", "precision", "sync-debug", "fusion"],
   },
 ];
 
@@ -178,6 +217,7 @@ export const lessons = {
     explain: "Block 1, Thread 1 has index 33, so the bounds check skips it. The run has 66 global reads and 33 global writes. Each copied array holds 132 bytes, for 396 payload bytes across three copies. For eight elements the three copies total 96 bytes.",
     native: "In Appendix A, run the affine investigation, which computes out = alpha × x + y. Compare Kernel (ms) and Round trip (ms) at each input size. Then compare 1 stream (ms) and 2 streams (ms) to check whether a second stream reduced the measured time.",
     evidence: ["trace"],
+    consoleCounters: [["Global reads", "global_read"], ["Global writes", "global_write"]],
     reference: "np.float32(scalars['alpha']) * host['x'] + host['y']",
     cases: [caseOf("33 elements", affine(33)), caseOf("8 elements", affine(8))],
   },
@@ -329,6 +369,7 @@ export const lessons = {
     native: "Run both starter notebooks and check that each output matches NumPy. Note the input shapes and Median kernel time. The cases have different shapes and different amounts of work, so use larger, matching input shapes when comparing different kernel implementations.",
     evidence: ["trace"],
     traceDetails: ["shared"],
+    consoleCounters: [["Global reads", "global_read"], ["Shared reads", "shared_read"]],
     reference: "host['a'] @ host['b']",
     cases: [caseOf("5 × 6 times 6 × 7", matmul(5, 6, 7)), caseOf("4 × 4 times 4 × 4", matmul(4, 4, 4))],
   },
@@ -356,5 +397,115 @@ export const lessons = {
       caseOf("Extreme and equal logits", softmax([[1000, 999, 1000, 997, -1000], [-1002, -1001, -1000, -1000, -1004]])),
       caseOf("Two rows · 37 columns", softmax([range(37).map((i) => i % 9 - 4), range(37).map((i) => 800 + i % 5)])),
     ],
+  },
+  gather: {
+    sourceTarget: "indices[i]",
+    title: "Read values through an index array",
+    summary: "Trace a gather, where each output selects an input using a separate index array.",
+    intro: [
+      "A gather looks up values at positions listed in another array. In gather.py, Thread i reads indices[i], uses that value to select an input from values, and writes the answer to out[i]. The case supplies eight indices and a table of 64 values.",
+      "In both cases, lanes read indices consecutively. The positions stored there determine whether their reads of values are close together. The browser groups addresses into 32-byte sectors with eight four-byte values per sector.",
+    ],
+    predict: "If the eight indices are [0, 8, 16, 24, 32, 40, 48, 56], how many sectors do reads of indices and reads of values touch?",
+    exercise: [
+      "Select Consecutive positions and click Run kernel. In Warp address model, record Distinct sectors for read · indices and read · values.",
+      "Select Spaced positions and run again. In Thread inspector, select Thread 1 and find the two reads in Selected thread trace. Which value read from indices becomes the index used to read values?",
+      "In gather.py, replace values[indices[i]] with values[i]. Run the Spaced positions case again. Compare out and the read · values sector count before and after the edit. In Editor tools, select Restore starter.",
+    ],
+    explain: "With consecutive positions, the lanes touch one sector in each input array. With spaced positions they still touch one sector in indices but touch eight in values. Reading values[i] changes the chosen inputs, so fewer modeled sectors comes with a different result. Hardware traffic also depends on caching and instruction behavior.",
+    native: "Run both notebooks and check each output against NumPy indexing. Compare the output order. Use larger inputs and a memory profiler to study hardware traffic, since these eight requests are too small for a throughput comparison.",
+    evidence: ["trace", "warp"],
+    traceDetails: ["offset"],
+    reference: "host['values'][host['indices']]",
+    cases: [caseOf("Consecutive positions", gather(range(8))), caseOf("Spaced positions", gather(range(8).map((i) => i * 8)))],
+  },
+  stencil: {
+    sourceTarget: "tile[0] = values[i - 1] if i > 0 else 0.0",
+    title: "Share neighboring values across threads",
+    summary: "Sum each element and its neighbors while reusing inputs in shared memory.",
+    intro: [
+      "A stencil applies the same rule at each position using nearby inputs. Here the rule adds the left neighbor, the current value, and the right neighbor. The kernel uses zero for neighbors outside the array.",
+      "The shared version uses eight threads per block. Each thread loads one center value into a tile. The first and last threads load the two extra neighboring values, called the halo. A barrier makes those values available to the whole block before it writes outputs.",
+    ],
+    predict: "At the first position of Block 1, which input from Block 0 must the stencil include? Which shared entry holds it?",
+    exercise: [
+      "Run 16 values · direct reads, then 16 values · shared tile. Compare Global reads and the Console check for both cases. How did staging the same inputs once per tile change the read count?",
+      "With the shared case selected, inspect Block 1, Thread 0. Find the read from values at Index 7 and the write to the shared array at Index 0. Follow that value to the first output of Block 1.",
+      "In stencil.py, replace tile[0] = values[i - 1] if i > 0 else 0.0 with tile[0] = 0.0. Run the shared case again and open Compare with starter. Find which output missed an input from the previous block.",
+      "In Editor tools, select Restore starter. Run 13 values · partial tile to verify the outputs when some threads have no center value.",
+    ],
+    explain: "The direct case records 46 global reads. Shared staging uses 18, including the two reads across the boundary between blocks. Block 1, Thread 0 loads input index 7 into tile[0]. Replacing the left halo with zero changes out[8] from 27 to 19. The browser counts the reads in the source. Repeated reads can hit a hardware cache.",
+    native: "Run the two complete-tile notebooks and check their NumPy outputs. Use matching, larger input arrays to compare hardware time. The direct reads can benefit from the cache, while shared staging has loads and a block barrier.",
+    evidence: ["trace"],
+    traceDetails: ["shared"],
+    consoleCounters: [["Global reads", "global_read"], ["Shared reads", "shared_read"]],
+    reference: "(lambda x: x[:-2] + x[1:-1] + x[2:])(np.pad(host['values'], 1))",
+    cases: [caseOf("16 values · direct reads", stencil(16, 0)), caseOf("16 values · shared tile", stencil(16, 1)),
+      caseOf("13 values · partial tile", stencil(13, 1))],
+  },
+  precision: {
+    sourceTarget: "float32(a[i] + b[i])",
+    title: "See how rounding changes a sum",
+    summary: "Group the same three values in two orders and check their float32 results.",
+    intro: [
+      "Float32 stores numbers with limited precision. Around 16,777,216, the next larger float32 value is 16,777,218. Adding 1 to 16,777,216 and rounding to float32 gives 16,777,216 again.",
+      "The explicit float32 calls round each sum at the same point in the browser and in the GPU notebook. Changing parentheses changes when a small value can be lost to rounding.",
+    ],
+    predict: "For a = 16,777,216, b = 1, and c = −16,777,216, what happens to the 1 when you add a and b first? What if you add a and c first?",
+    exercise: [
+      "Select Near the precision limit and run. In the Console, record out[0] and out[1]. Both threads add 1 and then subtract the starting value. Which thread keeps the 1?",
+      "In precision.py, change a[i] + b[i] to a[i] + c[i] and change first + c[i] to first + b[i]. Run again and compare the same outputs. Explain why changing the order changes one result.",
+      "Restore starter in Editor tools, then run Smaller integers. Check whether the original grouping keeps 1 for those values.",
+    ],
+    explain: "The first case starts with a values of 16,777,216 and 8,388,608. The original order returns 0 for the first thread and 1 for the second. Canceling a and c before adding b gives 1 for both. The starter reference follows the original float32 grouping. The exact sum is 1 for both inputs, so the edited result at index 0 is closer to the exact sum.",
+    native: "Run the starter and the edited versions of the first case. In Check the output, add print(host['a'].astype(np.float64) + host['b'] + host['c']) at the end of the cell. Compare the float32 results with this calculation in a type with more precision.",
+    evidence: [],
+    reference: "(host['a'] + host['b']) + host['c']",
+    cases: [caseOf("Near the precision limit", precision([2 ** 24, 2 ** 23])), caseOf("Smaller integers", precision([100, 1000]))],
+  },
+  "sync-debug": {
+    sourceTarget: "slot[lane] = i if i < n else -1",
+    title: "Find a barrier skipped by an edge thread",
+    summary: "Use a partial block to expose a synchronization bug that a full block passes.",
+    intro: [
+      "Each block has four threads. A thread writes its global index to shared memory, or −1 if its index is outside the output. After the block barrier, each active thread copies the next thread’s entry. The last thread in a block reads the first entry.",
+      "Every thread in a block must reach the barrier together. The browser checks the arrivals when it executes each step. The partial-block case has one thread in Block 1 whose index is outside the output.",
+    ],
+    predict: "In the 7-output case, which thread in Block 1 supplies the −1? What happens to the barrier if that thread returns first?",
+    exercise: [
+      "Run 7 outputs · partial block. Find out[6] in the Console and inspect Block 1, Thread 3. Which write and barrier entry let Thread 2 read the sentinel value −1?",
+      "In sync-debug.py, insert two lines just before slot[lane] = i if i < n else -1. On the first line, type if i >= n: at the same indentation as slot[lane]. On the second line, indent four more spaces and type return.",
+      "Run 8 outputs · two full blocks first. Then run 7 outputs · partial block with the same edit. Compare the Console messages. Why does the smallest change in output size expose the problem?",
+      "In Editor tools, select Restore starter and rerun the 7-output case.",
+    ],
+    explain: "The edited kernel has no early returns in the eight-output case. In the seven-output case, Block 1, Thread 3 returns before the other threads reach the barrier, and the browser reports inconsistent arrivals. Test both full and partial blocks when checking a synchronization rule.",
+    native: "Run the starter notebook for both input sizes. For hardware debugging tools, follow Find incorrect memory accesses and synchronization in Appendix A.",
+    evidence: ["trace"],
+    traceDetails: ["shared"],
+    reference: "(lambda i: np.where(i < scalars['n'], i, -1))((np.arange(scalars['n']) // 4) * 4 + (np.arange(scalars['n']) + 1) % 4)",
+    cases: [caseOf("7 outputs · partial block", syncDebug(7)), caseOf("8 outputs · two full blocks", syncDebug(8))],
+  },
+  fusion: {
+    sourceTarget: "if use_temp:",
+    title: "Remove an intermediate array",
+    summary: "Keep a value inside a thread instead of writing it out and reading it back.",
+    intro: [
+      "The first operation scales x and adds y. The second replaces negative results with zero. Putting both operations in one kernel is called fusion. It can save memory accesses when a thread can use its intermediate value directly.",
+      "Both browser cases use one kernel. One case explicitly writes temp and reads it back. The other keeps the value in a local variable. The hardware capstone compares separate launches with a fused launch.",
+    ],
+    predict: "For eight inputs, how many global reads and writes can you remove if each thread skips its write to temp and its read from temp?",
+    exercise: [
+      "Select 8 values · store temporary and click Run kernel. Record Global reads, Global writes, and out in the Console.",
+      "Select 8 values · keep local and run. Compare the same counts and check whether out changed. Inspect Thread 0’s trace to identify the two missing operations.",
+      "Select 8 values · store temporary. In fusion.py, change if use_temp: to if False: and run. Do the resulting access counts match the keep-local case? In Editor tools, select Restore starter.",
+      "For the optional capstone, use Appendix A to test whether fewer launches and accesses reduce the time on an NVIDIA GPU.",
+    ],
+    explain: "For eight elements, the temporary adds eight reads and eight writes. The local version reads x and y and writes only out, for 16 reads and eight writes. Both versions produce the same values. The access counts are a source-level prediction for the hardware capstone, since memory traffic also depends on what the compiler and caches do.",
+    native: "In Appendix A, run the profiling capstone to compare a two-launch baseline with a fused kernel across input sizes and block sizes. Verify both outputs and check whether the measured kernel time supports your prediction.",
+    evidence: ["trace"],
+    consoleCounters: [["Global reads", "global_read"], ["Global writes", "global_write"]],
+    reference: "np.maximum(np.float32(scalars['alpha']) * host['x'] + host['y'], np.float32(0))",
+    cases: [caseOf("8 values · store temporary", fusion(8, 1)), caseOf("8 values · keep local", fusion(8, 0)),
+      caseOf("13 values · keep local", fusion(13, 0))],
   },
 };

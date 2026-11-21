@@ -37,6 +37,35 @@ export const diagrams = {
       </ol>
       <p>Every step waits for the previous writes at a block barrier. At distance 4, Thread 1 adds its 2 to the 6 in scratch[5].</p>
     </figure>`,
+  stencil: `
+    <figure class="concept-diagram">
+      <figcaption>Where Block 1 gets the neighbors for out[8]</figcaption>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="The three inputs to out[8]">
+        <table>
+          <thead><tr><th scope="col">Role</th><th scope="col">Input index</th><th scope="col">Shared index</th><th scope="col">Value</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Left halo</th><td>7</td><td>0</td><td>8</td></tr>
+            <tr><th scope="row">Center</th><td>8</td><td>1</td><td>9</td></tr>
+            <tr><th scope="row">Right neighbor</th><td>9</td><td>2</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>After the barrier, Thread 0 adds 8 + 9 + 10 and writes 27 to out[8].</p>
+    </figure>`,
+  fusion: `
+    <figure class="concept-diagram">
+      <figcaption>Count the transfers for one element</figcaption>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Memory access counts with and without a temporary">
+        <table>
+          <thead><tr><th scope="col">Design</th><th scope="col">Arrays read</th><th scope="col">Arrays written</th><th scope="col">Bytes</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Store temporary</th><td>x, y, temp</td><td>temp, out</td><td>20</td></tr>
+            <tr><th scope="row">Keep local</th><td>x, y</td><td>out</td><td>12</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Each array access here uses four bytes. The totals count source operations without modeling traffic through GPU caches.</p>
+    </figure>`,
   transfers: `
     <figure class="concept-diagram">
       <figcaption>Array copies for 33 float32 values per array</figcaption>

@@ -49,7 +49,7 @@ const starters = Object.fromEntries(await Promise.all(slugs.map(async (slug) => 
 ])));
 await writeFile(new URL("starters.json", dist), JSON.stringify(starters));
 
-const gpuFiles = ["requirements.txt", "profile_workloads.py", "INVESTIGATIONS.md"];
+const gpuFiles = ["requirements.txt", "profile_workloads.py", "debug_workloads.py", "INVESTIGATIONS.md"];
 const archive = Object.fromEntries(await Promise.all(gpuFiles.map(async (name) => [
   name, await readFile(new URL(`gpu/${name}`, src)),
 ])));

@@ -94,11 +94,11 @@ function updateNav(page) {
 function showCourse() {
   main.innerHTML = `<div class="resource-page">
     <h1>CUDA Python Lab</h1>
-    <p class="lead">Learn GPU programming in Python without a physical GPU. In twelve browser labs, edit functions that run on a GPU, check their output, and follow what individual threads do.</p>
+    <p class="lead">Learn GPU programming in Python without a physical GPU. Edit functions that run on a GPU, check their output, and follow what individual threads do.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
-      <p>You’ll need to know how to read Python functions, loops, and array indices. The course introduces GPU programming from the first example. The browser runs your Python and models how the GPU behaves.</p>
-      <p>For optional GPU runs, <a href="#gpu">Appendix A</a> shows how to run the kernels on an NVIDIA GPU and measure performance.</p>
+      <p>You’ll need to know how to read Python functions, loops, and array indices. The browser runs your Python and models GPU behavior. Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
+      <p>The browser labs cover kernel design and correctness. <a href="#gpu">Appendix A</a> explains GPU debugging and profiling and provides a hardware capstone.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
     </section>
     <div class="course-modules">
@@ -145,6 +145,40 @@ python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
       <p>Check the output before interpreting timings. Record the GPU and input shape. Use Nsight Systems to see when copies and kernels run, or Nsight Compute to inspect kernel counters such as memory sectors.</p>
       <p><a href="https://pytorch.org/get-started/locally/">PyTorch installation selector</a> · <a href="https://developer.nvidia.com/nsight-systems">Nsight Systems</a> · <a href="https://developer.nvidia.com/nsight-compute">Nsight Compute</a></p>
     </section>
+    <section class="reading">
+      <h2>Find incorrect memory accesses and synchronization</h2>
+      <p>In the extracted archive, open <strong>INVESTIGATIONS.md</strong> and follow the Compute Sanitizer exercise. Compare the reports from the faulty and corrected kernels. Memcheck checks invalid memory accesses, racecheck checks shared-memory hazards, and synccheck checks synchronization primitives.</p>
+    </section>
+    <section class="reading">
+      <h2>Estimate how many blocks can run together</h2>
+      <p>A streaming multiprocessor (SM) is the part of a GPU that runs thread blocks. A block is resident while it holds resources on an SM. Those resources include thread slots, registers (storage for each thread’s values), and shared memory. Occupancy is the fraction of the SM’s maximum number of warps that are resident.</p>
+      <p>Use this example SM with 16 block slots, 2,048 thread slots, 65,536 registers, and 64 KiB (65,536 bytes) of shared memory. The model divides each budget by what one block needs. The smallest result limits the number of blocks. It assumes enough blocks to fill the SM and ignores hardware allocation increments.</p>
+      <div class="lesson-card" id="launch-resources">
+        <div class="actions">
+          <div class="resource-control">
+            <label for="resource-threads">Threads per block</label>
+            <select id="resource-threads"><option>64</option><option>128</option><option>256</option><option>512</option></select>
+          </div>
+          <div class="resource-control">
+            <label for="resource-registers">Registers per thread</label>
+            <select id="resource-registers"><option>32</option><option selected>40</option><option>64</option></select>
+          </div>
+          <div class="resource-control">
+            <label for="resource-shared">Shared memory per block (KiB)</label>
+            <select id="resource-shared"><option>0</option><option selected>8</option><option>16</option><option>32</option></select>
+          </div>
+        </div>
+        <p role="status" id="resource-result"></p>
+        <div id="resource-limits"></div>
+      </div>
+      <p>With 40 registers per thread and 8 KiB per block, compare 64 and 256 threads per block. Which resource limits each launch? For 256 threads, change shared memory to 16 KiB. Check which limit changes. Use Nsight Compute to check occupancy and its limits on the actual GPU.</p>
+    </section>
+    <section class="reading">
+      <h2>Profiling capstone. Compare two launches with a fused kernel</h2>
+      <p>In <strong>INVESTIGATIONS.md</strong>, follow the capstone to predict, check, measure, and explain the effect of keeping an intermediate value within a thread. Use identical inputs and block sizes for each pair of timings.</p>
+      <pre><code>python profile_workloads.py fusion --sizes 4096 1048583 4194304 --threads 64 128 256</code></pre>
+      <p>Use the browser exercise to predict changes in array accesses. The GPU investigation supplies launch timings, register counts, and profiler evidence. Record the conditions for a conclusion that another developer can check.</p>
+    </section>
     <details class="reading resource-details">
       <summary>Browser model and architecture simulator</summary>
       <p>Pyodide runs Python in the browser. The CUDA teaching model runs threads in one fixed order between synchronization points and records the array entries they access. Use a hardware run to compile the GPU code and measure its timing. A matching browser result does not establish that other thread orders on a GPU produce the same result.</p>
@@ -152,6 +186,26 @@ python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
       <p><a href="https://github.com/gpgpu-sim/gpgpu-sim_distribution">GPGPU-Sim source and setup guide</a></p>
     </details>
   </div>`;
+  const worksheet = main.querySelector("#launch-resources");
+  function updateResources() {
+    const threads = Number(worksheet.querySelector("#resource-threads").value);
+    const registers = Number(worksheet.querySelector("#resource-registers").value);
+    const shared = Number(worksheet.querySelector("#resource-shared").value);
+    const limits = [
+      ["Block slots", 16],
+      ["Thread slots", Math.floor(2048 / threads)],
+      ["Registers", Math.floor(65536 / (threads * registers))],
+      ["Shared memory", shared ? Math.floor(64 / shared) : Infinity],
+    ];
+    const blocks = Math.min(...limits.map(([, limit]) => limit));
+    const warps = blocks * threads / 32;
+    worksheet.querySelector("#resource-result").textContent =
+      `${blocks} resident blocks · ${warps} of 64 warps · ${Math.round(warps / 64 * 100)}% estimated occupancy`;
+    worksheet.querySelector("#resource-limits").innerHTML = formatTable(["Resource", "Block limit"],
+      limits.map(([resource, limit]) => [resource, limit === Infinity ? "No limit" : limit]));
+  }
+  worksheet.addEventListener("change", updateResources);
+  updateResources();
 }
 
 function formatTable(headers, rows, classes = []) {
@@ -417,7 +471,7 @@ function renderConsole(stdout = "", message = "") {
   panel.hidden = !stdout && !message;
 }
 
-function formatReadback({ output, shape, counts }, arrayName, slug) {
+function formatReadback({ output, shape, counts }, arrayName, slug, lesson) {
   const values = output.map(pretty);
   const matrixRows = shape.length === 2 ? Array.from({ length: shape[0] }, (_, row) => {
     const start = row * shape[1];
@@ -433,10 +487,7 @@ function formatReadback({ output, shape, counts }, arrayName, slug) {
     });
     lines.push(`Row sums [${totals.join(", ")}]`);
   }
-  if (slug === "transfers" || slug === "matmul") {
-    const other = slug === "transfers" ? ["Global writes", counts.global_write] : ["Shared reads", counts.shared_read];
-    lines.push(`Global reads ${counts.global_read ?? 0}`, `${other[0]} ${other[1] ?? 0}`);
-  }
+  for (const [label, key] of lesson.consoleCounters ?? []) lines.push(`${label} ${counts[key] ?? 0}`);
   return lines.join("\n");
 }
 
@@ -529,7 +580,7 @@ async function run() {
     } else {
       setStatus(`Edited kernel ran. ${comparison}`);
     }
-    renderConsole(stdout, formatReadback(result, current.fixture.output, current.slug));
+    renderConsole(stdout, formatReadback(result, current.fixture.output, current.slug, current.lesson));
     renderThreadTrace();
     renderComparison();
     current.root.querySelector("#result-panel").hidden = false;
