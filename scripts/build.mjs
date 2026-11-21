@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { build } from "esbuild";
 import { strToU8, zipSync } from "fflate";
 import { lessons, modules } from "../src/course.mjs";
 
@@ -14,6 +15,26 @@ await Promise.all(
   ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "notebook.mjs", "worker.js", "simulator.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
+const editorBuild = await build({
+  absWorkingDir: fileURLToPath(root),
+  entryPoints: [fileURLToPath(new URL("editor.mjs", src))],
+  outfile: fileURLToPath(new URL("editor.mjs", dist)),
+  bundle: true,
+  format: "esm",
+  minify: true,
+  legalComments: "linked",
+  banner: { js: "/*! Bundled license notices: editor.LICENSE.txt */" },
+  metafile: true,
+});
+const editorPackages = new Set(Object.keys(editorBuild.metafile.inputs)
+  .flatMap((file) => {
+    const dependency = file.match(/^(.+\/)?node_modules\/(@[^/]+\/[^/]+|[^/]+)\//);
+    return dependency ? [dependency[0]] : [];
+  }));
+const licenses = await Promise.all([...editorPackages].sort().map(async (directory) =>
+  directory + "\n" + (await readFile(new URL(directory + "LICENSE", root), "utf8")).trim(),
+));
+await writeFile(new URL("editor.LICENSE.txt", dist), licenses.join("\n\n") + "\n");
 await Promise.all(
   ["pyodide.js", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"]
     .map((name) => cp(new URL(`node_modules/pyodide/${name}`, root), new URL(`runtime/${name}`, dist))),

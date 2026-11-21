@@ -1,5 +1,6 @@
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
+import { mountKernelEditor } from "./editor.mjs";
 import { makeNotebook } from "./notebook.mjs";
 
 const order = modules.flatMap((module) => module.lessons);
@@ -135,33 +136,6 @@ python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
   </div>`;
 }
 
-function syntaxLine(line, index) {
-  const regex = /#[^\n]*|"[^"\n]*"|'[^'\n]*'|@\w+(?:\.\w+)*|\b(?:from|import|def|in|for|if|else|elif|while|return|and|or|not|True|False)\b|\b\d+(?:\.\d+)?\b|\b\w+(?=\()/g;
-  let previous = 0;
-  let text = "";
-  for (const match of line.matchAll(regex)) {
-    const [value] = match;
-    const type = value.startsWith("#") ? "comment"
-      : /^[\x22\x27]/.test(value) ? "string"
-      : /^\d/.test(value) ? "number"
-      : value.startsWith("@") || line[match.index + value.length] === "(" ? "call"
-      : "keyword";
-    text += escape(line.slice(previous, match.index)) + `<span class="token-${type}">${escape(value)}</span>`;
-    previous = match.index + value.length;
-  }
-  text += escape(line.slice(previous));
-  return `<span class="line" data-line="${index + 1}">${text || " "}</span>`;
-}
-
-function updateEditor() {
-  model.highlight.innerHTML = model.editor.value.split("\n").map(syntaxLine).join("");
-  syncScroll();
-}
-function syncScroll() {
-  model.highlight.scrollTop = model.editor.scrollTop;
-  model.highlight.scrollLeft = model.editor.scrollLeft;
-}
-
 function formatTable(headers, rows, classes = []) {
   return `<div class="table-scroll" tabindex="0"><table>
     <thead><tr>${headers.map((header) => `<th scope="col">${escape(header)}</th>`).join("")}</tr></thead>
@@ -205,7 +179,7 @@ function showLesson(slug) {
 
     <section class="reading experiment">
       <h2>Run the experiment</h2>
-      <p>The browser prepares the arrays and launch settings for each case.</p>
+      <p>The browser runs the Python in the editor using a CUDA teaching model. The selected case supplies the arrays and launch settings.</p>
       <p id="saved-draft-note" hidden>A saved edit is open. <strong>Restore starter</strong> sets your draft aside. To get it back after experimenting, restore the starter again if needed, then select <strong>Undo restore</strong>.</p>
       <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
     </section>
@@ -224,11 +198,8 @@ function showLesson(slug) {
             <span class="editor-title">${slug}.py</span>
             <button id="restore" type="button">Restore starter</button>
           </div>
-          <div class="codebox">
-            <pre id="highlight" aria-hidden="true"></pre>
-            <textarea id="source" aria-label="Python kernel source" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
-          </div>
-          <div class="editor-bottom">Ctrl/⌘ + Enter to run</div>
+          <div id="source" class="codebox"></div>
+          <div class="editor-bottom" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</div>
         </div>
         <div class="inspector">
           <div class="launch-info"><h3>Thread inspector</h3><span id="launch-shape"></span></div>
@@ -271,38 +242,33 @@ function showLesson(slug) {
   </article>`;
   const find = (id) => main.querySelector(`#${id}`);
   model = {
-    slug, lesson, root: main.querySelector("article"), editor: find("source"), highlight: find("highlight"),
+    slug, lesson, root: main.querySelector("article"),
     input: find("case"), blockInput: find("block"), block: 0, thread: 0, result: null,
     request: 0, runButton: find("run"),
   };
 
-  model.editor.value = state.drafts[slug] ?? starters[slug];
-  find("saved-draft-note").hidden = model.editor.value === starters[slug];
+  model.editor = mountKernelEditor(find("source"), state.drafts[slug] ?? starters[slug], {
+    onEdit() {
+      find("saved-draft-note").hidden = true;
+      saveEditor("Code changed. Run the kernel to see the new output.");
+    },
+    onRun() {
+      if (!model.runButton.disabled) run();
+    },
+  });
+  find("saved-draft-note").hidden = model.editor.source === starters[slug];
   function updateRestore() {
-    const undo = model.editor.value === starters[slug] && Object.hasOwn(state.restoredDrafts, slug);
+    const undo = model.editor.source === starters[slug] && Object.hasOwn(state.restoredDrafts, slug);
     find("restore").textContent = undo ? "Undo restore" : "Restore starter";
-    find("restore").hidden = !undo && model.editor.value === starters[slug];
+    find("restore").hidden = !undo && model.editor.source === starters[slug];
   }
   function saveEditor(message) {
-    state.drafts[slug] = model.editor.value;
+    state.drafts[slug] = model.editor.source;
     persist();
     updateRestore();
-    updateEditor();
     invalidateRun(message);
   }
-  updateEditor();
   updateRestore();
-  model.editor.addEventListener("scroll", syncScroll);
-  model.editor.addEventListener("input", () => {
-    find("saved-draft-note").hidden = true;
-    saveEditor("Code changed. Run the kernel to see the new output.");
-  });
-  model.editor.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      if (!model.runButton.disabled) run();
-    }
-  });
 
   find("prediction").value = state.predictions[slug] ?? "";
   find("prediction").addEventListener("input", (event) => {
@@ -312,13 +278,13 @@ function showLesson(slug) {
 
   find("restore").addEventListener("click", () => {
     find("saved-draft-note").hidden = true;
-    if (model.editor.value === starters[slug] && Object.hasOwn(state.restoredDrafts, slug)) {
-      model.editor.value = state.restoredDrafts[slug];
+    if (model.editor.source === starters[slug] && Object.hasOwn(state.restoredDrafts, slug)) {
+      model.editor.reset(state.restoredDrafts[slug]);
       delete state.restoredDrafts[slug];
       saveEditor("Your previous edit is back. Run the kernel to see its output.");
-    } else if (model.editor.value !== starters[slug]) {
-      state.restoredDrafts[slug] ??= model.editor.value;
-      model.editor.value = starters[slug];
+    } else if (model.editor.source !== starters[slug]) {
+      state.restoredDrafts[slug] ??= model.editor.source;
+      model.editor.reset(starters[slug]);
       saveEditor("Starter restored. Run the kernel to see its output.");
     }
   });
@@ -370,10 +336,10 @@ function showLesson(slug) {
   });
   model.runButton.addEventListener("click", run);
   find("download-notebook").addEventListener("click", () => {
-    download(`${slug}.ipynb`, JSON.stringify(makeNotebook(lesson, model.editor.value, model.fixture, { edited: model.editor.value !== starters[slug] }), null, 2), "application/json");
+    download(`${slug}.ipynb`, JSON.stringify(makeNotebook(lesson, model.editor.source, model.fixture, { edited: model.editor.source !== starters[slug] }), null, 2), "application/json");
   });
   find("download-source").addEventListener("click", () => {
-    download(`${slug}.py`, model.editor.value, "text/x-python");
+    download(`${slug}.py`, model.editor.source, "text/x-python");
   });
   find("complete").addEventListener("click", (event) => {
     state.completed[slug] = !state.completed[slug];
@@ -449,13 +415,14 @@ async function run() {
   renderThreadTrace();
   renderOutput();
   try {
-    const result = await execute(current.editor.value, current.fixture);
+    const source = current.editor.source;
+    const result = await execute(source, current.fixture);
     if (!isCurrent()) return;
     current.result = result;
     const differences = result.mismatches.length;
     const { length } = result.output;
     const count = `${length} output ${length === 1 ? "value" : "values"}`;
-    const isStarter = current.editor.value === starters[current.slug];
+    const isStarter = source === starters[current.slug];
     const comparison = length === 1
       ? `The output value ${differences ? "differs from" : "matches"} the starter reference.`
       : differences ? `${differences} of ${length} values differ from the starter reference.`
@@ -586,6 +553,7 @@ function route(moveFocus = false) {
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
   const page = slug === "course" || slug === "gpu" || order.includes(slug) ? slug : order[0];
   if (model && running) running.abort();
+  model?.editor.destroy();
   model = null;
   updateNav(page);
   if (page === "course") showCourse();

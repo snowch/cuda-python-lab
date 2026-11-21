@@ -30,7 +30,7 @@ async function runBrowser(t, viewport, exercise) {
     ?? ["/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
   const browser = await chromium.launch({ executablePath });
   t.after(() => browser.close());
-  const page = await browser.newPage({ viewport, acceptDownloads: true });
+  const page = await browser.newPage({ viewport, acceptDownloads: true, permissions: ["clipboard-read", "clipboard-write"] });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`http://127.0.0.1:${server.address().port}/`);
@@ -39,6 +39,18 @@ async function runBrowser(t, viewport, exercise) {
 }
 
 const status = (page, kind) => page.locator(`#run-status.${kind}`).waitFor();
+const sourceEditor = (page) => page.getByRole("textbox", { name: "Python kernel source" });
+
+async function readSource(editor) {
+  await editor.press("ControlOrMeta+a");
+  await editor.press("ControlOrMeta+c");
+  return editor.page().evaluate(() => navigator.clipboard.readText());
+}
+
+async function replaceSource(page, editor, source) {
+  await editor.press("ControlOrMeta+a");
+  await page.keyboard.insertText(source);
+}
 
 test("every browser case runs Python and matches its full reference", async (t) => {
   await runBrowser(t, { width: 1400, height: 960 }, async (page) => {
@@ -64,8 +76,8 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
 
     await page.getByRole("textbox", { name: "Predict before you run" }).fill("Block 1, lane 0");
-    const editor = page.getByRole("textbox", { name: "Python kernel source" });
-    const starter = await editor.inputValue();
+    const editor = sourceEditor(page);
+    const starter = await readSource(editor);
     await page.getByRole("button", { name: "Run kernel" }).click();
     await status(page, "success");
     await page.locator("#block").selectOption("1");
@@ -76,7 +88,7 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.match(await page.getByRole("button", { name: "Thread 1, no recorded events", exact: true }).textContent(), /1/);
 
     const modified = starter.replace("a[i] + b[i]", "a[i] - b[i]");
-    await editor.fill(modified);
+    await replaceSource(page, editor, modified);
     await page.getByRole("button", { name: "Run kernel" }).click();
     await page.getByText("Edited kernel ran. 33 of 33 values differ from the starter reference.").waitFor();
     assert.equal(await page.locator("#run-status.failure").count(), 0);
@@ -91,13 +103,13 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.ok(notebook.cells.some((cell) => cell.source.includes("Edited kernel ran.")));
 
     await page.getByRole("button", { name: "Restore starter" }).click();
-    assert.equal(await editor.inputValue(), starter);
+    assert.equal(await readSource(editor), starter);
     await page.reload();
     await page.getByRole("button", { name: "Undo restore" }).click();
-    assert.equal(await editor.inputValue(), modified);
+    assert.equal(await readSource(editor), modified);
     await page.getByRole("button", { name: "Mark complete" }).click();
     await page.reload();
-    assert.equal(await editor.inputValue(), modified);
+    assert.equal(await readSource(editor), modified);
     assert.equal(await page.getByRole("textbox", { name: "Predict before you run" }).inputValue(), "Block 1, lane 0");
     await page.getByRole("button", { name: "Completed" }).waitFor();
 
@@ -128,11 +140,11 @@ test("documented edits give a meaningful comparison or an execution error", asyn
       await page.locator(`#lesson-nav a[href="#lesson/${slug}"]`).click();
       await page.getByRole("heading", { name: lessons[slug].title, exact: true }).waitFor();
       if (lessons[slug].cases.length > 1) await page.locator("#case").selectOption(String(caseIndex));
-      const editor = page.locator("#source");
-      const starter = await editor.inputValue();
+      const editor = sourceEditor(page);
+      const starter = await readSource(editor);
       assert.ok(starter.includes(before), slug);
       const edited = slug === "softmax" ? starter.replaceAll(before, after) : starter.replace(before, after);
-      await editor.fill(edited);
+      await replaceSource(page, editor, edited);
       await editor.press("Control+Enter");
       await page.locator("#run-status").filter({ hasText: message }).waitFor();
       if (evidence instanceof RegExp) {
@@ -143,7 +155,7 @@ test("documented edits give a meaningful comparison or an execution error", asyn
         if (evidence) assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), evidence);
       }
       await page.getByRole("button", { name: "Restore starter" }).click();
-      assert.equal(await editor.inputValue(), starter);
+      assert.equal(await readSource(editor), starter);
     }
     await page.locator('#lesson-nav a[href="#lesson/vector-add"]').click();
     await page.getByRole("heading", { name: lessons["vector-add"].title, exact: true }).waitFor();
@@ -157,5 +169,40 @@ test("documented edits give a meaningful comparison or an execution error", asyn
     assert.equal(await nextThread.evaluate((button) => button === document.activeElement), true);
     assert.equal(await nextThread.getAttribute("aria-pressed"), "true");
     assert.equal(await page.getByRole("heading", { name: "Selected thread trace" }).isVisible(), true);
+  });
+});
+
+test("Python editor opens a saved draft, indents code, and runs the current buffer by keyboard", async (t) => {
+  await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
+    const oldDraft = "from numba import cuda\n\n@cuda.jit\ndef kernel(out):\n    out[0] = 21\n";
+    await page.evaluate((source) => {
+      localStorage.setItem("cuda-python-lab-v1", JSON.stringify({ drafts: { "first-value": source } }));
+    }, oldDraft);
+    await page.reload();
+    const editor = sourceEditor(page);
+    assert.equal(await readSource(editor), oldDraft);
+    assert.equal(await page.locator(".cm-lineNumbers .cm-gutterElement").getByText("4").count(), 1);
+
+    await replaceSource(page, editor, oldDraft.split("\n").slice(0, 4).join("\n"));
+    await editor.press("End");
+    await editor.press("Enter");
+    await page.keyboard.insertText("out[0] = 19");
+    assert.match(await readSource(editor), /def kernel\(out\):\n    out\[0\] = 19$/);
+
+    await editor.press("Control+z");
+    assert.doesNotMatch(await readSource(editor), /out\[0\] = 19/);
+    await editor.press("Control+y");
+    assert.match(await readSource(editor), /out\[0\] = 19/);
+
+    await editor.press("Control+Enter");
+    await page.getByText("Edited kernel ran. The output value differs from the starter reference.").waitFor();
+    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "19");
+
+    await editor.press("Control+f");
+    await page.locator(".cm-search input[name=search]").fill("kernel");
+    await page.locator(".cm-search input[name=search]").press("Escape");
+    await editor.press("Escape");
+    await page.keyboard.press("Tab");
+    assert.equal(await page.locator("#block").evaluate((select) => select === document.activeElement), true);
   });
 });
