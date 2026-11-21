@@ -1,6 +1,6 @@
 # CUDA Python Lab
 
-Learn GPU programming through seventeen hands-on labs for Python developers. Edit the complete CUDA Python program, including the kernel and the host `main()`, then download a notebook and run it on an NVIDIA GPU. The course follows the predict, run, and explain format of [CUDA C++ Lab](https://snowch.github.io/cuda-cpp-lab/v2/).
+Learn GPU programming through seventeen hands-on labs for Python developers. Edit the complete CUDA Python program, including the kernel and the host `main()`, then run it with GPGPU-Sim in the browser or with a notebook on an NVIDIA GPU. The course follows the predict, run, and explain format of [CUDA C++ Lab](https://snowch.github.io/cuda-cpp-lab/v2/).
 
 ## Take the course
 
@@ -20,6 +20,26 @@ Choose **Export .py** in **Editor tools** to run the complete program directly w
 
 Diagrams and captioned walkthroughs show how the programs use threads, blocks, warps, and GPU memory. Appendix A includes an occupancy worksheet and [GPU investigations](src/gpu/INVESTIGATIONS.md) with Compute Sanitizer, profiling, and a fusion capstone.
 
+## Run in the browser
+
+The browser runs the edited `main()` with Python and NumPy. A Linux CPU service uses Numba CUDA to compile each kernel to PTX. The browser runs that PTX in the WebAssembly build of GPGPU-Sim used by CUDA C++ Lab V2. Only the kernel, the numeric constants it references, and the argument types go to the compiler. Host code, array contents, and scalar arguments stay in the browser.
+
+On Linux with Python 3.12, Node.js 22 or later, and Bubblewrap (`bwrap`):
+
+```sh
+npm ci
+npm run build
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r compiler/requirements.txt
+.venv/bin/python compiler/server.py
+```
+
+Open [localhost:8000](http://localhost:8000) and choose **Run**. It starts the full editor program. The Console shows output from `main()`, and **Inspect compiled PTX** shows the compiler output. The service accepts the course's CUDA kernel subset. Use the notebook for GPU-side `print()`, hardware timings, and larger workloads.
+
+To connect an existing GitHub Pages deployment, run the compiler on a Linux host behind HTTPS with the site's origin allowed. For this repository, start it with `--origin https://snowch.github.io`. Set `CUDA_COMPILER_URL` to the public HTTPS `/api/compile` URL as a GitHub Actions repository variable and rebuild the Pages site. You can also enter the endpoint in **Editor tools** for the current browser. Bubblewrap runs each compile in its own network-isolated process with restricted filesystem access and resource limits.
+
+Browser assets are pinned to Pyodide 0.27.7 and the [CUDA C++ Lab V2 simulator build](https://github.com/snowch/cuda-cpp-lab/tree/88237c7df5df7a71318f23f73f813c12435a837a/assets/cuda-workbench). Their notices are included in the site's runtime assets.
+
 ## Develop and verify
 
 Use Node.js 22 or later.
@@ -37,6 +57,9 @@ Open [localhost:8000](http://localhost:8000). Predictions, source drafts, case s
 # Install Chromium for Playwright if a system Chromium is unavailable.
 npx playwright-core install chromium
 npm test
+
+# With the compiler environment above installed, run the end-to-end cases.
+CUDA_COMPILER_PYTHON=.venv/bin/python npm run test:runner
 
 # Check exports with Numba's development simulator and compile PTX.
 python -m venv .venv

@@ -8,7 +8,7 @@ Assume the learner can read Python functions, loops, and array indices. Teach CU
 - Define technical terms at their first use. Include vocabulary in headings, notebook cells, diagram labels, and errors in this check. Introduce the minimum needed to run and interpret the current experiment. For example, start with one thread and one output value, introduce blocks when learners need to locate a thread, and introduce warps when learners compare groups of memory accesses.
 - Say which arrays, launch settings, and reference values the page supplies. Give the exact case, notebook cell, code change, run action, and output to inspect. Verify each action is possible through the interface. Keep the complete kernel and host program visible in the lesson and notebook.
 - For comparisons, name the cases, fields, units, and question. Ask what changes and what pattern explains it. Clarify vague references and claims about what matters or helps by stating the goal and conditions.
-- Use the output of the program cell for learner results. Teach hardware through the actual CUDA code, notebook output, and clearly labeled calculations or diagrams.
+- Use the simulator Console or the GPU notebook's program output for learner results. Teach hardware through the actual CUDA code, notebook output, and clearly labeled calculations or diagrams.
 - Separate a Python execution error from a starter-reference comparison and a question about understanding. Treat an intentional output change as a valid result. State the assumptions of analytical counts and which conclusions need hardware measurements.
 
 ## Decide when to use a diagram
@@ -17,4 +17,4 @@ Look for inputs flowing through a process, dependent steps or branches, threshol
 
 ## Verify and report
 
-Follow the revised instructions in the built course. Run starter cases and suggested edits. Check the named evidence, errors, and recovery on relevant screen sizes and themes with keyboard navigation. Preserve saved code, predictions, selected cases, and completion. Run `npm test` for substantive browser changes. Check notebook correctness and PTX compilation with `scripts/check_native.py` where applicable. Report which behaviors were verified and any hardware or learner evaluation that is pending. Functional checks do not establish learning effectiveness.
+Follow the revised instructions in the built course. Run starter cases and suggested edits. Check the named evidence, errors, and recovery on relevant screen sizes and themes with keyboard navigation. Preserve saved code, predictions, selected cases, and completion. Run `npm test` for substantive browser changes and `npm run test:runner` for the Numba and GPGPU-Sim workflow. Check notebook correctness and PTX compilation with `scripts/check_native.py` where applicable. Report which behaviors were verified and any hardware or learner evaluation that is pending. Functional checks do not establish learning effectiveness.

@@ -150,8 +150,8 @@ export const lessons = {
     predict: "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
     exercise: [
       "Find main() in the program. It creates a CPU array with one float32 value, a 32-bit floating-point number. Find kernel[1, 1](out). The first 1 requests one block, a group of GPU threads. The second requests one thread in that block.",
-      "Run the starter notebook. Find out = [42.0] below the program cell. Which line in main() copies the result back before printing it?",
-      "In the program cell, change out[0] = 42 to out[0] = 73 and rerun the cell. Then add print(out_host.tolist()) just before return result and rerun. Compare the original CPU array with the result copied from the GPU.",
+      "Run the starter program and find out = [42.0] in the output. Which line in main() copies the result back before printing it?",
+      "Change out[0] = 42 to out[0] = 73 and rerun the program. Then add print(out_host.tolist()) just before return result and rerun. Compare the original CPU array with the result copied from the GPU.",
     ],
     explain: "The GPU thread writes to a separate device array. The original CPU array still holds zero. copy_to_host() waits for the GPU result and returns a new CPU array, which main() prints.",
     native: "Keep both prints. In main(), replace np.zeros(1, dtype=np.float32) with np.array([5], dtype=np.float32). Check which of the two printed arrays changes.",
@@ -168,11 +168,11 @@ export const lessons = {
     predict: "In the 33-element case with 32 threads per block, which block and thread write index 32? How many threads in that block skip the write?",
     exercise: [
       "Run 33 elements · 32 threads per block. Find the last value in out. In main(), find the two launch dimensions and calculate how many threads start.",
-      "In the kernel, immediately after out[i] = a[i] + b[i], add an if i == n - 1: at the same indentation as the assignment. Under it, indent print(cuda.blockIdx.x, cuda.threadIdx.x) one more level. Rerun the program cell and record the block and thread that write index 32.",
-      "In the same program, change kernel[2, 32] to kernel[3, 16] in main(). Rerun the cell and compare the block and thread number with the first launch. Check the last value again.",
+      "Use the kernel’s index formula to work out which block and thread write index 32. The quotient of 32 divided by the block width is the block number. The remainder is the thread number.",
+      "In the same program, change kernel[2, 32] to kernel[3, 16] in main(). Rerun and calculate the new block and thread numbers. Check the last value again.",
     ],
     explain: "Block 1, Thread 0 writes index 32 with 32 threads per block. Block 2, Thread 0 writes the same index with 16 threads per block. Both add 33 and 66 to get 99. The bounds check excludes every thread with i ≥ 33.",
-    native: "Run the 32 elements · exact fit case. Work out how many launched threads skip the array operation in each of the three cases.",
+    native: "In the GPU notebook, add if i == n - 1: just below the kernel’s assignment at the same indentation, then indent print(cuda.blockIdx.x, cuda.threadIdx.x) under the condition. Run both block sizes and compare the printed indices with your calculation.",
     cases: [caseOf("33 elements · 32 threads per block", vector(33, 32)), caseOf("33 elements · 16 threads per block", vector(33, 16)), caseOf("32 elements · exact fit", vector(32, 32))],
   },
   "grid-stride": {
@@ -185,12 +185,12 @@ export const lessons = {
     ],
     predict: "With 16 threads total and 35 elements, which indices does Block 0, Thread 3 visit?",
     exercise: [
-      "Run 35 elements · 16 threads total. In the kernel, add if cuda.threadIdx.x == 3: below the loop’s assignment at the same indentation. Under it, indent print(cuda.blockIdx.x, i). Rerun and record the indices printed by Block 0.",
-      "Change kernel[2, 8] to kernel[2, 4] in main() and rerun the same cell. Compare the indices from Block 0 and check that the resulting array stays the same.",
-      "Keep the eight-thread launch. Replace the assignment and its diagnostic with just if cuda.threadIdx.x == 3: and its indented print, so the loop prints indices without writing out. Set stride = cuda.blockDim.x. Which index now appears from Thread 3 in both blocks?",
+      "Run 35 elements · 16 threads total. Follow the loop for Block 0, Thread 3 by listing range(3, 35, 16). Check the output values at those indices.",
+      "Change kernel[2, 8] to kernel[2, 4] in main() and rerun. List range(3, 35, 8) and check that the resulting array stays the same.",
+      "For the eight-thread launch, calculate the indices Thread 3 would visit in each block if the stride were only four. Which index appears in both lists?",
     ],
-    explain: "Block 0, Thread 3 visits 3 and 19 with stride 16, or 3, 11, 19, and 27 with stride 8. With stride 4, both inspected threads visit index 7. The order in which CUDA prints lines from different threads may vary.",
-    native: "Compare the result of the two correct launches using Check the output. For timing, use larger matching inputs and remove the kernel print.",
+    explain: "Block 0, Thread 3 visits 3 and 19 with stride 16, or 3, 11, 19, and 27 with stride 8. With stride 4, both inspected threads visit index 7.",
+    native: "In the GPU notebook, add if cuda.threadIdx.x == 3: below the kernel loop’s assignment and indent print(cuda.blockIdx.x, i) under the condition. CUDA may print lines from different threads in different orders.",
     cases: [caseOf("35 elements · 16 threads total", stride(35, 8)), caseOf("35 elements · 8 threads total", stride(35, 4)), caseOf("7 elements · 16 threads total", stride(7, 8))],
   },
   transfers: {
@@ -222,7 +222,7 @@ export const lessons = {
     ],
     predict: "For the first eight lanes in 8 rows × 32 columns, will the reads of values or the writes to out reach more 32-byte sectors?",
     exercise: [
-      "Run 8 rows × 32 columns. Add print(actual[:8, 0]) at the end of Check the output. Compare those outputs with the first eight entries of values_host in main().",
+      "Run 8 rows × 32 columns. In main(), add print(result[:8, 0]) just before return result. Compare those outputs with the first eight entries of values_host in main().",
       "For Block (0, 0), work out the read and write word offsets for Threads (0, 0) and (7, 0). For a row-major array, offset = row × number of columns + column. Divide the offsets by eight and round down to find their sectors.",
       "Run 5 rows × 13 columns. For Block (1, 1), the first active row has five reads at word offsets 60–64. Use the same formula to count the sectors they occupy.",
     ],
@@ -241,7 +241,7 @@ export const lessons = {
     predict: "Both cases have 64 inputs. Alternating signs switches between negative and positive, starting with a negative value. Grouped signs puts the negative values first, then the positive values, 32 of each. How many lanes in Block 0 take the negative path in each case? How many blocks contain both paths?",
     exercise: [
       "Run Alternating signs. Compare the first two inputs, −1 and 2, with the first two output values. Which input was multiplied by 0.25?",
-      "At the end of Check the output, add print(np.count_nonzero(actual[:32] < 0), np.count_nonzero(actual[32:] < 0)). The first count is for Block 0 and the second for Block 1.",
+      "In main(), add print(np.count_nonzero(result[:32] < 0), np.count_nonzero(result[32:] < 0)) just before return result. The first count is for Block 0 and the second for Block 1.",
       "Run Grouped signs and repeat the count. In which case does a warp have lanes that take both paths?",
     ],
     explain: "Alternating signs puts 16 lanes on each path in both warps. Grouped signs puts all 32 negative values in Block 0 and all 32 positive values in Block 1. A timing difference on a GPU depends on the compiled instructions and the work on each path.",
@@ -262,11 +262,11 @@ export const lessons = {
     predict: "In the eight-thread block, the first pairs are four positions apart. Which thread adds scratch[5] to its own value? What must be ready before it reads scratch[5]?",
     exercise: [
       "Run 16 values · 8 threads per block. Record the two partial sums. Manually add the first eight input values and compare with out[0].",
-      "In the kernel, just above scratch[lane] += scratch[lane + distance] and at the same indentation, insert if cuda.blockIdx.x == 0 and lane == 1 and distance == 4: with an indented print(scratch[lane], scratch[lane + distance]). Rerun the program and use those two numbers to explain what the first barrier makes possible.",
+      "At distance four, find the two input values Thread 1 in Block 0 combines. Use the first scratch assignment to work out which threads write those values and what the first barrier makes possible.",
       "Run 19 values · partial block with the starter. Only the last three inputs belong to Block 2. Compare their sum with out[2] and explain why out-of-range threads contribute zero.",
     ],
     explain: "Thread 1 reads scratch[5] when it adds the value four slots away. Thread 5 stores that value before the barrier releases Thread 1. In the 19-value case, Block 2 sums 17 + 18 + 19 = 54 because the other five threads contribute zero.",
-    native: "Use the shared memory investigation in Appendix A to see how Compute Sanitizer detects a missing barrier.",
+    native: "In the GPU notebook, print scratch[lane] and scratch[lane + distance] just above the addition for Block 0, Lane 1, at distance four. In Appendix A, use Compute Sanitizer to see how it detects a missing barrier.",
     cases: [caseOf("16 values · 8 threads per block", reduction(16, 8)), caseOf("19 values · partial block", reduction(19, 8)), caseOf("39 values · 32 threads", reduction(39, 32))],
   },
   histogram: {
@@ -280,7 +280,7 @@ export const lessons = {
     predict: "When all 32 tokens go to destination 2, which counter changes? What count could two threads produce if both read zero before either writes?",
     exercise: [
       "Run Balanced destinations and then All tokens route to 2. Compare counts[2] and the total of all four counts.",
-      "Keep All tokens route to 2. Replace cuda.atomic.add(counts, tokens[i], 1) with counts[tokens[i]] += 1. Run the program cell several times and record the values of counts[2].",
+      "Keep All tokens route to 2. Replace cuda.atomic.add(counts, tokens[i], 1) with counts[tokens[i]] += 1. Run the program several times and record the values of counts[2].",
       "Put the atomic operation back and rerun. Explain how two threads could lose an increment with the plain assignment.",
     ],
     explain: "In the balanced case each counter gets eight increments. When all tokens route to 2, that counter gets all 32 with the atomic update. With a plain increment, two threads can read the same value and both write the same incremented value. The count can vary with execution order.",
@@ -298,7 +298,7 @@ export const lessons = {
     predict: "For [1, 0, 1, 1, 0, 0, 1], what running total do you expect at index 6? Where would that element move?",
     exercise: [
       "Run Keep flags · 7 elements. Read out[6] and subtract one to find the destination of the final kept element.",
-      "In the kernel, just below the assignment to previous and at the same indentation, add if lane == 6: with an indented print(distance, lane - distance, previous). Rerun and record the shared-memory indices read by Thread 6 on the three passes.",
+      "Follow the assignment to previous for Lane 6. The loop starts at distance one and doubles it on each pass. List the shared-memory indices read by Thread 6.",
       "Run Weighted counts · 13 elements with the starter and compare the last output with the sum of the inputs. Which parts of the algorithm are the same with flags and weights?",
     ],
     explain: "Thread 6 reads scratch[5], scratch[4], and scratch[2] at distances 1, 2, and 4. The first barrier in each pass lets all threads read the previous stage before the writes begin. In the weighted case, out[12] is 26, the sum of all 13 weights.",
@@ -315,7 +315,7 @@ export const lessons = {
     ],
     predict: "In Block (0, 0) of the 8 × 8 case, which thread loads the input value that Thread (2, 0) writes to out[0, 2]?",
     exercise: [
-      "Run 8 rows × 8 columns. At the end of Check the output, add print(actual[0, 2]). Find the matching input in values_host and identify the thread that loaded it.",
+      "Run 8 rows × 8 columns. In main(), add print(result[0, 2]) just before return result. Find the matching input in values_host and identify the thread that loaded it.",
       "Find the shared read of tile[tx, ty] for Thread (2, 0). Its word offset is 2 × TILE_STRIDE. Record the offset and bank with PADDING = 1, then set PADDING = 0, rerun, and calculate them again. Compare the output check.",
       "Run 11 rows × 13 columns with the starter. Check the output and locate the last index (12, 10) in the transposed result.",
     ],
@@ -334,7 +334,7 @@ export const lessons = {
     predict: "For 5 × 6 times 6 × 7, which inner indices fall outside the input in the second pass?",
     exercise: [
       "Run 5 × 6 times 6 × 7 and check the result. Find the range with step TILE in the kernel and list the inner indices in each pass.",
-      "In the kernel, immediately below the first cuda.syncthreads() and at the same indentation, insert if row == 0 and col == 0: with an indented print(start, tile_a[0, 2], tile_a[0, 3]). Rerun. Explain why the second pass prints zeros for both positions.",
+      "Trace the assignments to tile_a[0, 2] and tile_a[0, 3] for the first block. In the second pass, what values do these two positions get and why?",
       "Run 4 × 4 times 4 × 4. Compare the number of passes and explain how a value loaded into a shared tile can serve more than one output.",
     ],
     explain: "The second tile covers inner indices 4–7, so indices 6 and 7 contribute zero. Each loaded value can serve several output cells through shared reads. Threads outside the output can still load tiles and reach the barriers.",
@@ -351,8 +351,8 @@ export const lessons = {
     ],
     predict: "Row 0 is [1000, 999, 1000, 997, −1000]. What is the exponential of the largest score after subtracting the row maximum? Which two columns should have equal probabilities?",
     exercise: [
-      "Run Extreme and equal logits. Compare the first and third probabilities in row 0. Add print(actual.sum(axis=1)) to Check the output and check how close both row sums are to 1.",
-      "In the program cell, replace both math.exp(values[row, col] - row_max) calls with math.exp(values[row, col]). Run it again. In Check the output, add print(np.isfinite(actual).all()) to check whether the result still contains only finite values.",
+      "Run Extreme and equal logits. Compare the first and third probabilities in row 0. In main(), add print(result.sum(axis=1)) just before return result and check how close both row sums are to 1.",
+      "Replace both math.exp(values[row, col] - row_max) calls with math.exp(values[row, col]). In main(), add print(np.isfinite(result).all()) just before return result and rerun. Does the result still contain only finite values?",
       "Run Two rows · 37 columns with the starter. In the final loop, list the columns where Lane 0 writes. How does the number of threads per block set their spacing?",
     ],
     explain: "Removing the shift makes exp(1000) overflow. Dividing an infinite exponential by an infinite total can produce NaN. Columns 0 and 2 get equal probabilities in the stable version because they start at the same score and share the divisor. With 37 columns, Lane 0 visits columns 0 and 32.",
@@ -410,7 +410,7 @@ export const lessons = {
     predict: "For a = 16,777,216, b = 1, and c = −16,777,216, what happens to the 1 when you add a and b first? What if you add a and c first?",
     exercise: [
       "Run Near the precision limit. Thread 0 starts with 16,777,216 and Thread 1 starts with 8,388,608. Both add 1 and then subtract their starting value. Compare the two outputs.",
-      "In the program cell, change a[i] + b[i] to a[i] + c[i] and first + c[i] to first + b[i]. Rerun and explain why only one result changes.",
+      "In the kernel, change a[i] + b[i] to a[i] + c[i] and first + c[i] to first + b[i]. Rerun and explain why only one result changes.",
       "Run Smaller integers with the starter. Check whether the original grouping preserves 1 for both values.",
     ],
     explain: "The first case starts with a values of 16,777,216 and 8,388,608. The original order returns 0 for the first thread and 1 for the second. Canceling a and c before adding b gives 1 for both. The starter reference follows the original float32 grouping. The exact sum is 1 for both inputs, so the edited result at index 0 is closer to the exact sum.",
@@ -447,7 +447,7 @@ export const lessons = {
     exercise: [
       "Run 8 values · store temporary. Record the output. Count the input reads, temporary reads, temporary writes, and output writes performed by one active thread.",
       "Run 8 values · keep local. Compare the output and identify the two temporary-array operations that disappear. Multiply the per-thread counts by eight for each case.",
-      "In the store-temporary notebook, change if use_temp: to if False: and rerun. Compare the result with the keep-local case.",
+      "In the store-temporary program, change if use_temp: to if False: and rerun. Compare the result with the keep-local case.",
     ],
     explain: "For eight elements, the temporary adds eight reads and eight writes. The local version reads x and y and writes only out, for 16 reads and eight writes. Both versions produce the same values. The access counts are a source-level prediction for the hardware capstone, since memory traffic also depends on what the compiler and caches do.",
     native: "In Appendix A, run the capstone. Compare two launches with a fused launch across input sizes and block sizes. Check whether the measured times support your access-count prediction.",

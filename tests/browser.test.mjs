@@ -69,7 +69,7 @@ test("every case exports a CUDA notebook containing its complete program", async
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
     for (const [slug, lesson] of Object.entries(lessons)) {
       await openLesson(page, slug);
-      assert.equal(await page.getByRole("button", { name: "Run kernel" }).count(), 0);
+      assert.ok(await page.getByRole("button", { name: "Run", exact: true }).isVisible());
       const kernel = await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8");
       for (const [index, fixture] of lesson.cases.entries()) {
         if (lesson.cases.length > 1) await page.getByRole("combobox", { name: "Case", exact: true }).selectOption(String(index));
@@ -99,7 +99,7 @@ test("the full first program is keyboard accessible and edits reach both exports
     await replaceSource(page, editor, edited);
     await editor.press("Escape");
     await page.keyboard.press("Tab");
-    assert.equal(await page.locator("#download-notebook").evaluate((button) => button === document.activeElement), true);
+    assert.equal(await page.locator("#run").evaluate((button) => button === document.activeElement), true);
     const file = await downloadFile(page, page.getByRole("button", { name: "Download notebook" }));
     assert.ok(JSON.parse(file.contents).cells.some((cell) => cell.source === edited));
     await editorTools(page).click();

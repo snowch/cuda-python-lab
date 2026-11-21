@@ -9,7 +9,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "npm run build && python3 -m http.server 8000 --directory dist",
-    "test": "npm run build && node --test tests/browser.test.mjs"
+    "test": "npm run build && node --test tests/browser.test.mjs",
+    "test:runner": "npm run build && node --test tests/runner.test.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "6.11.1",
@@ -20,7 +21,8 @@
     "@codemirror/view": "6.43.15",
     "codemirror": "6.0.2",
     "esbuild": "0.28.2",
-    "fflate": "0.8.2"
+    "fflate": "0.8.2",
+    "pyodide": "0.27.7"
   },
   "devDependencies": {
     "playwright-core": "^1.55.0"

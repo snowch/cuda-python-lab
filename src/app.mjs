@@ -4,6 +4,7 @@ import { mountProgramEditor } from "./editor.mjs";
 import { joinProgram, splitProgram, standaloneProgram } from "./host-program.mjs";
 import { makeNotebook } from "./notebook.mjs";
 import { walkthroughs } from "./walkthroughs.mjs";
+import { attachRunner } from "./browser-runner.mjs";
 
 const order = modules.flatMap((module) => module.lessons);
 const main = document.querySelector("main");
@@ -11,6 +12,8 @@ const courseNav = document.querySelector("#course-nav");
 const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
+let activeRunner;
+let compilerDefault;
 let saved;
 
 try {
@@ -19,6 +22,16 @@ try {
   saved = {};
 }
 const state = { drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
+
+function compilerEndpoint(value) {
+  if (!value) return null;
+  try {
+    const url = new URL(value, location.href);
+    return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password ? url.href : null;
+  } catch {
+    return null;
+  }
+}
 function persist() {
   try {
     localStorage.setItem(storageKey, JSON.stringify(state));
@@ -83,7 +96,7 @@ function updateNav(page) {
 function showCourse() {
   main.innerHTML = `<div class="resource-page">
     <h1>CUDA Python Lab</h1>
-    <p class="lead">Learn GPU programming with CUDA Python. Edit complete programs and run your experiments in a notebook on an NVIDIA GPU.</p>
+    <p class="lead">Learn GPU programming with CUDA Python. Edit complete programs and run them with GPGPU-Sim in the browser or in a notebook on an NVIDIA GPU.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
       <p>You’ll need to know how to read Python functions, loops, and array indices. Use a local GPU with Jupyter or a hosted GPU runtime such as Google Colab. Diagrams and recordings show how CUDA maps your code to hardware.</p>
@@ -109,6 +122,12 @@ function showGpu() {
     <p class="breadcrumb"><a href="#course">Course outline</a></p>
     <h1 class="appendix-title">Appendix A. Run on an NVIDIA GPU</h1>
     <p class="lead">Use an NVIDIA GPU on your computer or through a hosted notebook service. Start with the lab notebook, then use the investigations to measure and debug GPU work.</p>
+    <section class="reading">
+      <h2>Run with GPGPU-Sim in the browser</h2>
+      <p><strong>Run</strong> executes your Python host code in the browser. It sends the CUDA kernel and argument types to the CPU compiler service, then runs the compiled GPU instructions (PTX) in GPGPU-Sim. Inspect the printed values in Console and the PTX under <strong>Inspect compiled PTX</strong>.</p>
+      <p>If the site asks for a compiler service URL, run the service on Linux or use the URL supplied by your host. The CUDA examples support small launches and numeric arrays. Use <code>print()</code> in <code>main()</code> for browser output and the GPU notebook for print calls inside a kernel.</p>
+      <p><a href="https://github.com/snowch/cuda-python-lab#run-in-the-browser">Compiler setup</a> · <a href="./runtime/gpgpu-sim-LICENSE.txt">GPGPU-Sim licences</a> · <a href="./runtime/pyodide-LICENSE.txt">Pyodide licence</a></p>
+    </section>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
       <ol>
@@ -222,7 +241,7 @@ function showLesson(slug) {
 
     <section class="reading experiment">
       <h2>Run the experiment</h2>
-      <p>${lesson.cases.length > 1 ? "Select a case in the editor and download its notebook." : "Download the notebook from the editor."} Open it in <a href="https://colab.research.google.com/">Google Colab</a> or Jupyter with an NVIDIA GPU. Run its cells from top to bottom. <a href="#gpu">GPU setup instructions</a></p>
+      <p>${lesson.cases.length > 1 ? "Select a case in the editor." : "Use the program in the editor."} Choose <strong>Run</strong> for GPGPU-Sim or <strong>Download notebook</strong> to use an NVIDIA GPU in Colab or Jupyter. <a href="#gpu">GPU setup instructions</a></p>
       <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
     </section>
 
@@ -239,19 +258,35 @@ function showLesson(slug) {
               <button class="button" id="download-source" type="button">Export .py</button>
             </div>
             <p class="editor-note" id="target-note" role="status" hidden></p>
+            <form id="compiler-form" class="compiler-form">
+              <label for="compiler-url">Compiler service URL</label>
+              <div class="actions"><input id="compiler-url" type="url" inputmode="url" placeholder="https://compiler.example/api/compile" autocapitalize="off" spellcheck="false"><button class="button" type="submit">Save compiler</button></div>
+              <p class="editor-note" id="compiler-note" role="status"></p>
+            </form>
           </details>
         </div>
         <div id="source" class="codebox"></div>
-        <p class="editor-shortcuts" id="editor-shortcuts">Esc then Tab to leave the editor</p>
+        <p class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</p>
         <div class="workbench-controls">
           <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
             <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
           </label>
-          <button class="button primary" id="download-notebook" type="button">Download notebook</button>
+          <div class="actions">
+            <button class="button primary" id="run" type="button">Run</button>
+            <button class="button" id="stop" type="button" hidden>Stop</button>
+            <button class="button" id="download-notebook" type="button">Download notebook</button>
+          </div>
         </div>
         ${lesson.cases.length > 1 ? '<p class="editor-note" id="case-note">Kernel edits carry across cases. The host code has a draft for each case.</p>' : ""}
         <p class="editor-note" id="draft-note" role="status" hidden></p>
       </div>
+      <section class="workbench-card run-console" aria-labelledby="console-title">
+        <h2 id="console-title">Console <span>GPGPU-Sim</span></h2>
+        <p class="editor-note" id="run-status" role="status"></p>
+        <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
+        <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
+        <p class="editor-note" id="compiler-path"></p>
+      </section>
     </section>
 
     <section class="reading lesson-explanation">
@@ -286,6 +321,8 @@ function showLesson(slug) {
     if (!currentTarget.open) currentTarget.querySelector("video").pause();
   });
   const input = find("case");
+  const compilerInput = find("compiler-url");
+  const compilerNote = find("compiler-note");
   const draftNote = find("draft-note");
   const targetNote = find("target-note");
   const programDrafts = state.programs[slug] ??= {};
@@ -324,11 +361,46 @@ function showLesson(slug) {
     programDrafts[caseIndex] = source;
     persist();
     updateRestore(message);
+    runner.reset();
   }
 
-  const editor = mountProgramEditor(find("source"), caseSource(), () => saveEditor());
+  const editor = mountProgramEditor(find("source"), caseSource(), () => saveEditor(), () => runner.start());
+  const endpoint = () => compilerEndpoint(state.compilerUrl) ?? compilerDefault;
+  const runner = attachRunner(main, {
+    getSource: () => editor.source,
+    getEndpoint: endpoint,
+    filename: `${slug}.py`,
+    configure() {
+      find("editor-tools").open = true;
+      compilerInput.focus();
+    },
+  });
+  activeRunner = runner;
   activeEditor = editor;
   updateRestore(editor.source === starter ? "" : "A saved edit is open.");
+
+  function updateCompiler() {
+    compilerInput.value = endpoint() ?? "";
+    find("compiler-path").textContent = endpoint()
+      ? "Run sends the kernel and argument types to the compiler. GPGPU-Sim executes the compiled PTX in the browser."
+      : "Set a compiler service URL in Editor tools to run in the browser.";
+  }
+  updateCompiler();
+  find("compiler-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = compilerInput.value.trim();
+    const url = compilerEndpoint(value);
+    if (value && !url) {
+      compilerNote.textContent = "Enter the HTTP or HTTPS URL of the compiler endpoint.";
+      return;
+    }
+    if (url) state.compilerUrl = url;
+    else delete state.compilerUrl;
+    persist();
+    runner.reset();
+    updateCompiler();
+    compilerNote.textContent = endpoint() ? "Compiler URL saved." : "Compiler URL cleared.";
+  });
 
   find("prediction").value = state.predictions[slug] ?? "";
   find("prediction").addEventListener("input", (event) => {
@@ -369,6 +441,7 @@ function showLesson(slug) {
     state.cases[slug] = caseIndex;
     editor.reset(caseSource(), { focus: false });
     updateRestore(editor.source === starter ? "" : "A saved edit is open.");
+    runner.reset();
     persist();
   });
 
@@ -404,6 +477,8 @@ function route(moveFocus = false) {
   const page = slug === "course" || slug === "gpu" || order.includes(slug) ? slug : order[0];
   activeEditor?.destroy();
   activeEditor = null;
+  activeRunner?.dispose();
+  activeRunner = null;
   updateNav(page);
   if (page === "course") showCourse();
   else if (page === "gpu") showGpu();
@@ -422,9 +497,13 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
 });
 
 try {
-  const response = await fetch("./starters.json");
+  const [response, compiler] = await Promise.all([
+    fetch("./starters.json"),
+    fetch("./compiler-config.json").then((config) => config.ok ? config.json() : null).catch(() => null),
+  ]);
   if (!response.ok) throw new Error("Could not load the starter kernels.");
   starters = await response.json();
+  compilerDefault = compilerEndpoint(compiler?.url);
   route();
   window.addEventListener("hashchange", () => route(true));
 } catch (error) {

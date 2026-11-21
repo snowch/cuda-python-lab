@@ -144,6 +144,17 @@ h3 { font-size: 1rem; line-height: 1.35; font-weight: 650; }
 .editor-shortcuts { margin: .5rem 0 .65rem; color: var(--muted); font: .78rem/1.5 var(--mono); }
 .workbench-controls { justify-content: space-between; }
 .editor-note { margin: .5rem 0 0; color: var(--muted); font-size: .85rem; }
+.compiler-form { margin-top: .6rem; font-size: .85rem; }
+.compiler-form label { display: block; margin-bottom: .25rem; }
+.compiler-form input { flex: 1 1 15rem; min-width: 0; border: 1px solid var(--line); border-radius: 6px; padding: .55rem; background: var(--code); color: var(--ink); font: inherit; }
+.run-console { border-top: 1px solid var(--line); background: var(--code-rail); border-radius: 0 0 9px 9px; }
+.run-console h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
+.run-console h2 span { color: var(--muted); font: .78rem var(--mono); }
+.run-console pre { max-height: 20rem; overflow: auto; padding: .65rem; margin: .5rem 0; border: 1px solid var(--line); border-radius: 6px; background: var(--code); font: .85rem/1.55 var(--mono); }
+#run-output { white-space: pre-wrap; overflow-wrap: anywhere; }
+#run-status:empty { display: none; }
+#run-status.error { color: #ffaea2; }
+#ptx-panel summary { min-height: 44px; padding-block: .5rem; font-size: .85rem; }
 .workbench-controls, .actions { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
 .case-control { display: flex; align-items: center; gap: .4rem; min-width: 0; max-width: 100%; font-size: .875rem; font-weight: 650; }
 select { min-width: 0; max-width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--paper); padding: .35rem .55rem; }

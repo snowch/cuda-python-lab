@@ -6,9 +6,9 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 
-export function mountProgramEditor(parent, source, onEdit) {
+export function mountProgramEditor(parent, source, onEdit, onRun) {
   const extensions = [
-    keymap.of([indentWithTab]),
+    keymap.of([{ key: "Mod-Enter", run: () => { onRun(); return true; } }, indentWithTab]),
     EditorView.domEventObservers({
       keydown(event, view) {
         // Let Tab leave the editor even when Escape closes an editor panel or selection.
