@@ -101,6 +101,7 @@ export const modules = [
 
 export const lessons = {
   "first-value": {
+    sourceTarget: "42",
     title: "Write your first GPU value",
     summary: "Write a number from one GPU thread and inspect the output.",
     intro: [
@@ -111,8 +112,8 @@ export const lessons = {
     exercise: [
       "Click Run kernel with the starter code.",
       "In first-value.py, replace 42 with 73 and click Run kernel again.",
-      "At index 0 in Output, compare Actual, Starter reference, and Last traced writer.",
-      "Explain which fields changed, then click Restore starter.",
+      "At index 0 in Simulated output, compare Actual, Starter reference, and Last traced writer.",
+      "Explain which fields changed. Open Editor tools and select Restore starter.",
     ],
     explain: "Actual changes from 42 to 73. Block 0, Thread 0 still writes out[0]. The starter reference remains 42 because it is the expected output of the original code.",
     native: "Run the starter notebook and find the device allocation, kernel launch, and copy back to the host. In Check the output, insert case[\"threads\"] = [2] just after case = json.loads(…) and rerun the cell. The same result can hide two threads writing to one address without coordination.",
@@ -121,6 +122,7 @@ export const lessons = {
     cases: [caseOf("One element", fixture({ out: zeros([1]) }, "out", ["out"], {}, [1], [1], [42]))],
   },
   "vector-add": {
+    sourceTarget: "if i < n:",
     title: "One thread, one element",
     summary: "Map threads to array indices and skip threads beyond the end of the input.",
     intro: [
@@ -129,10 +131,10 @@ export const lessons = {
     ],
     predict: "In the 33-element case with 32 threads per block, which block and thread write index 32? How many threads in that block skip the write?",
     exercise: [
-      "Select 33 elements · 32 threads per block in Case and click Run kernel. In Output, find Last traced writer at index 32.",
+      "Select 33 elements · 32 threads per block in Case and click Run kernel. In Simulated output, find Last traced writer at index 32.",
       "In Thread inspector, select Block 1. Select Thread 0 and Thread 1 in turn and compare their event counts. Which thread wrote index 32?",
       "Switch to 33 elements · 16 threads per block, run again, and find the writer at index 32.",
-      "In vector-add.py, replace if i < n: with if True:, run again, and find the first out-of-range index in the error. Click Restore starter.",
+      "In vector-add.py, replace if i < n: with if True:, run again, and find the first out-of-range index in the error. In Editor tools, select Restore starter.",
     ],
     explain: "Block 1, Thread 0 writes index 32 with 32 threads per block. Block 2, Thread 0 writes the same index with 16 threads per block. The other 31 threads in Block 1 of the 32-thread case skip the write. Without the bounds check, the first invalid read is at index 33.",
     native: "Export and run the starter notebook for each 33-element case and for the 32-element case. Check the complete output against a + b. Compare block and thread counts for the two 33-element cases.",
@@ -141,6 +143,7 @@ export const lessons = {
     cases: [caseOf("33 elements · 32 threads per block", vector(33, 32)), caseOf("33 elements · 16 threads per block", vector(33, 16)), caseOf("32 elements · exact fit", vector(32, 32))],
   },
   "grid-stride": {
+    sourceTarget: "cuda.gridDim.x * cuda.blockDim.x",
     title: "Let each thread do more work",
     summary: "Use a loop so each thread can visit more than one array index.",
     intro: [
@@ -152,7 +155,7 @@ export const lessons = {
       "Select 35 elements · 16 threads total, run, and find the write indices for Block 0, Thread 3 in Selected thread trace.",
       "Switch to 35 elements · 8 threads total and repeat.",
       "In grid-stride.py, replace cuda.gridDim.x * cuda.blockDim.x with cuda.blockDim.x and run again. Look for an index written by both Block 0, Thread 3 and Block 1, Thread 3.",
-      "Check whether Actual still matches Starter reference, then click Restore starter.",
+      "Check whether Actual still matches Starter reference. In Editor tools, select Restore starter.",
     ],
     explain: "Thread 3 visits 3 and 19 with stride 16, or 3, 11, 19, and 27 with stride 8. With stride 4, both inspected threads write index 7. The duplicate writes store the same value, so the output comparison cannot detect them.",
     native: "For a larger input, update values, out, their shapes, and n together in the notebook case. Vary the block count while keeping threads per block fixed. Verify each result, then compare Median kernel time to see how launch size affects this workload.",
@@ -161,6 +164,7 @@ export const lessons = {
     cases: [caseOf("35 elements · 16 threads total", stride(35, 8)), caseOf("35 elements · 8 threads total", stride(35, 4)), caseOf("7 elements · 16 threads total", stride(7, 8))],
   },
   transfers: {
+    sourceTarget: "out[i] = alpha * x[i] + y[i]",
     title: "Count bytes moved between host and GPU",
     summary: "Separate the kernel’s array accesses from the copies that get data to and from a GPU.",
     intro: [
@@ -169,7 +173,7 @@ export const lessons = {
     ],
     predict: "For 33 elements, how many bytes do the two input uploads and the output download carry in total?",
     exercise: [
-      "Select 33 elements and click Run kernel. In Output, find Global reads and Global writes.",
+      "Select 33 elements and click Run kernel. In Simulated output, find Global reads and Global writes.",
       "In Thread inspector, select Block 1, Thread 1. Check the event count. What is the thread’s global index, and how does it compare with n?",
       "Repeat with 8 elements and calculate the input and output payload in bytes for each case.",
     ],
@@ -180,6 +184,7 @@ export const lessons = {
     cases: [caseOf("33 elements", affine(33)), caseOf("8 elements", affine(8))],
   },
   coalescing: {
+    sourceTarget: "out[col, row] = values[row, col]",
     title: "Follow a warp’s addresses",
     summary: "Use a transpose to see how neighboring threads can read nearby addresses and write far apart.",
     intro: [
@@ -201,6 +206,7 @@ export const lessons = {
     cases: [caseOf("8 rows × 32 columns", transpose(8, 32, 32, 1)), caseOf("5 rows × 13 columns", transpose(5, 13, 8, 4))],
   },
   divergence: {
+    sourceTarget: "if x < 0:",
     title: "When lanes take different branches",
     summary: "Compare two ways of arranging the same number of negative and positive values across warps.",
     intro: [
@@ -209,7 +215,7 @@ export const lessons = {
     ],
     predict: "How many lanes in Block 0 take the negative path in each case? How many blocks contain both paths?",
     exercise: [
-      "Run Alternating signs. In Output, compare Actual at indices 0 and 1.",
+      "Run Alternating signs. In Simulated output, compare Actual at indices 0 and 1.",
       "Use Input values and launch arguments to count negative values in the first 32 entries and in the last 32.",
       "Switch to Grouped signs, run again, and repeat the counts. Which arrangement puts both paths in a warp?",
     ],
@@ -223,6 +229,7 @@ export const lessons = {
     ],
   },
   reduction: {
+    sourceTarget: "cuda.syncthreads()",
     title: "Add values across a block",
     summary: "Add values in pairs until each block has one partial sum.",
     intro: [
@@ -233,7 +240,7 @@ export const lessons = {
     exercise: [
       "Select 16 values · 8 threads per block and run.",
       "In Block 0, select Thread 1 and find the read of scratch[5] in Selected thread trace.",
-      "In reduction.py, delete the cuda.syncthreads() immediately after the first scratch[lane] assignment and run again. Read the error, click Restore starter, then run 19 values · partial block.",
+      "In reduction.py, delete the cuda.syncthreads() immediately after the first scratch[lane] assignment and run again. Read the error. In Editor tools, select Restore starter, then run 19 values · partial block.",
       "In Block 2, inspect Thread 3’s first write to scratch. Why does it write zero?",
     ],
     explain: "Thread 1 reads scratch[5] at distance 4. Without the first barrier the browser can read scratch[4] before Thread 4 initializes it. The model uses one fixed thread order, so a successful run cannot establish that the code is safe under all GPU schedules. In the last block, Thread 3 has global index 19 and supplies a zero.",
@@ -243,6 +250,7 @@ export const lessons = {
     cases: [caseOf("16 values · 8 threads per block", reduction(16, 8)), caseOf("19 values · partial block", reduction(19, 8)), caseOf("39 values · 32 threads", reduction(39, 32))],
   },
   histogram: {
+    sourceTarget: "cuda.atomic.add(counts, tokens[i], 1)",
     title: "Count token destinations safely",
     summary: "Count how many tokens go to each destination, even when threads update the same counter.",
     intro: [
@@ -254,7 +262,7 @@ export const lessons = {
       "Run Balanced destinations and record Actual for counters 0 through 3. Then run All tokens route to 2 and compare the four counts.",
       "In the all-to-2 case, inspect Threads 0 and 1 of Block 0 and find their atomic updates to counts[2].",
       "In histogram.py, replace cuda.atomic.add(counts, tokens[i], 1) with counts[tokens[i]] += 1 and run again.",
-      "Compare the Action column and Actual counts, then click Restore starter.",
+      "Compare the Action column and Actual counts. In Editor tools, select Restore starter.",
     ],
     explain: "In the balanced case each counter gets eight increments. When all tokens route to 2, that counter gets all 32. The plain increment records a read and a write in place of each atomic update. The browser still counts 32 because it runs the increments in order. On a GPU, the interleaving below can lose an increment.",
     native: "Run both starter cases on a GPU. Compare the result with NumPy’s bincount. To study contention (threads competing to update the same address), use larger balanced and single-destination inputs of equal size and reset the counters before every launch.",
@@ -263,6 +271,7 @@ export const lessons = {
     cases: [caseOf("Balanced destinations", histogram(range(32).map((i) => i % 4))), caseOf("All tokens route to 2", histogram(Array(32).fill(2)))],
   },
   scan: {
+    sourceTarget: "previous = scratch[lane - distance] if lane >= distance else 0\n        cuda.syncthreads()",
     title: "Build positions from prefix sums",
     summary: "Build running totals and use them to find positions for values you keep.",
     intro: [
@@ -275,7 +284,7 @@ export const lessons = {
       "Read Actual at index 6 and use Selected thread trace for Thread 6 to identify the predecessor indices read at distances 1, 2, and 4.",
       "In scan.py, remove only the cuda.syncthreads() immediately after the previous = line.",
       "Run again and find the first difference between Actual and Starter reference.",
-      "Click Restore starter and run Weighted counts · 13 elements.",
+      "In Editor tools, select Restore starter and run Weighted counts · 13 elements.",
       "Explain what Actual at index 12 represents when the inputs are weights.",
     ],
     explain: "Thread 6 reads scratch[5], scratch[4], and scratch[2] at distances 1, 2, and 4. Without the read barrier, threads can read a value from the current stage instead of the previous one. In the weighted case, Actual at index 12 is 26, the sum of all 13 weights.",
@@ -285,6 +294,7 @@ export const lessons = {
     cases: [caseOf("Keep flags · 7 elements", scan([1, 0, 1, 1, 0, 0, 1], 8)), caseOf("Weighted counts · 13 elements", scan([2, 4, 0, 3, 1, 5, 0, 0, 1, 2, 3, 4, 1], 16))],
   },
   "tiled-transpose": {
+    sourceTarget: "PADDING = 1",
     title: "Transpose through a shared tile",
     summary: "Pass values through shared memory so neighboring threads can write neighboring output columns.",
     intro: [
@@ -297,7 +307,7 @@ export const lessons = {
       "In Block (0, 0), compare Thread (0, 2)’s shared write with Thread (2, 0)’s shared read.",
       "In tiled-transpose.py, set PADDING = 0 and run again.",
       "Compare Index, Word offset, and Shared bank for Thread (2, 0)’s shared read, then check whether Actual still matches Starter reference.",
-      "Click Restore starter and run 11 rows × 13 columns. Check the starter reference and find the last valid output at index (12, 10).",
+      "In Editor tools, select Restore starter and run 11 rows × 13 columns. Check the starter reference and find the last valid output at index (12, 10).",
     ],
     explain: "The shared word offset and modeled bank change from 18 to 16 when you remove padding. One address shows how padding changes the mapping. A hardware run can measure whether it reduces bank conflicts for a larger tile.",
     native: "In Appendix A, run the transpose investigation. Compare the direct, unpadded, and padded kernels at the same shape. Inspect the shared-load bank conflicts before attributing a bandwidth difference to padding.",
@@ -306,6 +316,7 @@ export const lessons = {
     cases: [caseOf("8 rows × 8 columns", transpose(8, 8, 8, 8)), caseOf("11 rows × 13 columns", transpose(11, 13, 8, 8))],
   },
   matmul: {
+    sourceTarget: "tile_a[ty, tx] = a[row, a_col] if row < m and a_col < k else 0",
     title: "Reuse inputs in matrix multiplication",
     summary: "Reuse pieces of the two input matrices while computing a matrix product.",
     intro: [
@@ -315,7 +326,7 @@ export const lessons = {
     predict: "For 5 × 6 times 6 × 7, which inner indices fall outside the input in the second pass?",
     exercise: [
       "Run 5 × 6 times 6 × 7.",
-      "In Block (0, 0), select Thread (0, 0). Find both writes to the shared array allocated for tile_a, then find reads from both shared arrays after each loading barrier. In Output, use Global reads and Shared reads to explain how values are reused.",
+      "In Block (0, 0), select Thread (0, 0). Find both writes to the shared array allocated for tile_a, then find reads from both shared arrays after each loading barrier. In Simulated output, use Global reads and Shared reads to explain how values are reused.",
       "In Block (1, 1), select Thread (3, 3) and find its zero tile writes and barrier arrivals. Does it write to out?",
     ],
     explain: "The second tile covers inner indices 4–7, so indices 6 and 7 contribute zero. Each loaded value can serve several output cells through shared reads. Thread (3, 3) in Block (1, 1) has no output cell, but it still participates in tile loading and reaches the barriers.",
@@ -325,6 +336,7 @@ export const lessons = {
     cases: [caseOf("5 × 6 times 6 × 7", matmul(5, 6, 7)), caseOf("4 × 4 times 4 × 4", matmul(4, 4, 4))],
   },
   softmax: {
+    sourceTarget: "math.exp(values[row, col] - row_max)",
     title: "Build a stable softmax",
     summary: "Turn scores into probabilities without overflowing the exponential.",
     intro: [
@@ -333,10 +345,10 @@ export const lessons = {
     ],
     predict: "Row 0 starts [1000, 999, 1000, 997, −1000]. What is exp(1000 − max)? Which two columns should have equal probabilities?",
     exercise: [
-      "Run Extreme and equal logits. In Output, compare Actual at (0, 0) and (0, 2) and check Row sums.",
+      "Run Extreme and equal logits. In Simulated output, compare Actual at (0, 0) and (0, 2) and check Row sums.",
       "In Block 0, inspect Thread 0’s reads of scratch[0] for the maximum and the sum.",
       "In softmax.py, replace both math.exp(values[row, col] - row_max) calls with math.exp(values[row, col]).",
-      "Run again and read the error, then click Restore starter.",
+      "Run again and read the error. In Editor tools, select Restore starter.",
       "Run Two rows · 37 columns and inspect Thread 0’s writes to columns 0 and 32.",
     ],
     explain: "Removing the shift makes exp(1000) overflow in the browser. Columns 0 and 2 get equal probabilities because they start at the same score and use the same divisor. Even with the shift, a very small probability can round to zero when converted to float32.",

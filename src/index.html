@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Learn CUDA Python in twelve browser labs without a physical GPU. Optional notebooks run on NVIDIA hardware.">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <title>CUDA Python Lab</title>
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./app.mjs"></script>
@@ -14,20 +14,20 @@
   <header class="site-header">
     <a class="brand" href="#course" aria-label="CUDA Python Lab course outline">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span>CUDA Python <strong>Lab</strong></span>
+      <span class="brand-copy">CUDA Python Lab<span>Numba CUDA</span></span>
     </a>
     <nav class="site-nav" aria-label="Course resources">
       <a href="#course" data-page="course">Course outline</a>
       <a href="#gpu" data-page="gpu">Appendix A</a>
+      <button type="button" class="button" id="theme">Theme</button>
     </nav>
   </header>
 
   <div class="layout">
-    <aside class="sidebar">
-      <details id="mobile-nav">
-        <summary>Course lessons <span id="mobile-progress"></span></summary>
-        <div class="sidebar-inner">
-          <div class="progress-label"><span>Your progress</span><span id="progress-label"></span></div>
+    <aside class="course-navigation">
+      <details id="course-nav">
+        <summary>Course lessons <span id="course-progress"></span></summary>
+        <div class="contents">
           <progress id="progress" aria-label="Course progress"></progress>
           <nav id="lesson-nav" aria-label="Lessons"></nav>
         </div>

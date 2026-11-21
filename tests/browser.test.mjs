@@ -40,6 +40,13 @@ async function runBrowser(t, viewport, exercise) {
 
 const status = (page, kind) => page.locator(`#run-status.${kind}`).waitFor();
 const sourceEditor = (page) => page.getByRole("textbox", { name: "Python kernel source" });
+const editorTools = (page) => page.locator("#editor-tools > summary");
+
+async function openLesson(page, slug) {
+  await page.locator("#course-nav > summary").click();
+  await page.locator(`#lesson-nav a[href="#lesson/${slug}"]`).click();
+  await page.getByRole("heading", { name: lessons[slug].title, exact: true }).waitFor();
+}
 
 async function readSource(editor) {
   await editor.press("ControlOrMeta+a");
@@ -55,8 +62,7 @@ async function replaceSource(page, editor, source) {
 test("every browser case runs Python and matches its full reference", async (t) => {
   await runBrowser(t, { width: 1400, height: 960 }, async (page) => {
     for (const [slug, lesson] of Object.entries(lessons)) {
-      await page.locator(`#lesson-nav a[href="#lesson/${slug}"]`).click();
-      await page.getByRole("heading", { name: lesson.title, exact: true }).waitFor();
+      await openLesson(page, slug);
       for (const [i, fixture] of lesson.cases.entries()) {
         if (lesson.cases.length > 1) await page.locator("#case").selectOption(String(i));
         await page.getByRole("button", { name: "Run kernel" }).click();
@@ -69,10 +75,8 @@ test("every browser case runs Python and matches its full reference", async (t) 
 
 test("mobile lesson flow traces the boundary thread, persists drafts, and exports the changed source", async (t) => {
   await runBrowser(t, { width: 393, height: 852 }, async (page) => {
-    await page.getByText("Course lessons", { exact: false }).click();
-    await page.locator('#lesson-nav a[href="#lesson/vector-add"]').click();
-    await page.getByRole("heading", { name: "One thread, one element", exact: true }).waitFor();
-    assert.equal(await page.locator("#mobile-nav").evaluate((menu) => menu.open), false);
+    await openLesson(page, "vector-add");
+    assert.equal(await page.locator("#course-nav").evaluate((menu) => menu.open), false);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
 
     await page.getByRole("textbox", { name: "Predict before you run" }).fill("Block 1, lane 0");
@@ -102,9 +106,11 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.ok(notebook.cells.some((cell) => cell.source === modified));
     assert.ok(notebook.cells.some((cell) => cell.source.includes("Edited kernel ran.")));
 
+    await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
     assert.equal(await readSource(editor), starter);
     await page.reload();
+    await editorTools(page).click();
     await page.getByRole("button", { name: "Undo restore" }).click();
     assert.equal(await readSource(editor), modified);
     await page.getByRole("button", { name: "Mark complete" }).click();
@@ -137,8 +143,7 @@ test("documented edits give a meaningful comparison or an execution error", asyn
       ["softmax", 0, "math.exp(values[row, col] - row_max)", "math.exp(values[row, col])", /Execution error/, /math range error/],
     ];
     for (const [slug, caseIndex, before, after, message, evidence] of edits) {
-      await page.locator(`#lesson-nav a[href="#lesson/${slug}"]`).click();
-      await page.getByRole("heading", { name: lessons[slug].title, exact: true }).waitFor();
+      await openLesson(page, slug);
       if (lessons[slug].cases.length > 1) await page.locator("#case").selectOption(String(caseIndex));
       const editor = sourceEditor(page);
       const starter = await readSource(editor);
@@ -149,16 +154,16 @@ test("documented edits give a meaningful comparison or an execution error", asyn
       await page.locator("#run-status").filter({ hasText: message }).waitFor();
       if (evidence instanceof RegExp) {
         assert.match(await page.locator("#error-text").textContent(), evidence, slug);
-        assert.equal(await page.getByRole("heading", { name: "Output", exact: true }).isVisible(), false);
+        assert.equal(await page.locator("#result-panel").isVisible(), false);
       } else {
-        assert.equal(await page.getByRole("heading", { name: "Output", exact: true }).isVisible(), true);
+        assert.equal(await page.locator("#result-panel").isVisible(), true);
         if (evidence) assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), evidence);
       }
+      await editorTools(page).click();
       await page.getByRole("button", { name: "Restore starter" }).click();
       assert.equal(await readSource(editor), starter);
     }
-    await page.locator('#lesson-nav a[href="#lesson/vector-add"]').click();
-    await page.getByRole("heading", { name: lessons["vector-add"].title, exact: true }).waitFor();
+    await openLesson(page, "vector-add");
     await page.locator("#case").selectOption("0");
     await page.getByRole("button", { name: "Run kernel" }).click();
     await status(page, "success");
@@ -203,6 +208,71 @@ test("Python editor opens a saved draft, indents code, and runs the current buff
     await page.locator(".cm-search input[name=search]").press("Escape");
     await editor.press("Escape");
     await page.keyboard.press("Tab");
-    assert.equal(await page.locator("#block").evaluate((select) => select === document.activeElement), true);
+    assert.equal(await page.locator("#run").evaluate((button) => button === document.activeElement), true);
+  });
+});
+
+test("the V2-style tools export Python, show console output and allow a stopped run to restart", async (t) => {
+  await runBrowser(t, { width: 390, height: 850 }, async (page) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.reload();
+    const root = page.locator("html");
+    const editor = sourceEditor(page);
+    await editor.waitFor();
+    assert.equal(await root.getAttribute("data-theme"), "dark");
+    await page.getByRole("button", { name: "Light theme" }).click();
+    await page.reload();
+    await editor.waitFor();
+    assert.equal(await root.getAttribute("data-theme"), "light");
+
+    await editorTools(page).click();
+    await page.getByRole("button", { name: "Show launch settings" }).click();
+    assert.equal(await page.locator("#input-panel").evaluate((panel) => panel.open), true);
+    assert.match(await page.locator("#input-output").textContent(), /Blocks 1 · Threads per block 1/);
+    await editorTools(page).click();
+    await page.getByRole("button", { name: "Show target line" }).click();
+    assert.equal(await editor.evaluate(() => String(window.getSelection())), "42");
+    await page.keyboard.insertText("7 ** 2");
+    await editor.press("Control+Enter");
+    await page.locator("#run-status").filter({ hasText: "Edited kernel ran." }).waitFor();
+    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "49");
+
+    const starter = await readFile(new URL("../src/kernels/first-value.py", import.meta.url), "utf8");
+    const printed = starter.replace("    out[0] = 42", '    out[0] = 7 ** 2\n    print("output", out[0])');
+    await replaceSource(page, editor, printed);
+    await page.getByRole("button", { name: "Run kernel" }).click();
+    await page.locator("#console-output").waitFor();
+    assert.equal(await page.locator("#console-output").textContent(), "output 49.0\n");
+    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "49");
+
+    await editorTools(page).click();
+    const [sourceFile] = await Promise.all([
+      page.waitForEvent("download"), page.getByRole("button", { name: "Export .py" }).click(),
+    ]);
+    assert.equal(sourceFile.suggestedFilename(), "first-value.py");
+    assert.equal(await readFile(await sourceFile.path(), "utf8"), printed);
+    await editorTools(page).click();
+
+    await replaceSource(page, editor, starter.replace("    out[0] = 42", '    print("before the error")\n    raise ValueError("example")'));
+    await editor.press("Control+Enter");
+    await status(page, "failure");
+    assert.equal(await page.locator("#console-output").textContent(), "before the error\n");
+    await page.getByText("Python and execution messages", { exact: true }).click();
+    assert.match(await page.locator("#error-details pre").textContent(), /first-value\.py.*ValueError: example/s);
+
+    const loop = starter.replace("    out[0] = 42", "    while True:\n        pass");
+    await replaceSource(page, editor, loop);
+    await editor.press("Control+Enter");
+    await page.getByRole("button", { name: "Stop", exact: true }).click();
+    await page.locator("#run-status").filter({ hasText: "Run stopped." }).waitFor();
+    assert.equal(await readSource(editor), loop);
+    assert.equal(await page.locator("#console-panel").isVisible(), false);
+
+    await editorTools(page).click();
+    await page.getByRole("button", { name: "Restore starter" }).click();
+    await page.getByRole("button", { name: "Run kernel" }).click();
+    await status(page, "success");
+    assert.equal(await page.locator("#result-output tbody td").nth(1).textContent(), "42");
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   });
 });

@@ -2,7 +2,7 @@
 
 CUDA Python Lab teaches GPU programming to Python developers through twelve browser labs that require no physical GPU. It follows the predict, run, and explain format of [GPU Lab](https://snowch.github.io/gpu-lab/v2/).
 
-Edit Python kernels in the browser with CodeMirror. The workbench runs your current source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Appendix A covers optional GPU verification and profiling with exported notebooks.
+The workbench follows GPU Lab V2’s layout and editor tools. Edit Python kernels with CodeMirror, run or stop a case, and use the console to inspect `print()` output. The workbench runs your current source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Appendix A covers optional GPU verification and profiling with exported notebooks.
 
 ## Start the course
 
@@ -34,7 +34,7 @@ The browser model executes a small CUDA subset in a worker and uses deterministi
 
 ## Develop and verify
 
-`src/course.mjs` defines the lesson text, launch cases, and references. `src/kernels/` contains the editable CUDA Python sources. `src/simulator.py` traces them in the browser, and `src/notebook.mjs` builds the corresponding notebooks.
+`src/course.mjs` defines the lesson text, launch cases, and references. `src/kernels/` contains the editable CUDA Python sources. `src/simulator.py` traces them in the browser, `src/browser_adapter.py` reports Python console output and execution errors, and `src/notebook.mjs` builds the corresponding notebooks.
 
 ```sh
 # Install Chromium for Playwright if a system Chromium is unavailable.

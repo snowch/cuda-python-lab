@@ -5,8 +5,7 @@ import { makeNotebook } from "./notebook.mjs";
 
 const order = modules.flatMap((module) => module.lessons);
 const main = document.querySelector("main");
-const mobileNav = document.querySelector("#mobile-nav");
-const mobile = matchMedia("(max-width: 850px)");
+const courseNav = document.querySelector("#course-nav");
 const storageKey = "cuda-python-lab-v1";
 let starters;
 let worker;
@@ -44,18 +43,37 @@ const launchCount = (dimensions) => dimensions.reduce((total, width) => total * 
 const pairFor = (index, dimensions) => [index % dimensions[0], Math.floor(index / dimensions[0])];
 const linearIndex = (pair, dimensions) => pair[1] * dimensions[0] + pair[0];
 
-function setNavMode() {
-  mobileNav.open = !mobile.matches;
+const themeControl = document.querySelector("#theme");
+const prefersDark = matchMedia("(prefers-color-scheme: dark)");
+let themeChoice;
+try {
+  themeChoice = localStorage.getItem("cuda-python-lab-theme");
+} catch {
+  // Theme selection is still available for this page.
 }
-mobile.addEventListener("change", setNavMode);
-setNavMode();
+function applyTheme() {
+  const theme = themeChoice ?? (prefersDark.matches ? "dark" : "light");
+  document.documentElement.dataset.theme = theme;
+  themeControl.textContent = theme === "dark" ? "Light theme" : "Dark theme";
+}
+if (themeChoice !== "light" && themeChoice !== "dark") themeChoice = null;
+applyTheme();
+prefersDark.addEventListener("change", applyTheme);
+themeControl.addEventListener("click", () => {
+  themeChoice = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme();
+  try {
+    localStorage.setItem("cuda-python-lab-theme", themeChoice);
+  } catch {
+    // Keep the theme active until the page closes.
+  }
+});
 
 function updateNav(page) {
   const completed = order.filter((slug) => state.completed[slug]).length;
   document.querySelector("#progress").max = order.length;
   document.querySelector("#progress").value = completed;
-  document.querySelector("#progress-label").textContent = `${completed} / ${order.length}`;
-  document.querySelector("#mobile-progress").textContent = `${completed} / ${order.length} complete`;
+  document.querySelector("#course-progress").textContent = `${completed} / ${order.length} complete`;
   document.querySelectorAll("[data-page]").forEach((link) => {
     if (link.dataset.page === page) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
@@ -81,14 +99,14 @@ function showCourse() {
       <h2>Before you start</h2>
       <p>You’ll need to know how to read Python functions, loops, and array indices. The labs run Python in your browser with a teaching model of CUDA.</p>
       <p>For optional GPU runs, <a href="#gpu">Appendix A</a> shows how to run the kernels on an NVIDIA GPU and measure performance.</p>
-      <a class="button primary standalone" href="${lessonURL(order[0])}">Start the first lab</a>
+      <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
     </section>
-    <div class="module-cards">
-      ${modules.map((module) => `<section class="lesson-card">
+    <div class="course-modules">
+      ${modules.map((module) => `<section class="course-module">
         <h2>${escape(module.title)}</h2>
         <p>${escape(module.description)}</p>
         <ol start="${Number(number(module.lessons[0]))}">
-          ${module.lessons.map((slug) => `<li>${lessonLink(slug)}</li>`).join("")}
+          ${module.lessons.map((slug) => `<li>${lessonLink(slug)}<p>${escape(lessons[slug].summary)}</p></li>`).join("")}
         </ol>
       </section>`).join("")}
     </div>
@@ -180,42 +198,57 @@ function showLesson(slug) {
     <section class="reading experiment">
       <h2>Run the experiment</h2>
       <p>The browser runs the Python in the editor using a CUDA teaching model. The selected case supplies the arrays and launch settings.</p>
-      <p id="saved-draft-note" hidden>A saved edit is open. <strong>Restore starter</strong> sets your draft aside. To get it back after experimenting, restore the starter again if needed, then select <strong>Undo restore</strong>.</p>
+      <p id="saved-draft-note" hidden>A saved edit is open. In <strong>Editor tools</strong>, <strong>Restore starter</strong> sets your draft aside. To get it back after experimenting, restore the starter again if needed, then select <strong>Undo restore</strong>.</p>
       <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
     </section>
 
     <section class="workbench" aria-labelledby="workbench-title">
-      <div class="workbench-toolbar">
-        <h2 id="workbench-title">Kernel workbench</h2>
-        <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
-          <select id="case">${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
-        </label>
-        <button class="button primary" id="run" type="button">Run kernel</button>
-      </div>
       <div class="workbench-body">
-        <div class="editor">
+        <section class="workbench-card editor" aria-labelledby="workbench-title">
           <div class="editor-top">
-            <span class="editor-title">${slug}.py</span>
-            <button id="restore" type="button">Restore starter</button>
+            <div><h2 id="workbench-title">Python source</h2><span class="editor-title">${slug}.py</span></div>
+            <details id="editor-tools"><summary>Editor tools</summary>
+              <div class="actions">
+                <button class="button" id="show-target" type="button">Show target line</button>
+                <button class="button" id="show-launch" type="button">Show launch settings</button>
+                <button class="button" id="restore" type="button">Restore starter</button>
+                <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
+                <button class="button" id="download-source" type="button">Export .py</button>
+              </div>
+              <p class="trace-note">Use print() to show values in the console.</p>
+              <p class="trace-note" id="target-note" role="status" hidden></p>
+            </details>
           </div>
           <div id="source" class="codebox"></div>
-          <div class="editor-bottom" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</div>
-        </div>
-        <div class="inspector">
-          <div class="launch-info"><h3>Thread inspector</h3><span id="launch-shape"></span></div>
-          <div class="inspect-controls"><label for="block">Block <select id="block"></select></label></div>
-          <div class="thread-grid" id="threads" role="group" aria-label="Threads in selected block" aria-description="Use the arrow keys to select a thread."></div>
-          <p class="inspector-note" id="inspector-note"></p>
+          <p class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</p>
+          <div class="workbench-controls">
+            <button class="button primary" id="run" type="button">Run kernel</button>
+            <button class="button" id="stop" type="button" hidden>Stop</button>
+            <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
+              <select id="case">${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
+            </label>
+          </div>
           <div id="run-status" class="run-status" role="status"></div>
           <p id="error-text" class="error-text" hidden></p>
-          <details id="error-details" hidden><summary>Python traceback</summary><pre></pre></details>
-        </div>
+          <details id="error-details" hidden><summary>Python and execution messages</summary><pre></pre></details>
+        </section>
+        <section class="workbench-card" aria-labelledby="output-title">
+          <h2 id="output-title">Simulated output</h2>
+          <p id="output-hint" class="trace-note">Run the kernel to see the output from the selected case.</p>
+          <section id="result-panel" class="evidence" aria-label="Result values" hidden><div id="result-output"></div></section>
+          <section id="console-panel" class="evidence" hidden><h3>Console</h3><pre id="console-output"></pre></section>
+          <div class="inspector">
+            <div class="launch-info"><h3>Thread inspector</h3><span id="launch-shape"></span></div>
+            <div class="inspect-controls"><label for="block">Block <select id="block"></select></label></div>
+            <div class="thread-grid" id="threads" role="group" aria-label="Threads in selected block" aria-description="Use the arrow keys to select a thread."></div>
+            <p class="inspector-note" id="inspector-note"></p>
+          </div>
+          <details id="input-panel" class="evidence"><summary>Input values and launch arguments</summary><div id="input-output"></div></details>
+        </section>
       </div>
       <div class="workbench-output" id="workbench-output" hidden>
-        <section id="result-panel" class="evidence"><h3>Output</h3><div id="result-output"></div></section>
         ${evidencePanel(lesson, "trace", "Selected thread trace")}
         ${evidencePanel(lesson, "warp", "Warp address model")}
-        ${evidencePanel(lesson, "input", "Input values and launch arguments")}
       </div>
     </section>
 
@@ -230,7 +263,6 @@ function showLesson(slug) {
       <p>${escape(lesson.native)}</p>
       <div class="actions">
         <button id="download-notebook" class="button" type="button">Download notebook</button>
-        <button id="download-source" class="button" type="button">Download kernel</button>
         <a class="button" href="#gpu">Appendix A</a>
       </div>
     </details>
@@ -258,12 +290,13 @@ function showLesson(slug) {
   });
   find("saved-draft-note").hidden = model.editor.source === starters[slug];
   function updateRestore() {
-    const undo = model.editor.source === starters[slug] && Object.hasOwn(state.restoredDrafts, slug);
-    find("restore").textContent = undo ? "Undo restore" : "Restore starter";
-    find("restore").hidden = !undo && model.editor.source === starters[slug];
+    const isStarter = model.editor.source === starters[slug];
+    find("restore").disabled = isStarter;
+    find("undo-restore").hidden = !isStarter || !Object.hasOwn(state.restoredDrafts, slug);
   }
   function saveEditor(message) {
     state.drafts[slug] = model.editor.source;
+    find("target-note").hidden = true;
     persist();
     updateRestore();
     invalidateRun(message);
@@ -276,17 +309,34 @@ function showLesson(slug) {
     persist();
   });
 
-  find("restore").addEventListener("click", () => {
-    find("saved-draft-note").hidden = true;
-    if (model.editor.source === starters[slug] && Object.hasOwn(state.restoredDrafts, slug)) {
-      model.editor.reset(state.restoredDrafts[slug]);
-      delete state.restoredDrafts[slug];
-      saveEditor("Your previous edit is back. Run the kernel to see its output.");
-    } else if (model.editor.source !== starters[slug]) {
-      state.restoredDrafts[slug] ??= model.editor.source;
-      model.editor.reset(starters[slug]);
-      saveEditor("Starter restored. Run the kernel to see its output.");
+  find("show-target").addEventListener("click", () => {
+    if (model.editor.reveal(lesson.sourceTarget)) {
+      find("editor-tools").open = false;
+    } else {
+      const note = find("target-note");
+      note.textContent = "The starter’s target has changed in this draft.";
+      note.hidden = false;
     }
+  });
+  find("show-launch").addEventListener("click", () => {
+    find("editor-tools").open = false;
+    const inputPanel = find("input-panel");
+    inputPanel.open = true;
+    inputPanel.querySelector("summary").focus();
+  });
+  find("restore").addEventListener("click", () => {
+    state.restoredDrafts[slug] ??= model.editor.source;
+    find("saved-draft-note").hidden = true;
+    find("editor-tools").open = false;
+    model.editor.reset(starters[slug]);
+    saveEditor("Starter restored. Run the kernel to see its output.");
+  });
+  find("undo-restore").addEventListener("click", () => {
+    const draft = state.restoredDrafts[slug];
+    delete state.restoredDrafts[slug];
+    find("editor-tools").open = false;
+    model.editor.reset(draft);
+    saveEditor("Your previous edit is back. Run the kernel to see its output.");
   });
 
   model.input.value = lesson.cases[state.cases[slug]] ? state.cases[slug] : 0;
@@ -302,7 +352,8 @@ function showLesson(slug) {
     const buffers = Object.entries(model.fixture.buffers).filter(([name]) => name !== model.fixture.output);
     find("input-output").innerHTML = buffers.map(([name, spec]) =>
       `<p class="value-list"><strong>${escape(name)}</strong> · ${shape(spec.shape)} · ${escape(spec.dtype)}<br>${spec.values.map(pretty).join(", ")}</p>`).join("")
-      + `<p class="value-list">Arguments · ${escape(model.fixture.args.map((name) => name in model.fixture.scalars
+      + `<p class="value-list">Blocks ${shape(blocks)} · Threads per block ${shape(threads)}</p>
+        <p class="value-list">Arguments · ${escape(model.fixture.args.map((name) => name in model.fixture.scalars
         ? `${name}=${model.fixture.scalars[name]}` : name).join(", "))}</p>`;
     invalidateRun();
   }
@@ -335,6 +386,10 @@ function showLesson(slug) {
     find("threads").querySelector(`[data-thread="${next}"]`)?.click();
   });
   model.runButton.addEventListener("click", run);
+  find("stop").addEventListener("click", () => {
+    invalidateRun("Run stopped. Your code is still in the editor.");
+    model.runButton.focus();
+  });
   find("download-notebook").addEventListener("click", () => {
     download(`${slug}.ipynb`, JSON.stringify(makeNotebook(lesson, model.editor.source, model.fixture, { edited: model.editor.source !== starters[slug] }), null, 2), "application/json");
   });
@@ -359,20 +414,37 @@ function download(name, content, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function showConsole(stdout = "") {
+  const consolePanel = model.root.querySelector("#console-panel");
+  consolePanel.hidden = !stdout;
+  consolePanel.querySelector("pre").textContent = stdout;
+}
+
+function setRunBusy(busy) {
+  const stop = model.root.querySelector("#stop");
+  const returnFocus = !busy && document.activeElement === stop;
+  model.runButton.disabled = busy;
+  stop.hidden = !busy;
+  if (returnFocus) model.runButton.focus();
+}
+
 function invalidateRun(message = "") {
   model.request++;
+  running?.abort();
   model.result = null;
   model.root.querySelector("#workbench-output").hidden = true;
-  model.runButton.disabled = false;
+  model.root.querySelector("#result-panel").hidden = true;
+  model.root.querySelector("#output-hint").hidden = false;
   model.root.querySelector("#error-text").hidden = true;
   model.root.querySelector("#error-details").hidden = true;
+  setRunBusy(false);
   setStatus(message);
+  showConsole();
   renderThreadTrace();
   renderOutput();
 }
 
-function execute(source, fixture) {
-  if (running) running.abort();
+function execute(source, fixture, filename) {
   worker ??= new Worker(new URL("./worker.js", import.meta.url));
   const active = worker;
   const id = ++jobId;
@@ -394,30 +466,42 @@ function execute(source, fixture) {
     active.onmessage = (event) => {
       if (event.data.id !== id) return;
       cleanup();
-      if (event.data.error) reject(new Error(event.data.error));
-      else resolve(event.data.result);
+      resolve(event.data);
     };
     active.onerror = () => fail("Could not start the browser Python runtime. Reload the page and try again.");
-    active.postMessage({ id, source, fixture });
+    active.postMessage({ id, source, fixture, filename });
   });
+}
+
+function showExecutionError(message) {
+  setStatus("Execution error. The kernel did not produce output.", "failure");
+  model.root.querySelector("#output-hint").hidden = true;
+  const detail = model.root.querySelector("#error-text");
+  const lines = message.trimEnd().split("\n");
+  detail.textContent = lines.at(-1);
+  detail.hidden = false;
+  const traceback = model.root.querySelector("#error-details");
+  traceback.querySelector("pre").textContent = message;
+  traceback.hidden = lines.length === 1;
+  traceback.open = false;
 }
 
 async function run() {
   const current = model;
-  const request = ++current.request;
-  current.runButton.disabled = true;
-  current.result = null;
-  current.root.querySelector("#workbench-output").hidden = true;
-  current.root.querySelector("#error-text").hidden = true;
-  current.root.querySelector("#error-details").hidden = true;
-  const isCurrent = () => model === current && current.request === request;
+  invalidateRun();
+  const request = current.request;
+  setRunBusy(true);
   setStatus(worker ? "Running Python…" : "Loading Python and running the kernel…");
-  renderThreadTrace();
-  renderOutput();
+  const isCurrent = () => model === current && current.request === request;
   try {
     const source = current.editor.source;
-    const result = await execute(source, current.fixture);
+    const { result, error, stdout } = await execute(source, current.fixture, `${current.slug}.py`);
     if (!isCurrent()) return;
+    showConsole(stdout);
+    if (error) {
+      showExecutionError(error);
+      return;
+    }
     current.result = result;
     const differences = result.mismatches.length;
     const { length } = result.output;
@@ -434,21 +518,14 @@ async function run() {
     }
     renderThreadTrace();
     renderOutput();
+    current.root.querySelector("#result-panel").hidden = false;
+    current.root.querySelector("#output-hint").hidden = true;
     current.root.querySelector("#workbench-output").hidden = false;
-    current.root.querySelector("#input-panel").hidden = false;
+    if (current.lesson.evidence.includes("input")) current.root.querySelector("#input-panel").open = true;
   } catch (error) {
-    if (!isCurrent()) return;
-    setStatus("Execution error. The kernel did not produce output.", "failure");
-    const detail = current.root.querySelector("#error-text");
-    const lines = error.message.split("\n");
-    detail.textContent = lines.at(-1);
-    detail.hidden = false;
-    const traceback = current.root.querySelector("#error-details");
-    traceback.querySelector("pre").textContent = error.message;
-    traceback.hidden = lines.length === 1;
-    traceback.open = false;
+    if (isCurrent()) showExecutionError(error.message);
   } finally {
-    if (isCurrent()) current.runButton.disabled = false;
+    if (isCurrent()) setRunBusy(false);
   }
 }
 
@@ -561,7 +638,7 @@ function route(moveFocus = false) {
   else showLesson(page);
   document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? "Appendix A"} · CUDA Python Lab`;
   if (moveFocus) {
-    if (mobile.matches) mobileNav.open = false;
+    courseNav.open = false;
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }

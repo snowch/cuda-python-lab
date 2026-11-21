@@ -44,6 +44,16 @@ export function mountKernelEditor(parent, source, { onEdit, onRun }) {
     get source() {
       return view.state.doc.toString();
     },
+    reveal(source) {
+      const index = view.state.doc.toString().indexOf(source);
+      if (index === -1) return false;
+      view.dispatch({
+        selection: { anchor: index, head: index + source.length },
+        scrollIntoView: true,
+      });
+      view.focus();
+      return true;
+    },
     reset(source) {
       view.setState(createState(source));
       view.focus();

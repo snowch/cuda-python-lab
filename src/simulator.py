@@ -186,7 +186,7 @@ def display_value(value):
     return value
 
 
-def run_lab(source, fixture):
+def run_lab(source, fixture, filename="kernel.py"):
     model = CudaModel()
     numba = SimpleNamespace(cuda=model.cuda, float32=float32, int32=int32)
 
@@ -200,13 +200,13 @@ def run_lab(source, fixture):
     sandbox_builtins = {
         **{name: getattr(builtins, name) for name in (
             "abs", "bool", "enumerate", "float", "int", "len", "max", "min",
-            "range", "round", "sum", "tuple", "ValueError", "RuntimeError", "IndexError",
+            "print", "range", "round", "sum", "tuple", "ValueError", "RuntimeError", "IndexError",
         )},
         "__import__": import_kernel_module,
     }
     namespace = {"__builtins__": sandbox_builtins}
-    tree = ast.fix_missing_locations(BarrierCompiler().visit(ast.parse(source, filename="kernel.py")))
-    exec(compile(tree, "kernel.py", "exec"), namespace)
+    tree = ast.fix_missing_locations(BarrierCompiler().visit(ast.parse(source, filename=filename)))
+    exec(compile(tree, filename, "exec"), namespace)
     buffers = {}
     for name, spec in fixture["buffers"].items():
         buffers[name] = Buffer(

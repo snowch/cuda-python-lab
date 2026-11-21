@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from browser_adapter import CONSOLE_LIMIT, run_from_json
 from simulator import run_lab
 
 
@@ -52,3 +53,13 @@ def kernel(out):
         event, = [event for event in result["events"] if
                   event["action"] == "write" and event["index"] == 32]
         self.assertEqual((event["block"], event["thread"]), ((1, 0), (0, 0)))
+
+    def test_browser_adapter_limits_console_output_without_altering_results(self):
+        case = starter_cases()[0]["cases"][0]["fixture"]
+        source = f"""def kernel(out):
+    print("a" * {CONSOLE_LIMIT + 20})
+    out[0] = 42
+"""
+        report = json.loads(run_from_json(source, json.dumps(case), "first-value.py"))
+        self.assertEqual(report["stdout"], "a" * CONSOLE_LIMIT + "\n[Console output truncated.]")
+        self.assertEqual(report["result"]["output"], [42])
