@@ -145,9 +145,9 @@ export const lessons = {
     summary: "Change one number in a GPU function and see what it writes.",
     intro: [
       "A GPU (graphics processing unit) can run the same function many times in parallel. A function written to run on the GPU is called a kernel. Each run of that function does the work of one GPU thread.",
-      "Numba CUDA lets you write GPU functions in Python. The line @cuda.jit marks this function as a GPU kernel. Each time you click Run kernel, the browser creates out = [0] and runs the function once, as a single GPU thread. The starter reference is the expected result for the original code.",
+      "Numba CUDA lets you write GPU functions in Python. The line @cuda.jit marks this function as a GPU kernel. This exercise uses one GPU thread. The starter reference is the expected result for the original code.",
     ],
-    predict: "The starter code assigns 42 to out[0]. If you change 42 to 73, what will the Console show for out?",
+    predict: "Each run starts with out = [0]. The starter code assigns 42 to out[0]. If you change 42 to 73, what will the Console show for out?",
     exercise: [
       "Click Run kernel with the starter code. Under Kernel result in the Console, find out = [42].",
       "In the Python editor, replace 42 with 73 in out[0] = 42. Click Run kernel again and check the new value of out in the Console.",
@@ -251,15 +251,15 @@ export const lessons = {
       "A branch is a choice between paths, such as the if and else parts of an if statement. Warp divergence occurs when threads in one warp take different paths. A GPU can run the instructions for a path with only the lanes that chose it active.",
       "Each block in these cases has one 32-lane warp. The kernel multiplies negative inputs by 0.25 and copies positive inputs. The browser lets you count the lanes taking each path. Hardware timing also depends on how the compiler implements the condition and how much each path does.",
     ],
-    predict: "How many lanes in Block 0 take the negative path in each case? How many blocks contain both paths?",
+    predict: "Both cases have 64 inputs. Alternating signs switches between negative and positive, starting with a negative value. Grouped signs puts the negative values first, then the positive values, 32 of each. How many lanes in Block 0 take the negative path in each case? How many blocks contain both paths?",
     exercise: [
-      "Select Alternating signs in Case and click Run kernel. Compare the first two entries of out in the Console. Which input was multiplied by 0.25?",
-      "Open Input values and launch arguments if needed. In values, count negative entries in positions 0–31 for Block 0 and 32–63 for Block 1.",
-      "Select Grouped signs, run again, and count the negative entries in the same two ranges. In which case does a single warp contain lanes that take both paths?",
+      "Select Alternating signs in Case and click Run kernel. The first two inputs are −1 and 2. Compare them with the first two entries of out in the Console. Which input was multiplied by 0.25?",
+      "The output keeps the sign of each input. In the Console, open Compare with starter and count the negative entries in the Actual column at indices 0–31 for Block 0 and 32–63 for Block 1.",
+      "Select Grouped signs and run again. In Compare with starter, count the negative entries in the same two ranges. In which case does a single warp contain lanes that take both paths?",
     ],
     explain: "Alternating signs puts 16 lanes on each path in both warps. Grouped signs puts all 32 negative values in Block 0 and all 32 positive values in Block 1. A timing difference on a GPU depends on the compiled instructions and the work on each path.",
     native: "Run both cases in GPU notebooks and verify the outputs. For a controlled timing comparison, use inputs of the same size with the same values reordered. Inspect the generated code before attributing a timing difference to the branch.",
-    evidence: ["input"],
+    evidence: [],
     reference: "np.where(host['values'] < 0, host['values'] * np.float32(0.25), host['values'])",
     cases: [
       caseOf("Alternating signs", divergence(range(64).map((i) => (i + 1) * (i % 2 ? 1 : -1)))),
@@ -453,7 +453,7 @@ export const lessons = {
     ],
     predict: "For a = 16,777,216, b = 1, and c = −16,777,216, what happens to the 1 when you add a and b first? What if you add a and c first?",
     exercise: [
-      "Select Near the precision limit and run. In the Console, record out[0] and out[1]. Both threads add 1 and then subtract the starting value. Which thread keeps the 1?",
+      "Select Near the precision limit and run. Thread 0 starts with 16,777,216 and Thread 1 starts with 8,388,608. Both threads add 1 and then subtract their starting value. Check out[0] and out[1] in the Console. Which thread keeps the 1?",
       "In precision.py, change a[i] + b[i] to a[i] + c[i] and change first + c[i] to first + b[i]. Run again and compare the same outputs. Explain why changing the order changes one result.",
       "Restore starter in Editor tools, then run Smaller integers. Check whether the original grouping keeps 1 for those values.",
     ],

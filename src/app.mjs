@@ -259,7 +259,6 @@ function showLesson(slug) {
             <details id="editor-tools"><summary>Editor tools</summary>
               <div class="actions">
                 <button class="button" id="show-target" type="button">Show target line</button>
-                <button class="button" id="show-launch" type="button">${firstLesson ? "Show browser setup" : "Show launch settings"}</button>
                 <button class="button" id="restore" type="button">Restore starter</button>
                 <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
                 <button class="button" id="download-source" type="button">Export .py</button>
@@ -289,7 +288,6 @@ function showLesson(slug) {
             <div class="thread-grid" id="threads" role="group" aria-label="Threads in selected block" aria-description="Use the arrow keys to select a thread."></div>
             <p class="inspector-note" id="inspector-note"></p>
           </div>` : ""}
-          <details id="input-panel" class="evidence"><summary>${firstLesson ? "What the browser prepares" : "Input values and launch arguments"}</summary><div id="input-output"></div></details>
         </section>
       </div>
       ${hasTrace ? `<div class="workbench-output" id="workbench-output" hidden>
@@ -364,12 +362,6 @@ function showLesson(slug) {
       note.hidden = false;
     }
   });
-  find("show-launch").addEventListener("click", () => {
-    find("editor-tools").open = false;
-    const inputPanel = find("input-panel");
-    inputPanel.open = true;
-    inputPanel.querySelector("summary").focus();
-  });
   find("restore").addEventListener("click", () => {
     state.restoredDrafts[slug] ??= model.editor.source;
     find("saved-draft-note").hidden = true;
@@ -396,16 +388,6 @@ function showLesson(slug) {
       find("launch-shape").textContent = `Blocks ${shape(blocks)} · Threads per block ${shape(threads)}`;
       model.blockInput.innerHTML = Array.from({ length: launchCount(blocks) }, (_, i) =>
         `<option value="${i}">${coordinate(pairFor(i, blocks), blocks)}</option>`).join("");
-    }
-    if (firstLesson) {
-      find("input-output").textContent = "The browser starts with out = [0] and runs the function once.";
-    } else {
-      const buffers = Object.entries(model.fixture.buffers).filter(([name]) => name !== model.fixture.output);
-      find("input-output").innerHTML = buffers.map(([name, spec]) =>
-        `<p class="value-list"><strong>${escape(name)}</strong> · shape ${shape(spec.shape)}<br>${spec.values.map(pretty).join(", ")}</p>`).join("")
-        + `<p class="value-list">Blocks ${shape(blocks)} · Threads per block ${shape(threads)}</p>
-          <p class="value-list">Arguments passed to kernel · ${escape(model.fixture.args.map((name) => name in model.fixture.scalars
-            ? `${name}=${model.fixture.scalars[name]}` : name).join(", "))}</p>`;
     }
     invalidateRun();
   }
@@ -584,7 +566,6 @@ async function run() {
     renderThreadTrace();
     renderComparison();
     current.root.querySelector("#result-panel").hidden = false;
-    if (current.lesson.evidence.includes("input")) current.root.querySelector("#input-panel").open = true;
   } catch (error) {
     if (isCurrent()) showExecutionError(error.message);
   } finally {

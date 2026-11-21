@@ -179,7 +179,6 @@ select { min-width: 0; max-width: 100%; min-height: 44px; border: 1px solid var(
 .thread[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 .inspector-note, .trace-note { color: var(--muted); font-size: .875rem; margin: 0 0 .4rem; }
 .inspector-note:last-child { margin-bottom: 0; }
-#input-panel { margin-top: .6rem; border-top: 1px solid var(--line); }
 .evidence { padding: .3rem 0; }
 .evidence + .evidence { border-top: 1px solid var(--line); }
 .evidence h3 { margin: 0 0 .3rem; }
@@ -193,7 +192,6 @@ td, th { padding: .3rem .4rem; border-bottom: 1px solid var(--line); white-space
 #result-output th, #result-output td:nth-child(4) { white-space: normal; }
 #result-output td:nth-child(4) { min-width: 6.5rem; }
 tr.difference td { background: var(--difference); }
-.value-list { overflow-wrap: anywhere; font: .8rem/1.65 var(--mono); margin: .45rem 0; }
 
 .concept-diagram { max-width: 53rem; margin: 1rem 0 0; padding: .85rem; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
 .concept-diagram figcaption { font-weight: 700; margin-bottom: .55rem; }

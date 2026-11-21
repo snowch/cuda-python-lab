@@ -63,6 +63,7 @@ test("every browser case runs Python and matches its full reference", async (t) 
   await runBrowser(t, { width: 1400, height: 960 }, async (page) => {
     for (const [slug, lesson] of Object.entries(lessons)) {
       await openLesson(page, slug);
+      assert.equal(await page.locator("#input-panel, #show-launch").count(), 0, slug);
       for (const [i, fixture] of lesson.cases.entries()) {
         if (lesson.cases.length > 1) await page.locator("#case").selectOption(String(i));
         await page.getByRole("button", { name: "Run kernel" }).click();
@@ -72,6 +73,15 @@ test("every browser case runs Python and matches its full reference", async (t) 
         assert.ok(transcript.startsWith(`Kernel result\n${fixture.output} = [`), slug);
         if (slug === "softmax") assert.match(transcript, /Row sums \[1, 1\]/);
         if (slug === "transfers") assert.match(transcript, /Global reads \d+\nGlobal writes \d+/);
+        if (slug === "divergence") {
+          if (i === 0) assert.match(transcript, /out = \[-0\.25, 2,/);
+          const comparison = page.locator("#result-panel");
+          if (!(await comparison.evaluate((panel) => panel.open))) await comparison.locator("summary").click();
+          const actual = (await comparison.locator("tbody td:nth-child(2)").allTextContents()).map(Number);
+          assert.equal(actual.length, 64);
+          assert.equal(actual.slice(0, 32).filter((value) => value < 0).length, i === 0 ? 16 : 32);
+          assert.equal(actual.slice(32).filter((value) => value < 0).length, i === 0 ? 16 : 0);
+        }
         if (slug === "gather") {
           assert.deepEqual(await page.locator("#warp-output td:nth-child(3)").allTextContents(), ["1", i === 0 ? "1" : "8", "1"]);
         }
@@ -259,10 +269,7 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     await editor.waitFor();
     assert.equal(await root.getAttribute("data-theme"), "light");
 
-    await editorTools(page).click();
-    await page.getByRole("button", { name: "Show browser setup" }).click();
-    assert.equal(await page.locator("#input-panel").evaluate((panel) => panel.open), true);
-    assert.match(await page.locator("#input-output").textContent(), /starts with out = \[0\] and runs the function once/);
+    assert.match(await page.locator("#prediction-prompt").textContent(), /starts with out = \[0\]/);
     await editorTools(page).click();
     await page.getByRole("button", { name: "Show target line" }).click();
     assert.equal(await editor.evaluate(() => String(window.getSelection())), "42");
