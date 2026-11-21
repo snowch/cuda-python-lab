@@ -142,17 +142,18 @@ export const lessons = {
   "first-value": {
     sourceTarget: "42",
     title: "Write your first GPU value",
-    summary: "Change one number in a GPU function and see what it writes.",
+    summary: "Launch one GPU thread, write one value, and copy the result back to the CPU.",
     intro: [
       "A GPU (graphics processing unit) can run the same function many times in parallel. A function written to run on the GPU is called a kernel. Each run of that function does the work of one GPU thread.",
-      "Numba CUDA lets you write GPU functions in Python. The line @cuda.jit marks this function as a GPU kernel. This exercise uses one GPU thread. The starter reference is the expected result for the original code.",
+      "Numba CUDA lets you write GPU functions in Python. The line @cuda.jit marks this function as a GPU kernel. The CPU program, called the host, launches the kernel and copies the result back from the GPU, called the device. The starter reference is the expected result for the original code.",
     ],
     predict: "Each run starts with out = [0]. The starter code assigns 42 to out[0]. If you change 42 to 73, what will the Console show for out?",
     exercise: [
       "Click Run kernel with the starter code. Under Kernel result in the Console, find out = [42].",
+      "In Host Python · launch and readback, main() creates a CPU array with one float32 value, a 32-bit floating-point number. Find kernel[1, 1](out). The first 1 asks for one block, a group of GPU threads. The second asks for one thread in that block. Which line copies the result back before main() prints it?",
       "In the Python editor, replace 42 with 73 in out[0] = 42. Click Run kernel again and check the new value of out in the Console.",
     ],
-    explain: "The thread writes the number in the assignment to out[0]. After the edit it writes 73, so the Console reports a difference from the original expected value of 42.",
+    explain: "The thread writes to the GPU array. The original CPU array still holds zero. In main(), copy_to_host() waits for the GPU result and returns a CPU array. After your edit, that result is 73, so the Console reports a difference from the original expected value of 42.",
     native: "After running the browser experiment, download the notebook and run it on an NVIDIA GPU. In Check the output, find cuda.to_device, which creates and copies the array to the GPU, and copy_to_host, which brings the result back to Python. Check the printed value of out.",
     evidence: [],
     reference: 'np.array([42], dtype=np.float32)',
@@ -163,7 +164,7 @@ export const lessons = {
     title: "One thread, one element",
     summary: "Map threads to array indices and skip threads beyond the end of the input.",
     intro: [
-      "A launch starts a group of GPU threads. CUDA organizes the threads into groups called blocks. Each thread has a number within its block. Here one number identifies each block and each thread within it. cuda.grid(1) returns the thread’s global index, its unique number across all blocks. Multiply the block number by the number of threads per block, then add the thread’s number within the block. Block numbers, thread numbers, and array indices start at zero.",
+      "A launch can start several blocks. Each thread has a number within its block. Here one number identifies each block and each thread within it. cuda.grid(1) returns the thread’s global index, its unique number across all blocks. Multiply the block number by the number of threads per block, then add the thread’s number within the block. Block numbers, thread numbers, and array indices start at zero.",
       "The browser starts enough whole blocks to cover the array. In vector-add.py, i is the number returned by cuda.grid(1) and n is the array length. The test i < n skips any thread whose index is outside the array. Each read or write that the browser records is an event in the thread trace.",
     ],
     predict: "In the 33-element case with 32 threads per block, which block and thread write index 32? How many threads in that block skip the write?",
@@ -226,7 +227,7 @@ export const lessons = {
     title: "See how threads group memory accesses",
     summary: "Use a matrix transpose to see why neighboring threads can read nearby addresses and write far apart.",
     intro: [
-      "A warp is a group of up to 32 threads in a block. A thread’s position in its warp is called a lane. In a two-dimensional block, lanes are numbered across x before moving to the next y. The kernel uses x for the column and y for the row.",
+      "A streaming multiprocessor (SM) executes the threads of a block in groups called warps. Each warp has 32 positions called lanes. A partial warp leaves some lanes unused. In a two-dimensional block, lanes are numbered across x before moving to the next y. The kernel uses x for the column and y for the row.",
       "A transpose swaps the row and column of every value. The arrays here store each row together. Adjacent lanes read consecutive columns of values[row, col] and write to different rows of out[col, row].",
       "The address model divides each array into 32-byte groups called sectors. One sector holds eight float32 values. Word offset counts four-byte values from the start of an array. The model assumes the start of each array is a sector boundary.",
     ],

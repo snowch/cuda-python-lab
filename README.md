@@ -2,7 +2,7 @@
 
 CUDA Python Lab teaches GPU programming to Python developers through seventeen browser labs that require no physical GPU. It follows the predict, run, and explain format of [CUDA C++ Lab](https://snowch.github.io/cuda-cpp-lab/v2/).
 
-The workbench follows CUDA C++ Lab’s layout and editor tools. Edit Python kernels with CodeMirror, run or stop a case, and use the console to inspect `print()` messages, kernel results, and execution errors. The workbench runs your current source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Appendix A covers optional GPU verification and profiling with exported notebooks.
+Edit Python kernels with CodeMirror, run or stop a case, and use the console to inspect `print()` messages, kernel results, and execution errors. The workbench runs your current source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Diagrams and captioned video walkthroughs connect the experiments to GPU hardware.
 
 ## Start the course
 
@@ -27,7 +27,9 @@ Use `npm run build` to produce the static site in `dist/`. Serve that directory 
 
 ## Run on a GPU
 
-Each lesson can export a notebook with your kernel, an independent NumPy check, CUDA event timing, and a host round-trip measurement. Enable an NVIDIA GPU runtime before running the notebook.
+Open **Host Python · launch and readback** to see how `main()` prepares the selected case, launches the kernel, and copies the result back. **Download complete CUDA Python program** combines that host code with your current kernel. Run the file with Python in an NVIDIA GPU environment with NumPy and Numba CUDA installed.
+
+Each lesson can also export a notebook with your kernel, an independent NumPy check, CUDA event timing, and a host round-trip measurement. Enable an NVIDIA GPU runtime before running the notebook.
 
 **Appendix A** includes an occupancy worksheet and a downloadable archive. Debug global memory and shared-memory hazards with Compute Sanitizer. Profile streams, transpose, and Numba–PyTorch interoperability. Complete the capstone by comparing a two-launch baseline with a fused kernel across workloads and block sizes. [Native investigations](src/gpu/INVESTIGATIONS.md)
 
@@ -50,4 +52,6 @@ python scripts/check_native.py
 python scripts/check_native.py --ptx
 ```
 
-The browser tests exercise every starter case and cover the mobile edit, trace, restore, and download flow. Native simulator checks cover exported notebook setup and correctness. Benchmark timings and PyTorch interop require an NVIDIA GPU.
+The browser tests exercise every starter case and cover the mobile edit, trace, restore, and download flow. Native simulator checks cover exported notebooks and complete programs. Benchmark timings and PyTorch interop require an NVIDIA GPU.
+
+Walkthrough scripts and transcripts are in `src/walkthroughs.mjs`. The site build uses the checked-in media. To regenerate the videos, run `node scripts/build_walkthroughs.mjs /path/to/en_US-ljspeech-medium.onnx` with Chromium, FFmpeg, uv, and the [Piper voice model and its JSON config](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/ljspeech/medium). The narration uses a synthetic voice.

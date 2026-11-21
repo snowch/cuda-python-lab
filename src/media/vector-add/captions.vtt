@@ -1,0 +1,47 @@
+WEBVTT
+
+00:00:00.180 --> 00:00:05.203
+With thirty-three elements and thirty-two
+threads per block, main launches two
+
+00:00:05.203 --> 00:00:05.660
+blocks.
+
+00:00:05.840 --> 00:00:10.066
+Each thread needs to work out which array
+index belongs to it.
+
+00:00:10.740 --> 00:00:14.374
+CUDA grid of one returns the index across
+all blocks.
+
+00:00:14.554 --> 00:00:18.629
+Multiply the block number by the threads
+per block and add the thread number.
+
+00:00:18.809 --> 00:00:22.385
+Block one, thread zero gets index
+thirty-two.
+
+00:00:23.060 --> 00:00:26.439
+Index thirty-two is the last valid
+position.
+
+00:00:26.619 --> 00:00:30.496
+The next thread gets thirty-three and skips
+the read and write.
+
+00:00:30.676 --> 00:00:35.343
+In the thread inspector, compare thread
+zero and thread one of block one.
+
+00:00:36.020 --> 00:00:38.655
+Now select sixteen threads per block.
+
+00:00:38.835 --> 00:00:42.435
+Block two, thread zero writes the same
+array position.
+
+00:00:42.615 --> 00:00:46.539
+Use last traced writer in the console
+comparison to check it.

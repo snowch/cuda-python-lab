@@ -12,9 +12,10 @@ for (const directory of ["", "runtime/", "gpu/"]) {
   await mkdir(new URL(directory, dist), { recursive: true });
 }
 await Promise.all(
-  ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "notebook.mjs", "worker.js", "simulator.py", "browser_adapter.py"]
+  ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs", "worker.js", "simulator.py", "browser_adapter.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
+await cp(new URL("media/", src), new URL("media/", dist), { recursive: true });
 const editorBuild = await build({
   absWorkingDir: fileURLToPath(root),
   entryPoints: [fileURLToPath(new URL("editor.mjs", src))],

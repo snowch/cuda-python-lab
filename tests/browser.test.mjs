@@ -6,11 +6,13 @@ import { test } from "node:test";
 import { chromium } from "playwright-core";
 import { unzipSync } from "fflate";
 import { lessons } from "../src/course.mjs";
+import { walkthroughs } from "../src/walkthroughs.mjs";
 
 const dist = new URL("../dist/", import.meta.url);
 const mime = new Map([
   ["html", "text/html"], ["css", "text/css"], ["js", "text/javascript"],
   ["mjs", "text/javascript"], ["wasm", "application/wasm"], ["json", "application/json"],
+  ["mp4", "video/mp4"], ["vtt", "text/vtt"], ["webp", "image/webp"],
 ]);
 
 async function runBrowser(t, viewport, exercise) {
@@ -92,6 +94,8 @@ test("every browser case runs Python and matches its full reference", async (t) 
         }
         if (slug === "first-value") {
           assert.equal(await page.locator("#threads, #trace-output, #warp-output").count(), 0);
+          assert.match(await page.getByRole("region", { name: "Host Python source" }).textContent(),
+            /kernel\[1, 1\]\(out\)\n    result = out\.copy_to_host\(\)/);
           await page.locator("#result-panel > summary").click();
           assert.deepEqual(await page.locator("#result-output th").allTextContents(),
             ["Index", "Actual", "Starter reference"]);
@@ -101,6 +105,34 @@ test("every browser case runs Python and matches its full reference", async (t) 
           assert.equal(await page.locator("#threads button").first().textContent(), "(0,0)");
         }
       }
+    }
+  });
+});
+
+test("architecture walkthroughs play with captions and expose transcripts by keyboard", async (t) => {
+  await runBrowser(t, { width: 390, height: 850 }, async (page) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    for (const [slug, walkthrough] of Object.entries(walkthroughs)) {
+      await openLesson(page, slug);
+      await page.locator(".walkthrough > summary").press("Space");
+      const video = page.locator(".walkthrough video");
+      assert.ok(await video.isVisible(), slug);
+      assert.equal(await video.getAttribute("aria-label"), walkthrough.title);
+      await video.evaluate(async (player) => {
+        player.muted = true;
+        await player.play();
+      });
+      await page.waitForFunction(() => {
+        const player = document.querySelector(".walkthrough video");
+        return player.currentTime > 0 && player.textTracks[0]?.cues?.length > 0;
+      });
+      assert.ok(await video.evaluate((player) => player.duration > 20));
+      await video.evaluate((player) => player.pause());
+      await page.locator(".walkthrough-transcript > summary").press("Space");
+      for (const stage of walkthrough.stages) {
+        assert.ok(await page.getByRole("heading", { name: stage.title, exact: true }).isVisible(), slug);
+      }
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, slug);
     }
   });
 });
@@ -142,6 +174,20 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.ok(notebook.cells.some((cell) => cell.source === modified));
     assert.ok(notebook.cells.some((cell) => cell.source.includes("Edited kernel ran.")));
 
+    await page.locator("#host-code summary").press("Space");
+    const hostSource = page.getByRole("region", { name: "Host Python source" });
+    assert.match(await hostSource.textContent(), /kernel\[2, 32\]\(a, b, out, 33\)/);
+    await page.locator("#case").selectOption("1");
+    const host = await hostSource.textContent();
+    assert.match(host, /kernel\[3, 16\]\(a, b, out, 33\)/);
+    const [program] = await Promise.all([
+      page.waitForEvent("download"), page.getByRole("button", { name: "Download complete CUDA Python program" }).click(),
+    ]);
+    assert.equal(program.suggestedFilename(), "vector-add-cuda.py");
+    const programSource = await readFile(await program.path(), "utf8");
+    assert.ok(programSource.includes(modified.trimEnd()));
+    assert.ok(programSource.endsWith(host));
+
     await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
     assert.equal(await readSource(editor), starter);
@@ -154,6 +200,7 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     assert.equal(await readSource(editor), modified);
     assert.equal(await page.getByRole("textbox", { name: "Predict before you run" }).inputValue(), "Block 1, lane 0");
     await page.getByRole("button", { name: "Completed" }).waitFor();
+    assert.equal(await page.locator("#case").inputValue(), "1");
 
     await page.getByRole("link", { name: "Appendix A" }).first().click();
     const [archive] = await Promise.all([

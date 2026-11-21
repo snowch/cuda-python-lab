@@ -1,17 +1,40 @@
 export const diagrams = {
+  "first-value": `
+    <figure class="concept-diagram">
+      <figcaption>Where does each line of the starter run?</figcaption>
+      <div class="hardware-path">
+        <section><h3>CPU · host</h3><p><code>main()</code> launches the kernel and prints the returned array.</p><p>CPU memory holds <code>out_host = [0]</code>.</p></section>
+        <div class="hardware-links"><span class="to-device">Upload and launch</span><span class="to-host">Copy result back</span></div>
+        <section><h3>GPU · device</h3>
+          <div class="hardware-part"><strong>Compute chip</strong><p>A streaming multiprocessor (SM) runs the thread.</p></div>
+          <div class="hardware-part"><strong>Device memory</strong><p>The thread writes <code>out[0] = 42</code> here.</p></div>
+        </section>
+      </div>
+      <p>The diagram shows where the code runs and where each array lives. The GPU can have many SMs. CUDA assigns blocks to the available SMs.</p>
+    </figure>`,
   "vector-add": `
     <figure class="concept-diagram">
       <figcaption>Who writes to the array when n is 33?</figcaption>
-      <div class="table-scroll" tabindex="0" role="region" aria-label="Thread coverage for 33 elements">
+      <div class="block-coverage">
+        <div><strong>Block 0</strong><span>Indices 0–31 · All 32 threads write</span></div>
+        <div class="coverage-lanes all-write" aria-hidden="true"></div>
+        <div><strong>Block 1</strong><span>Index 32 writes · Indices 33–63 skip</span></div>
+        <div class="coverage-lanes one-writes" aria-hidden="true"></div>
+      </div>
+      <p>Each slot represents one thread. Thread 0 in Block 1 gets the last valid index, 32.</p>
+    </figure>`,
+  divergence: `
+    <figure class="concept-diagram">
+      <figcaption>Which warps contain both paths?</figcaption>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Path counts by warp">
         <table>
-          <thead><tr><th scope="col">Block</th><th scope="col">Global indices</th><th scope="col">Threads that pass i &lt; 33</th></tr></thead>
+          <thead><tr><th scope="col">Case</th><th scope="col">Block 0 · 32 lanes</th><th scope="col">Block 1 · 32 lanes</th></tr></thead>
           <tbody>
-            <tr><th scope="row">0</th><td>0–31</td><td>All 32</td></tr>
-            <tr><th scope="row">1</th><td>32–63</td><td>Thread 0</td></tr>
+            <tr><th scope="row">Alternating signs</th><td>16 negative, 16 positive</td><td>16 negative, 16 positive</td></tr>
+            <tr><th scope="row">Grouped signs</th><td>32 negative</td><td>32 positive</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Thread 0 in Block 1 writes out[32]. The other 31 threads in Block 1 skip the array accesses.</p>
     </figure>`,
   coalescing: `
     <figure class="concept-diagram">
@@ -35,7 +58,7 @@ export const diagrams = {
         <li><strong>Distance 2</strong><span>Two partial sums<br>[16, 20]</span></li>
         <li><strong>Distance 1</strong><span>One sum<br>36 → out[0]</span></li>
       </ol>
-      <p>Every step waits for the previous writes at a block barrier. At distance 4, Thread 1 adds its 2 to the 6 in scratch[5].</p>
+      <p>Each block gets its own scratch array in shared memory on the SM that runs it. At distance 4, the barrier lets Thread 1 read the 6 that Thread 5 wrote to scratch[5].</p>
     </figure>`,
   stencil: `
     <figure class="concept-diagram">

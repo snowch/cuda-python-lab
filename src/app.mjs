@@ -1,7 +1,9 @@
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountKernelEditor } from "./editor.mjs";
+import { hostProgram, standaloneProgram } from "./host-program.mjs";
 import { makeNotebook } from "./notebook.mjs";
+import { walkthroughs } from "./walkthroughs.mjs";
 
 const order = modules.flatMap((module) => module.lessons);
 const main = document.querySelector("main");
@@ -97,7 +99,8 @@ function showCourse() {
     <p class="lead">Learn GPU programming in Python without a physical GPU. Edit functions that run on a GPU, check their output, and follow what individual threads do.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
-      <p>You’ll need to know how to read Python functions, loops, and array indices. The browser runs your Python and models GPU behavior. Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
+      <p>You’ll need to know how to read Python functions, loops, and array indices. The browser runs your Python and models GPU behavior. Each lesson includes a downloadable CUDA Python program, and the core labs use diagrams and recordings to show how CUDA maps code to hardware.</p>
+      <p>Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
       <p>The browser labs cover kernel design and correctness. <a href="#gpu">Appendix A</a> explains GPU debugging and profiling and provides a hardware capstone.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
     </section>
@@ -227,6 +230,7 @@ function showLesson(slug) {
   const firstLesson = index === 0;
   const hasTrace = lesson.evidence.includes("trace");
   const hasWarp = lesson.evidence.includes("warp");
+  const walkthrough = walkthroughs[slug];
   const module = modules.find((part) => part.lessons.includes(slug));
   main.innerHTML = `<article>
     <header class="lesson-heading">
@@ -294,12 +298,28 @@ function showLesson(slug) {
         <section class="evidence"><h3>Selected thread trace</h3><div id="trace-output"></div></section>
         ${hasWarp ? '<section class="evidence"><h3>Warp address model</h3><div id="warp-output"></div></section>' : ""}
       </div>` : ""}
+      <details id="host-code" class="workbench-card evidence"${firstLesson ? " open" : ""}>
+        <summary>Host Python · launch and readback</summary>
+        <p class="trace-note">Run kernel models the selected case in the browser. The downloaded program combines this CPU code with your current kernel for an NVIDIA GPU with NumPy and Numba CUDA.</p>
+        <pre tabindex="0" role="region" aria-label="Host Python source"><code id="host-source"></code></pre>
+        <button id="download-program" class="button" type="button">Download complete CUDA Python program</button>
+      </details>
     </section>
 
     <section class="reading lesson-explanation">
       <h2>Explain the result</h2>
       <p>${escape(lesson.explain)}</p>
       ${diagrams[slug] ?? ""}
+      ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details">
+        <summary>Video · ${escape(walkthrough.title)}</summary>
+        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="./media/${slug}/poster.webp">
+          <source src="./media/${slug}/walkthrough.mp4" type="video/mp4">
+          <track src="./media/${slug}/captions.vtt" kind="captions" srclang="en" label="English" default>
+        </video>
+        <details class="walkthrough-transcript"><summary>Read the transcript</summary>
+          ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
+        </details>
+      </details>` : ""}
     </section>
 
     <details class="lesson-card native-card">
@@ -317,6 +337,9 @@ function showLesson(slug) {
     </footer>
   </article>`;
   const find = (id) => main.querySelector(`#${id}`);
+  find("walkthrough")?.addEventListener("toggle", ({ currentTarget }) => {
+    if (!currentTarget.open) currentTarget.querySelector("video").pause();
+  });
   model = {
     slug, lesson, root: main.querySelector("article"),
     input: find("case"), blockInput: find("block"), block: 0, thread: 0, result: null,
@@ -381,6 +404,7 @@ function showLesson(slug) {
   function loadCase() {
     model.fixture = lesson.cases[Number(model.input.value)];
     state.cases[slug] = Number(model.input.value);
+    find("host-source").textContent = hostProgram(model.fixture);
     model.block = 0;
     model.thread = 0;
     const { blocks, threads } = model.fixture;
@@ -427,6 +451,9 @@ function showLesson(slug) {
   });
   find("download-source").addEventListener("click", () => {
     download(`${slug}.py`, model.editor.source, "text/x-python");
+  });
+  find("download-program").addEventListener("click", () => {
+    download(`${slug}-cuda.py`, standaloneProgram(model.editor.source, model.fixture), "text/x-python");
   });
   find("complete").addEventListener("click", (event) => {
     state.completed[slug] = !state.completed[slug];

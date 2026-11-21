@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { lessons } from "../src/course.mjs";
+import { standaloneProgram } from "../src/host-program.mjs";
 import { makeNotebook } from "../src/notebook.mjs";
 
 const suite = await Promise.all(Object.entries(lessons).map(async ([slug, lesson]) => {
@@ -9,6 +10,7 @@ const suite = await Promise.all(Object.entries(lessons).map(async ([slug, lesson
     cases: lesson.cases.map((fixture) => ({
       fixture,
       notebook: makeNotebook(lesson, source, fixture),
+      program: standaloneProgram(source, fixture),
     })),
   };
 }));

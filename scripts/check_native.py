@@ -1,6 +1,7 @@
-"""Exercise exported notebooks with CUDASIM, or compile the kernels to PTX."""
+"""Exercise exported notebooks and programs with CUDASIM, or compile kernels to PTX."""
 
 import argparse
+import ast
 import contextlib
 import io
 import json
@@ -24,6 +25,19 @@ def validate_notebook(case):
     np.testing.assert_allclose(
         namespace["actual"].ravel(), case["fixture"]["expected"], rtol=1e-5, atol=1e-6,
     )
+
+
+def validate_program(case):
+    import numpy as np
+
+    with contextlib.redirect_stdout(io.StringIO()) as console:
+        exec(case["program"], {"__name__": "__main__"})
+    label, result = console.getvalue().strip().split(" = ", 1)
+    fixture = case["fixture"]
+    assert label == fixture["output"]
+    actual = np.asarray(ast.literal_eval(result))
+    assert actual.shape == tuple(fixture["buffers"][label]["shape"])
+    np.testing.assert_allclose(actual.ravel(), fixture["expected"], rtol=1e-5, atol=1e-6)
 
 
 def compile_kernel(source, fixture):
@@ -109,10 +123,11 @@ def main():
         else:
             for case in lesson["cases"]:
                 validate_notebook(case)
+                validate_program(case)
                 checked += 1
     validate_investigations()
     additional = "native tile, fusion, and debugging kernels" if args.ptx else "native tile, stream, fusion, and debugging examples"
-    print(f"Verified {checked} {'PTX kernels' if args.ptx else 'exported notebook cases'} and {additional}.")
+    print(f"Verified {checked} {'PTX kernels' if args.ptx else 'cases in both notebook and program exports'} and {additional}.")
 
 
 if __name__ == "__main__":

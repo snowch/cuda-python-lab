@@ -1,0 +1,49 @@
+WEBVTT
+
+00:00:00.180 --> 00:00:01.991
+Main runs on the CPU.
+
+00:00:02.171 --> 00:00:06.235
+It starts with a one element NumPy array
+containing zero.
+
+00:00:06.415 --> 00:00:11.256
+To device copies that value into a separate
+array in GPU memory.
+
+00:00:11.940 --> 00:00:15.400
+The first one in the square brackets
+requests one block.
+
+00:00:15.580 --> 00:00:18.401
+The second one requests one thread per
+block.
+
+00:00:18.581 --> 00:00:24.536
+A streaming multiprocessor, or S M, is a
+part of the GPU chip that executes the
+
+00:00:24.536 --> 00:00:24.908
+thread.
+
+00:00:25.580 --> 00:00:28.622
+The thread writes forty-two to the GPU
+array.
+
+00:00:28.802 --> 00:00:31.995
+The original CPU array still contains zero.
+
+00:00:32.175 --> 00:00:35.541
+Which line makes the new value available on
+the CPU?
+
+00:00:36.220 --> 00:00:40.144
+Copy to host waits for the result and
+returns a CPU array.
+
+00:00:40.324 --> 00:00:42.298
+Main can now print forty-two.
+
+00:00:42.478 --> 00:00:47.842
+Change the assignment to seventy-three and
+trace the same steps with the new value.
