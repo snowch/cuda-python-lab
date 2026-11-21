@@ -13,7 +13,6 @@ const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
 let activeRunner;
-let compilerDefault;
 let saved;
 
 try {
@@ -23,15 +22,6 @@ try {
 }
 const state = { drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
 
-function compilerEndpoint(value) {
-  if (!value) return null;
-  try {
-    const url = new URL(value, location.href);
-    return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password ? url.href : null;
-  } catch {
-    return null;
-  }
-}
 function persist() {
   try {
     localStorage.setItem(storageKey, JSON.stringify(state));
@@ -124,9 +114,9 @@ function showGpu() {
     <p class="lead">Use an NVIDIA GPU on your computer or through a hosted notebook service. Start with the lab notebook, then use the investigations to measure and debug GPU work.</p>
     <section class="reading">
       <h2>Run with GPGPU-Sim in the browser</h2>
-      <p><strong>Run</strong> executes your Python host code in the browser. It sends the CUDA kernel and argument types to the CPU compiler service, then runs the compiled GPU instructions (PTX) in GPGPU-Sim. Inspect the printed values in Console and the PTX under <strong>Inspect compiled PTX</strong>.</p>
-      <p>If the site asks for a compiler service URL, run the service on Linux or use the URL supplied by your host. The CUDA examples support small launches and numeric arrays. Use <code>print()</code> in <code>main()</code> for browser output and the GPU notebook for print calls inside a kernel.</p>
-      <p><a href="https://github.com/snowch/cuda-python-lab#run-in-the-browser">Compiler setup</a> · <a href="./runtime/gpgpu-sim-LICENSE.txt">GPGPU-Sim licences</a> · <a href="./runtime/pyodide-LICENSE.txt">Pyodide licence</a></p>
+      <p><strong>Run</strong> executes your full Python program in the browser. Numba and LLVM compile the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
+      <p>Use <code>print()</code> in <code>main()</code> to show values in the Console. Use the GPU notebook for print calls inside kernels and for hardware timing.</p>
+      <p><a href="./runtime/gpgpu-sim-LICENSE.txt">GPGPU-Sim and LLVM licences</a> · <a href="./runtime/pyodide-LICENSE.txt">Pyodide licence</a></p>
     </section>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
@@ -258,11 +248,6 @@ function showLesson(slug) {
               <button class="button" id="download-source" type="button">Export .py</button>
             </div>
             <p class="editor-note" id="target-note" role="status" hidden></p>
-            <form id="compiler-form" class="compiler-form">
-              <label for="compiler-url">Compiler service URL</label>
-              <div class="actions"><input id="compiler-url" type="url" inputmode="url" placeholder="https://compiler.example/api/compile" autocapitalize="off" spellcheck="false"><button class="button" type="submit">Save compiler</button></div>
-              <p class="editor-note" id="compiler-note" role="status"></p>
-            </form>
           </details>
         </div>
         <div id="source" class="codebox"></div>
@@ -285,7 +270,6 @@ function showLesson(slug) {
         <p class="editor-note" id="run-status" role="status"></p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
-        <p class="editor-note" id="compiler-path"></p>
       </section>
     </section>
 
@@ -321,8 +305,6 @@ function showLesson(slug) {
     if (!currentTarget.open) currentTarget.querySelector("video").pause();
   });
   const input = find("case");
-  const compilerInput = find("compiler-url");
-  const compilerNote = find("compiler-note");
   const draftNote = find("draft-note");
   const targetNote = find("target-note");
   const programDrafts = state.programs[slug] ??= {};
@@ -365,42 +347,13 @@ function showLesson(slug) {
   }
 
   const editor = mountProgramEditor(find("source"), caseSource(), () => saveEditor(), () => runner.start());
-  const endpoint = () => compilerEndpoint(state.compilerUrl) ?? compilerDefault;
   const runner = attachRunner(main, {
     getSource: () => editor.source,
-    getEndpoint: endpoint,
     filename: `${slug}.py`,
-    configure() {
-      find("editor-tools").open = true;
-      compilerInput.focus();
-    },
   });
   activeRunner = runner;
   activeEditor = editor;
   updateRestore(editor.source === starter ? "" : "A saved edit is open.");
-
-  function updateCompiler() {
-    compilerInput.value = endpoint() ?? "";
-    find("compiler-path").textContent = endpoint()
-      ? "Run sends the kernel and argument types to the compiler. GPGPU-Sim executes the compiled PTX in the browser."
-      : "Set a compiler service URL in Editor tools to run in the browser.";
-  }
-  updateCompiler();
-  find("compiler-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const value = compilerInput.value.trim();
-    const url = compilerEndpoint(value);
-    if (value && !url) {
-      compilerNote.textContent = "Enter the HTTP or HTTPS URL of the compiler endpoint.";
-      return;
-    }
-    if (url) state.compilerUrl = url;
-    else delete state.compilerUrl;
-    persist();
-    runner.reset();
-    updateCompiler();
-    compilerNote.textContent = endpoint() ? "Compiler URL saved." : "Compiler URL cleared.";
-  });
 
   find("prediction").value = state.predictions[slug] ?? "";
   find("prediction").addEventListener("input", (event) => {
@@ -497,13 +450,9 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
 });
 
 try {
-  const [response, compiler] = await Promise.all([
-    fetch("./starters.json"),
-    fetch("./compiler-config.json").then((config) => config.ok ? config.json() : null).catch(() => null),
-  ]);
+  const response = await fetch("./starters.json");
   if (!response.ok) throw new Error("Could not load the starter kernels.");
   starters = await response.json();
-  compilerDefault = compilerEndpoint(compiler?.url);
   route();
   window.addEventListener("hashchange", () => route(true));
 } catch (error) {

@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { build } from "esbuild";
-import { strToU8, zipSync } from "fflate";
+import { strToU8, unzipSync, zipSync } from "fflate";
 import { lessons, modules } from "../src/course.mjs";
 
 const root = new URL("../", import.meta.url);
@@ -17,7 +17,7 @@ for (const directory of ["", "gpu/", "runtime/"]) {
 }
 await Promise.all(
   ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs",
-    "browser-runner.mjs", "run-worker.mjs", "gpgpu-device.mjs", "runner_host.py"]
+    "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
 await cp(new URL("media/", src), new URL("media/", dist), { recursive: true });
@@ -31,10 +31,16 @@ async function checkedAsset(name, hash, compressed = false) {
   return bytes;
 }
 const numpy = lock.packages.numpy;
-const [simulatorJS, simulatorWasm, numpyWheel] = await Promise.all([
+const numbaWheel = "numba-0.68.1-cp312-cp312-pyodide_2024_0_wasm32.whl";
+const [simulatorJS, simulatorWasm, numpyWheel, numba, llvmlite, nvptxJS, nvptxWasm, binding] = await Promise.all([
   checkedAsset("gpgpu-sim.js.gz", "fdc787d13622f972f89a93ede2835d5ddba4db1992d3f7df360fe3735ad4ee7d", true),
   checkedAsset("gpgpu-sim.wasm.gz", "59fa21ccd1a1f3b4e82e51a7436c925aad72e1b8f415eabee81fbac231708919", true),
   checkedAsset(numpy.file_name, numpy.sha256),
+  checkedAsset(numbaWheel, "918de23b33f1afffefe3ac47fd01eb91579709e6bec92c343a3f182710ecd893"),
+  checkedAsset("llvmlite-ir.zip", "7c1ba9d86b05da3e6c9961662acb1ec8453901fea5f0168c6a2e6c157aa3a402"),
+  checkedAsset("nvptx.js.gz", "f92127b1a7ece5a3d2d7c60c3898747f48ab16bd826f2bd3a81b12785feeea5a", true),
+  checkedAsset("nvptx.wasm.gz", "b0f8b20f9c9500cade2afd7925235323232f12ed821de8e0c328407c2e4f2f00", true),
+  readFile(new URL("wasm-llvm-binding.py", src)),
 ]);
 const factory = "async function createModuleSimulator(";
 const instantiate = "wasmExports = await (createWasm());";
@@ -51,10 +57,17 @@ await Promise.all([
     cp(new URL(name, pyodide), new URL(name, runtime))),
   writeFile(new URL("gpgpu-sim.mjs", runtime), simulator + "\nexport default createModuleSimulator;\n"),
   writeFile(new URL("gpgpu-sim.wasm", runtime), simulatorWasm),
+  writeFile(new URL("nvptx.mjs", runtime), nvptxJS.toString() + "\nexport default createNvptxCompiler;\n"),
+  writeFile(new URL("nvptx.wasm", runtime), nvptxWasm),
+  writeFile(new URL(numbaWheel, runtime), numba),
+  writeFile(new URL("llvmlite.zip", runtime), zipSync({
+    ...unzipSync(llvmlite),
+    "llvmlite/binding/__init__.py": binding,
+  })),
   writeFile(new URL(numpy.file_name, runtime), numpyWheel),
+  cp(new URL("compiler/compile_kernel.py", root), new URL("compile_kernel.py", dist)),
   cp(new URL("pyodide-LICENSE.txt", vendor), new URL("pyodide-LICENSE.txt", runtime)),
   cp(new URL("gpgpu-sim-LICENSE.txt", vendor), new URL("gpgpu-sim-LICENSE.txt", runtime)),
-  writeFile(new URL("compiler-config.json", dist), JSON.stringify({ url: process.env.CUDA_COMPILER_URL || null })),
 ]);
 const editorBuild = await build({
   absWorkingDir: fileURLToPath(root),

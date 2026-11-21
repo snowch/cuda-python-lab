@@ -4,15 +4,33 @@ const encode = (value) => new TextEncoder().encode(value + "\0");
 const bufferLimit = 8 * 1024 * 1024;
 const maxThreads = 4096;
 
+const floatingImmediate = /(?<![\w%$])0(?:f([a-f0-9]{8})|d([a-f0-9]{16}))\b/gi;
+
 export function compatiblePtx(ptx) {
-  // Kernels are linked one module at a time. The Wasm parser accepts the
-  // global declaration and preserves double literals through their raw bits.
+  // This simulator links one module at a time and runs kernels serially.
+  // Its PTX parser accepts legacy global declarations and atomic opcodes,
+  // and preserves floating-point immediates when loaded as raw bits.
   return ptx.replace(/^\.common /gm, "")
-    .replace(/mov\.f64\s+(%fd\d+),\s*0d([a-f0-9]{8})([a-f0-9]{8});/gi,
-      (_, register, high, low) => `{ .reg .b32 %lab_literal_low, %lab_literal_high;
-        mov.b32 %lab_literal_low, 0x${low};
-        mov.b32 %lab_literal_high, 0x${high};
-        mov.b64 ${register}, {%lab_literal_low, %lab_literal_high}; }`);
+    .replace(/\batom\.relaxed\.sys\./g, "atom.")
+    .replace(/^([ \t]*)(?:(@!?%\w+)[ \t]+)?([a-z]\S*)[ \t]+([^;\n]+);/gm,
+      (line, indent, predicate, opcode, operands) => {
+        const setup = [];
+        let index = 0;
+        const values = operands.replace(floatingImmediate, (_, single, double) => {
+          const register = "%lab_literal" + index++;
+          if (single) {
+            setup.push(".reg .b32 " + register + "; mov.b32 " + register + ", 0x" + single + ";");
+          } else {
+            setup.push(".reg .b64 " + register + "; .reg .b32 " + register + "_low, " + register + "_high;",
+              "mov.b32 " + register + "_low, 0x" + double.slice(8) + ";",
+              "mov.b32 " + register + "_high, 0x" + double.slice(0, 8) + ";",
+              "mov.b64 " + register + ", {" + register + "_low, " + register + "_high};");
+          }
+          return register;
+        });
+        return setup.length ? indent + "{ " + setup.join("\n") + "\n" + indent
+          + (predicate ? predicate + " " : "") + opcode + " " + values + "; }" : line;
+      });
 }
 
 export function openDevice(wasmModule, compile, status) {

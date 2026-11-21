@@ -1,34 +1,11 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { createInterface } from "node:readline";
 import { test } from "node:test";
-import { chromium } from "playwright-core";
 import { lessons } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
+import { launchChromium, serveBuild } from "./browser-support.mjs";
 
-const root = new URL("../", import.meta.url);
 const displayedRun = /Ran in GPGPU-Sim|Execution stopped|too long|Could not|without a CUDA launch/;
-
-async function startCompiler(t) {
-  const compiler = spawn(process.env.CUDA_COMPILER_PYTHON || "python3", ["compiler/server.py", "--port", "0"], {
-    cwd: root,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  t.after(() => compiler.kill());
-  let errors = "";
-  compiler.stderr.on("data", (data) => { errors = (errors + data.toString()).slice(-4000); });
-  return new Promise((resolve, reject) => {
-    compiler.once("error", reject);
-    compiler.once("exit", (code) => reject(new Error(`Compiler stopped (${code}).\n${errors}`)));
-    const lines = createInterface({ input: compiler.stdout });
-    lines.on("line", (line) => {
-      const serverURL = line.match(/http:\/\/127\.0\.0\.1:\d+\//)?.[0];
-      if (serverURL) resolve(serverURL);
-    });
-  });
-}
 
 async function runProgram(page) {
   await page.getByRole("button", { name: "Run", exact: true }).click();
@@ -45,16 +22,18 @@ async function replaceProgram(page, code) {
 }
 
 test("Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim", { timeout: 240000 }, async (t) => {
-  const url = await startCompiler(t);
-  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-    ?? ["/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
-  const browser = await chromium.launch({ executablePath });
-  t.after(() => browser.close());
+  const url = await serveBuild(t);
+  const browser = await launchChromium(t);
   const page = await browser.newPage({ viewport: { width: 390, height: 850 } });
   await page.emulateMedia({ colorScheme: "dark" });
-  const requests = [];
-  page.on("request", (request) => {
-    if (request.method() === "POST" && request.url().endsWith("/api/compile")) requests.push(request.postDataJSON());
+  const unexpectedRequests = [];
+  await page.context().route("**/*", (route) => {
+    const request = route.request();
+    if (request.method() !== "GET" || !request.url().startsWith(url)) {
+      unexpectedRequests.push([request.method(), request.url()]);
+      return route.abort();
+    }
+    return route.continue();
   });
 
   for (const [slug, lesson] of Object.entries(lessons)) {
@@ -74,6 +53,8 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
   }
 
   await page.goto(`${url}#lesson/first-value`);
+  assert.deepEqual(await runProgram(page), { status: "Ran in GPGPU-Sim.", output: "out = [42.0]" });
+  await page.context().setOffline(true);
   const starter = await readFile(new URL("../src/kernels/first-value.py", import.meta.url), "utf8");
   const fixture = lessons["first-value"].cases[0];
   const edited = standaloneProgram(starter.replace("42", "73"), fixture)
@@ -82,10 +63,9 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
   await replaceProgram(page, edited);
   const result = await runProgram(page);
   assert.deepEqual(result, { status: "Ran in GPGPU-Sim.", output: "out = [73.0]\nThis stays in the browser [0.0]" });
-  assert.match(requests.at(-1).source, /out\[0\] = 73/);
-  assert.doesNotMatch(requests.at(-1).source, /main\(|HOST_LABEL|out_host/);
-  assert.deepEqual(Object.keys(requests.at(-1)).sort(), ["kernel", "signature", "source"]);
-  assert.match(await page.locator("#ptx-output").textContent(), /\.entry/);
+  const ptx = await page.locator("#ptx-output").textContent();
+  assert.match(ptx, /\.entry/);
+  assert.match(ptx, /\bst\.b32\s+\[%rd\d+\],\s*1116864512;/);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
 
   await replaceProgram(page, edited.replace("out[0] = 73", "out[0] = unknown(73)"));
@@ -93,6 +73,7 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
   assert.match(bad.status, /error/);
   assert.match(bad.output, /supported CUDA/);
 
+  await page.context().setOffline(false);
   await replaceProgram(page, edited.replace("def main():", "def main():\n    while True:\n        pass"));
   await page.getByRole("button", { name: "Run", exact: true }).click();
   await page.getByRole("button", { name: "Stop", exact: true }).click();
@@ -125,15 +106,5 @@ if __name__ == "__main__":
   await replaceProgram(page, twoKernels);
   assert.deepEqual(await runProgram(page), { status: "Ran in GPGPU-Sim.", output: "[6.0]" });
 
-  const rejected = await fetch(new URL("api/compile", url), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source: 'def kernel(out, setup=print("side effect")): out[0] = 1',
-      kernel: "kernel",
-      signature: [{ dtype: "float32", ndim: 1 }],
-    }),
-  });
-  assert.equal(rejected.status, 422);
-  assert.match((await rejected.json()).error, /plain positional arguments/);
+  assert.deepEqual(unexpectedRequests, []);
 });

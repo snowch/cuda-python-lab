@@ -5,7 +5,6 @@ from contextlib import redirect_stdout
 import json
 import math
 import operator
-import resource
 import re
 import sys
 
@@ -135,11 +134,12 @@ def inspect_request(request):
     return constants, kernel, specs
 
 
-def compile_request(request):
+def prepare_kernel(request, builtins=BUILTINS):
     constants, kernel, specs = inspect_request(request)
     from numba import cuda, types
 
-    namespace = {"__name__": "lab_kernel", "__builtins__": BUILTINS, "math": math, "cuda": cuda,
+    # Numba resolves kernel globals during typing, including device-specific builtins.
+    namespace = {"__name__": "lab_kernel", "__builtins__": builtins, **builtins, "math": math, "cuda": cuda,
                  **{name: getattr(types, name) for name in DTYPES if name != "bool"}, **constants}
     module = ast.Module(body=[kernel], type_ignores=[])
     exec(compile(module, "kernel.py", "exec"), namespace)
@@ -147,7 +147,14 @@ def compile_request(request):
     for spec in specs:
         dtype = types.boolean if spec["dtype"] == "bool" else getattr(types, spec["dtype"])
         signature.append(types.Array(dtype, spec["ndim"], "C") if spec["ndim"] else dtype)
-    ptx, _ = cuda.compile_ptx(namespace[kernel.name], tuple(signature), cc=(7, 0))
+    return namespace[kernel.name], tuple(signature)
+
+
+def compile_request(request):
+    from numba import cuda
+
+    function, signature = prepare_kernel(request)
+    ptx, _ = cuda.compile_ptx(function, signature, cc=(7, 0))
     entry = re.search(r"\.entry\s+(\w+)\s*\(", ptx)
     if not entry:
         raise RuntimeError("Numba did not return a kernel entry point.")
@@ -155,6 +162,8 @@ def compile_request(request):
 
 
 def main():
+    import resource
+
     resource.setrlimit(resource.RLIMIT_AS, (2 << 30, 2 << 30))
     resource.setrlimit(resource.RLIMIT_CPU, (8, 9))
     resource.setrlimit(resource.RLIMIT_FSIZE, (1 << 20, 1 << 20))

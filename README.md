@@ -22,23 +22,11 @@ Diagrams and captioned walkthroughs show how the programs use threads, blocks, w
 
 ## Run in the browser
 
-The browser runs the edited `main()` with Python and NumPy. A Linux CPU service uses Numba CUDA to compile each kernel to PTX. The browser runs that PTX in the WebAssembly build of GPGPU-Sim used by CUDA C++ Lab V2. Only the kernel, the numeric constants it references, and the argument types go to the compiler. Host code, array contents, and scalar arguments stay in the browser.
+Open a lesson and choose **Run**. Python and NumPy execute the edited `main()`. Numba lowers the CUDA kernel to LLVM IR, LLVM generates PTX, and GPGPU-Sim runs it. The entire run takes place in the browser. The Console shows what `main()` prints, and **Inspect compiled PTX** shows the generated instructions.
 
-On Linux with Python 3.12, Node.js 22 or later, and Bubblewrap (`bwrap`):
+The first run loads the WebAssembly toolchain. The browser runner supports the kernels, numeric arrays, and small launches used in the course. Use the GPU notebook for kernel-side `print()`, hardware timing, and NVIDIA library functions. Browser softmax uses the GPU's approximate single-precision exponential.
 
-```sh
-npm ci
-npm run build
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r compiler/requirements.txt
-.venv/bin/python compiler/server.py
-```
-
-Open [localhost:8000](http://localhost:8000) and choose **Run**. It starts the full editor program. The Console shows output from `main()`, and **Inspect compiled PTX** shows the compiler output. The service accepts the course's CUDA kernel subset. Use the notebook for GPU-side `print()`, hardware timings, and larger workloads.
-
-To connect an existing GitHub Pages deployment, run the compiler on a Linux host behind HTTPS with the site's origin allowed. For this repository, start it with `--origin https://snowch.github.io`. Set `CUDA_COMPILER_URL` to the public HTTPS `/api/compile` URL as a GitHub Actions repository variable and rebuild the Pages site. You can also enter the endpoint in **Editor tools** for the current browser. Bubblewrap runs each compile in its own network-isolated process with restricted filesystem access and resource limits.
-
-Browser assets are pinned to Pyodide 0.27.7 and the [CUDA C++ Lab V2 simulator build](https://github.com/snowch/cuda-cpp-lab/tree/88237c7df5df7a71318f23f73f813c12435a837a/assets/cuda-workbench). Their notices are included in the site's runtime assets.
+The build pins Pyodide 0.27.7, Numba 0.68.1, llvmlite IR 0.50.0, and the [CUDA C++ Lab V2 LLVM backend and simulator](https://github.com/snowch/cuda-cpp-lab/tree/88237c7df5df7a71318f23f73f813c12435a837a/assets/cuda-workbench). See [browser toolchain sources and build instructions](vendor/README.md).
 
 ## Develop and verify
 
@@ -58,8 +46,8 @@ Open [localhost:8000](http://localhost:8000). Predictions, source drafts, case s
 npx playwright-core install chromium
 npm test
 
-# With the compiler environment above installed, run the end-to-end cases.
-CUDA_COMPILER_PYTHON=.venv/bin/python npm run test:runner
+# Run the end-to-end cases against a static site with Chromium.
+npm run test:runner
 
 # Check exports with Numba's development simulator and compile PTX.
 python -m venv .venv
@@ -69,6 +57,6 @@ python scripts/check_native.py
 python scripts/check_native.py --ptx
 ```
 
-The browser tests check the editor, case selection, saved drafts, exports, and walkthroughs. Development checks exercise the exported programs and notebooks. Hardware timing and behavior such as races require an NVIDIA GPU.
+The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
 
 Walkthrough scripts and transcripts are in `src/walkthroughs.mjs`. The site build uses the checked-in media. To regenerate the videos, run `node scripts/build_walkthroughs.mjs /path/to/en_US-ljspeech-medium.onnx` with Chromium, FFmpeg, uv, and the [Piper voice model and its JSON config](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/ljspeech/medium). The narration uses a synthetic voice.

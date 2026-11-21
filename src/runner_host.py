@@ -1,10 +1,10 @@
 """Execute the editable host program in Pyodide and forward CUDA calls to GPGPU-Sim."""
 
 import ast
+import builtins
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 import json
-import sys
 from types import ModuleType, SimpleNamespace
 import traceback
 
@@ -113,7 +113,6 @@ class Kernel:
 
 def run_program(source, filename, bridge):
     console = Console()
-    previous = sys.modules.get("numba")
     try:
         tree = ast.parse(source, filename=filename)
 
@@ -131,14 +130,15 @@ def run_program(source, filename, bridge):
         )
         for name in DTYPES:
             setattr(numba, name, DTYPES[name].type)
-        sys.modules["numba"] = numba
+
+        def host_import(name, globals=None, locals=None, fromlist=(), level=0):
+            if not level and name == "numba":
+                return numba
+            return builtins.__import__(name, globals, locals, fromlist, level)
+
+        scope = {"__name__": "__main__", "__builtins__": {**vars(builtins), "__import__": host_import}}
         with redirect_stdout(console), redirect_stderr(console):
-            exec(compile(tree, filename, "exec"), {"__name__": "__main__"})
+            exec(compile(tree, filename, "exec"), scope)
         return json.dumps({"stdout": console.result()})
     except Exception:
         return json.dumps({"stdout": console.result(), "error": traceback.format_exc(limit=8)[-4500:]})
-    finally:
-        if previous is None:
-            sys.modules.pop("numba", None)
-        else:
-            sys.modules["numba"] = previous

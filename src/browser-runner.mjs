@@ -1,6 +1,6 @@
 const runTimeout = 45000;
 
-export function attachRunner(root, { getSource, getEndpoint, filename, configure }) {
+export function attachRunner(root, { getSource, filename }) {
   const run = root.querySelector("#run");
   const stop = root.querySelector("#stop");
   const consoleOutput = root.querySelector("#run-output");
@@ -45,12 +45,6 @@ export function attachRunner(root, { getSource, getEndpoint, filename, configure
 
   function start() {
     if (busy) return;
-    const endpoint = getEndpoint();
-    if (!endpoint) {
-      setStatus("Set a compiler URL to run this program in the browser.");
-      configure();
-      return;
-    }
     resetOutput();
     setBusy(true);
     setStatus("Starting…");
@@ -82,7 +76,7 @@ export function attachRunner(root, { getSource, getEndpoint, filename, configure
         cancel();
         setStatus("The run took too long. Check the launch size and loops, then try again.", true);
       }, runTimeout);
-      running.postMessage({ source: getSource(), filename, endpoint });
+      running.postMessage({ source: getSource(), filename });
     } catch (error) {
       cancel();
       setStatus(error.message, true);

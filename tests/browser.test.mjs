@@ -1,41 +1,20 @@
 import assert from "node:assert/strict";
-import { createServer } from "node:http";
-import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
-import { chromium } from "playwright-core";
 import { unzipSync } from "fflate";
 import { lessons } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
 import { walkthroughs } from "../src/walkthroughs.mjs";
 
-const dist = new URL("../dist/", import.meta.url);
-const mime = new Map([
-  ["html", "text/html"], ["css", "text/css"], ["mjs", "text/javascript"], ["json", "application/json"],
-  ["mp4", "video/mp4"], ["vtt", "text/vtt"], ["webp", "image/webp"],
-]);
+import { launchChromium, serveBuild } from "./browser-support.mjs";
 
 async function runBrowser(t, viewport, exercise) {
-  const server = createServer(async (request, response) => {
-    try {
-      const path = new URL(request.url, "http://localhost").pathname.slice(1) || "index.html";
-      const contents = await readFile(new URL(path, dist));
-      response.setHeader("Content-Type", mime.get(path.split(".").at(-1)) ?? "application/octet-stream");
-      response.end(contents);
-    } catch {
-      response.writeHead(404).end();
-    }
-  });
-  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-  t.after(() => server.close());
-  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-    ?? ["/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
-  const browser = await chromium.launch({ executablePath });
-  t.after(() => browser.close());
+  const url = await serveBuild(t);
+  const browser = await launchChromium(t);
   const page = await browser.newPage({ viewport, acceptDownloads: true, permissions: ["clipboard-read", "clipboard-write"] });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`http://127.0.0.1:${server.address().port}/`);
+  await page.goto(url);
   await exercise(page);
   assert.deepEqual(errors, []);
 }
