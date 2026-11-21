@@ -1,6 +1,6 @@
 # CUDA Python GPU investigations
 
-Use Python 3.12 and an NVIDIA driver compatible with the CUDA 12 toolkit installed by the requirements. These scripts use the same kernels as the lessons where possible and allocate larger datasets for profiling.
+Use Python 3.12 and a machine with an NVIDIA GPU and a driver compatible with CUDA 12. Open a terminal in the extracted investigations directory. The scripts use larger inputs than the browser cases to measure performance.
 
 ```sh
 python -m venv .venv
@@ -15,11 +15,11 @@ python profile_workloads.py affine --sizes 256 4096 1048576 4194304
 nsys profile -o affine --trace=cuda python profile_workloads.py affine --sizes 1048576 --repeats 10
 ```
 
-All implementations compute `out = alpha * x + y` and check the full output against NumPy. The resident-kernel column measures CUDA events after allocation, and the synchronous round trip times host-to-device and device-to-host copies with a host clock. The last two columns use pinned host arrays, identical chunk sizes, and either one or two streams. Only compare those two columns to isolate the stream count. A stream orders uploads, a kernel, and a download for each chunk. Two streams may overlap work depending on the hardware, transfer sizes, and available copy engines.
+All implementations compute `out = alpha * x + y` and check the full output against NumPy. Kernel (ms) times the calculation with the arrays already on the GPU. Round trip (ms) includes copying the arrays to the GPU, running the kernel, and copying the result back. Compare 1 stream (ms) with 2 streams (ms) to isolate the stream count. These two runs use the same chunk size and pinned host buffers, which are held in place in CPU memory for transfers. A stream orders the upload, kernel, and download for each chunk. Whether two streams overlap work depends on the transfer size and the GPU’s copy engines.
 
 1. Predict which input sizes will be dominated by launch and transfer overhead.
 2. Record median times and the GPU name. In the Nsight Systems timeline find the uploads, kernel, and downloads for a chunk, then check whether any work overlaps across streams.
-3. Adjust the chunk size in `profile_affine` and explain how launch overhead and overlap change.
+3. In `profile_workloads.py`, find `chunk = max(1, ceil_div(size, 4))` in `profile_affine`. Change 4 to 8 and repeat the same command. Compare the two stream timings and check the timeline for more launches and any change in overlap.
 
 ## Explain a transpose optimization
 
@@ -28,10 +28,10 @@ python profile_workloads.py transpose --rows 2049 --cols 4093
 ncu --section MemoryWorkloadAnalysis python profile_workloads.py transpose --rows 2049 --cols 4093 --repeats 1
 ```
 
-The direct kernel reads consecutive inputs and writes strided destinations. The shared-memory variants use a 32 × 8 block; each thread handles four values in a 32 × 32 or 32 × 33 tile. The 33-word row stride changes how shared reads map to banks. Edge threads still reach the barrier.
+The direct kernel reads consecutive input values and writes to different rows of the output. The distance between those writes is the output row length. The shared-memory variants use a 32 × 8 block; each thread handles four values in a 32 × 32 or 32 × 33 tile. The 33-word row stride changes how shared reads map to banks. Edge threads still reach the barrier.
 
 1. Predict which variant has fewer global store sectors and which has fewer shared load bank conflicts.
-2. Compare effective bandwidth for square, rectangular, and uneven dimensions. Verify all outputs against NumPy before interpreting a speedup.
+2. Run the command at 2048 × 2048, 2048 × 4096, and 2049 × 4093. Compare effective GB/s after each kernel passes its NumPy check. Effective bandwidth counts one input read and one output write per element. It is calculated from the elapsed time.
 3. In Nsight Compute, identify the three kernels by name and inspect global sectors and shared-memory bank conflicts. Filter kernels or launches as needed for your version. Explain differences between the logical browser address model and measured GPU transactions.
 
 ## Integrate a stable softmax with PyTorch

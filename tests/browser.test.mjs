@@ -72,6 +72,16 @@ test("every browser case runs Python and matches its full reference", async (t) 
         assert.ok(transcript.startsWith(`Kernel result\n${fixture.output} = [`), slug);
         if (slug === "softmax") assert.match(transcript, /Row sums \[1, 1\]/);
         if (slug === "transfers") assert.match(transcript, /Global reads \d+\nGlobal writes \d+/);
+        if (slug === "first-value") {
+          assert.equal(await page.locator("#threads, #trace-output, #warp-output").count(), 0);
+          await page.locator("#result-panel > summary").click();
+          assert.deepEqual(await page.locator("#result-output th").allTextContents(),
+            ["Index", "Actual", "Starter reference"]);
+        }
+        if (slug === "coalescing" && i === 0) {
+          assert.deepEqual(await page.locator("#warp-output td:nth-child(3)").allTextContents(), ["4", "32"]);
+          assert.equal(await page.locator("#threads button").first().textContent(), "(0,0)");
+        }
       }
     }
   });
@@ -91,7 +101,7 @@ test("mobile lesson flow traces the boundary thread, persists drafts, and export
     await page.locator("#block").selectOption("1");
     await page.getByRole("button", { name: "Thread 0, trace events", exact: true }).click();
     assert.deepEqual(await page.locator("#trace-output tbody tr").last().locator("td").allTextContents(),
-      ["0", "write", "global", "out", "32", "32", "99", "–"]);
+      ["write", "out", "32", "99"]);
     assert.equal(await page.locator("#result-panel").evaluate((details) => details.open), false);
     await page.locator("#result-panel > summary").click();
     const lastComparison = page.locator("#result-output tbody tr").last();
@@ -234,9 +244,9 @@ test("the V2-style tools export Python, show console output and allow a stopped 
     assert.equal(await root.getAttribute("data-theme"), "light");
 
     await editorTools(page).click();
-    await page.getByRole("button", { name: "Show launch settings" }).click();
+    await page.getByRole("button", { name: "Show browser setup" }).click();
     assert.equal(await page.locator("#input-panel").evaluate((panel) => panel.open), true);
-    assert.match(await page.locator("#input-output").textContent(), /Blocks 1 · Threads per block 1/);
+    assert.match(await page.locator("#input-output").textContent(), /starts with out = \[0\] and runs the function once/);
     await editorTools(page).click();
     await page.getByRole("button", { name: "Show target line" }).click();
     assert.equal(await editor.evaluate(() => String(window.getSelection())), "42");

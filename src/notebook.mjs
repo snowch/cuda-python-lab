@@ -98,15 +98,15 @@ Run the cells in order to check the result and collect timings. Read the investi
       code(source),
       markdown(`## Check the output
 
-Selected case: ${fixture.label}
+The selected case is **${fixture.label}**.
 
-${edited ? "Compare the edited kernel output with the NumPy result for the starter. Differences can be expected when you change the calculation." : "The notebook compares every GPU output value with the NumPy result for the starter."}`),
+${edited ? "Compare the edited kernel output with the NumPy result for the starter. Differences can be expected when you change the calculation." : "The notebook checks every value returned by the GPU against the expected result calculated with NumPy."}`),
       code(`case = json.loads(${JSON.stringify(JSON.stringify(fixture))})\n\n${hostSetup}
 expected = ${lesson.reference}
 ${compare}
 print(actual)
 `),
-      markdown("## Measure on hardware\n\nThe output check ran the kernel once before timing. Compare Median kernel time, which uses GPU events, with Median round-trip time, which includes copies, CPU launch overhead, and waiting. Both are medians of 30 runs in milliseconds. The small case checks correctness. Use the larger workloads in Appendix A to study throughput."),
+      markdown("## Measure on hardware\n\nThe output check runs the function once before timing so the timed runs can reuse the compiled code. Compare Median kernel time, measured by the GPU, with Median round-trip time, which includes copies to and from the GPU, starting the function, and waiting for the result. Both fields report the median of 30 runs in milliseconds. For larger inputs, use the investigations in Appendix A."),
       code(measure),
       markdown(`## Optional investigation\n\n${lesson.native}`),
     ],

@@ -94,10 +94,10 @@ function updateNav(page) {
 function showCourse() {
   main.innerHTML = `<div class="resource-page">
     <h1>CUDA Python Lab</h1>
-    <p class="lead">Learn GPU programming in Python without a physical GPU. In twelve browser labs, edit kernels, check their output, and trace what individual threads do.</p>
+    <p class="lead">Learn GPU programming in Python without a physical GPU. In twelve browser labs, edit functions that run on a GPU, check their output, and follow what individual threads do.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
-      <p>You’ll need to know how to read Python functions, loops, and array indices. The labs run Python in your browser with a teaching model of CUDA.</p>
+      <p>You’ll need to know how to read Python functions, loops, and array indices. The course introduces GPU programming from the first example. The browser runs your Python and models how the GPU behaves.</p>
       <p>For optional GPU runs, <a href="#gpu">Appendix A</a> shows how to run the kernels on an NVIDIA GPU and measure performance.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
     </section>
@@ -118,14 +118,14 @@ function showGpu() {
   main.innerHTML = `<div class="resource-page">
     <p class="breadcrumb"><a href="#course">Course outline</a></p>
     <h1 class="appendix-title">Appendix A. Run on an NVIDIA GPU</h1>
-    <p class="lead">Use a local or hosted NVIDIA GPU to compile the kernels, check their output, and measure performance.</p>
+    <p class="lead">Use an NVIDIA GPU on your computer or through a hosted service. Run a notebook to check the output of your GPU function and measure how long it takes.</p>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
       <ol>
-        <li>In a lesson, open <strong>Optional GPU experiment and downloads</strong> and select <strong>Download notebook</strong>. The notebook contains your current code and the selected case. Start with the starter code to run the original NumPy check.</li>
+        <li>In a lesson, open <strong>Optional GPU experiment and downloads</strong> and select <strong>Download notebook</strong>. The notebook contains your current code and the selected case. Start with the original example to see whether its result matches the result calculated with NumPy.</li>
         <li>Open the notebook in Jupyter on a machine with an NVIDIA GPU, or upload it to a hosted notebook service and enable an NVIDIA GPU runtime.</li>
-        <li>Run the cells from top to bottom. The first cell installs the Python dependencies. If your notebook asks you to restart its Python session after installing, restart and continue with the next cell.</li>
-        <li>Find the verification result before comparing <strong>Median kernel time</strong> and <strong>Median round-trip time</strong>. The kernel time uses GPU events. The round trip includes copies, launch, and waiting.</li>
+        <li>Run the cells from top to bottom. The first cell installs the Python dependencies. If the notebook asks for a Python restart, restart the session, then continue with the cell after the installation command.</li>
+        <li>Find the output check before interpreting the timings. <strong>Median kernel time</strong> measures the function on the GPU using timestamps recorded by the GPU. <strong>Median round-trip time</strong> includes copying data to and from the GPU, starting the function, and waiting for the result.</li>
       </ol>
     </section>
     <section class="reading">
@@ -147,7 +147,7 @@ python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
     </section>
     <details class="reading resource-details">
       <summary>Browser model and architecture simulator</summary>
-      <p>The browser runs a small CUDA subset through Pyodide. It uses one fixed thread order within each barrier phase and reports logical accesses. Use GPU runs for native compilation and hardware measurements. A matching browser result cannot establish that a kernel is free of races.</p>
+      <p>Pyodide runs Python in the browser. The CUDA teaching model runs threads in one fixed order between synchronization points and records the array entries they access. Use a hardware run to compile the GPU code and measure its timing. A matching browser result does not establish that other thread orders on a GPU produce the same result.</p>
       <p>GPGPU-Sim is a separate open-source GPU architecture simulator. Its upstream guide covers setting up the simulator with a supported CUDA toolchain for architecture experiments.</p>
       <p><a href="https://github.com/gpgpu-sim/gpgpu-sim_distribution">GPGPU-Sim source and setup guide</a></p>
     </details>
@@ -167,17 +167,12 @@ function setStatus(message, kind = "") {
   status.className = `run-status ${kind}`;
 }
 
-function evidencePanel(lesson, name, title) {
-  const contents = `<div id="${name}-output"></div>`;
-  if (lesson.evidence.includes(name)) {
-    return `<section id="${name}-panel" class="evidence" hidden><h3>${title}</h3>${contents}</section>`;
-  }
-  return `<details id="${name}-panel" class="evidence" hidden><summary>${title}</summary>${contents}</details>`;
-}
-
 function showLesson(slug) {
   const lesson = lessons[slug];
   const index = order.indexOf(slug);
+  const firstLesson = index === 0;
+  const hasTrace = lesson.evidence.includes("trace");
+  const hasWarp = lesson.evidence.includes("warp");
   const module = modules.find((part) => part.lessons.includes(slug));
   main.innerHTML = `<article>
     <header class="lesson-heading">
@@ -197,7 +192,7 @@ function showLesson(slug) {
 
     <section class="reading experiment">
       <h2>Run the experiment</h2>
-      <p>The browser executes your Python code and models GPU threads and memory. The selected case supplies the arrays and launch settings.</p>
+      ${firstLesson ? "" : "<p>Case selects the arrays and how many blocks and threads the browser starts. Edit the function in Python source to change what each thread does.</p>"}
       <p id="saved-draft-note" hidden>A saved edit is open. In <strong>Editor tools</strong>, <strong>Restore starter</strong> sets your draft aside. To get it back after experimenting, restore the starter again if needed, then select <strong>Undo restore</strong>.</p>
       <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
     </section>
@@ -210,7 +205,7 @@ function showLesson(slug) {
             <details id="editor-tools"><summary>Editor tools</summary>
               <div class="actions">
                 <button class="button" id="show-target" type="button">Show target line</button>
-                <button class="button" id="show-launch" type="button">Show launch settings</button>
+                <button class="button" id="show-launch" type="button">${firstLesson ? "Show browser setup" : "Show launch settings"}</button>
                 <button class="button" id="restore" type="button">Restore starter</button>
                 <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
                 <button class="button" id="download-source" type="button">Export .py</button>
@@ -234,19 +229,19 @@ function showLesson(slug) {
           <pre id="console-output" tabindex="0" role="region" aria-label="Console transcript" hidden></pre>
           <details id="error-details" class="evidence" hidden><summary>Python traceback</summary><pre></pre></details>
           <details id="result-panel" class="evidence" hidden><summary>Compare with starter</summary><div id="result-output"></div></details>
-          <div class="inspector">
+          ${hasTrace ? `<div class="inspector">
             <div class="launch-info"><h3>Thread inspector</h3><span id="launch-shape"></span></div>
             <div class="inspect-controls"><label for="block">Block <select id="block"></select></label></div>
             <div class="thread-grid" id="threads" role="group" aria-label="Threads in selected block" aria-description="Use the arrow keys to select a thread."></div>
             <p class="inspector-note" id="inspector-note"></p>
-          </div>
-          <details id="input-panel" class="evidence"><summary>Input values and launch arguments</summary><div id="input-output"></div></details>
+          </div>` : ""}
+          <details id="input-panel" class="evidence"><summary>${firstLesson ? "What the browser prepares" : "Input values and launch arguments"}</summary><div id="input-output"></div></details>
         </section>
       </div>
-      <div class="workbench-output" id="workbench-output" hidden>
-        ${evidencePanel(lesson, "trace", "Selected thread trace")}
-        ${evidencePanel(lesson, "warp", "Warp address model")}
-      </div>
+      ${hasTrace ? `<div class="workbench-output" id="workbench-output" hidden>
+        <section class="evidence"><h3>Selected thread trace</h3><div id="trace-output"></div></section>
+        ${hasWarp ? '<section class="evidence"><h3>Warp address model</h3><div id="warp-output"></div></section>' : ""}
+      </div>` : ""}
     </section>
 
     <section class="reading lesson-explanation">
@@ -311,7 +306,7 @@ function showLesson(slug) {
       find("editor-tools").open = false;
     } else {
       const note = find("target-note");
-      note.textContent = "The starter’s target has changed in this draft.";
+      note.textContent = "The original code for this step has changed in your draft.";
       note.hidden = false;
     }
   });
@@ -343,37 +338,41 @@ function showLesson(slug) {
     model.block = 0;
     model.thread = 0;
     const { blocks, threads } = model.fixture;
-    find("launch-shape").textContent = `Blocks ${shape(blocks)} · Threads per block ${shape(threads)}`;
-    model.blockInput.innerHTML = Array.from({ length: launchCount(blocks) }, (_, i) =>
-      `<option value="${i}">${coordinate(pairFor(i, blocks), blocks)}</option>`).join("");
-    const buffers = Object.entries(model.fixture.buffers).filter(([name]) => name !== model.fixture.output);
-    find("input-output").innerHTML = buffers.map(([name, spec]) =>
-      `<p class="value-list"><strong>${escape(name)}</strong> · ${shape(spec.shape)} · ${escape(spec.dtype)}<br>${spec.values.map(pretty).join(", ")}</p>`).join("")
-      + `<p class="value-list">Blocks ${shape(blocks)} · Threads per block ${shape(threads)}</p>
-        <p class="value-list">Arguments · ${escape(model.fixture.args.map((name) => name in model.fixture.scalars
-        ? `${name}=${model.fixture.scalars[name]}` : name).join(", "))}</p>`;
+    if (hasTrace) {
+      find("launch-shape").textContent = `Blocks ${shape(blocks)} · Threads per block ${shape(threads)}`;
+      model.blockInput.innerHTML = Array.from({ length: launchCount(blocks) }, (_, i) =>
+        `<option value="${i}">${coordinate(pairFor(i, blocks), blocks)}</option>`).join("");
+    }
+    if (firstLesson) {
+      find("input-output").textContent = "The browser starts with out = [0] and runs the function once.";
+    } else {
+      const buffers = Object.entries(model.fixture.buffers).filter(([name]) => name !== model.fixture.output);
+      find("input-output").innerHTML = buffers.map(([name, spec]) =>
+        `<p class="value-list"><strong>${escape(name)}</strong> · shape ${shape(spec.shape)}<br>${spec.values.map(pretty).join(", ")}</p>`).join("")
+        + `<p class="value-list">Blocks ${shape(blocks)} · Threads per block ${shape(threads)}</p>
+          <p class="value-list">Arguments passed to kernel · ${escape(model.fixture.args.map((name) => name in model.fixture.scalars
+            ? `${name}=${model.fixture.scalars[name]}` : name).join(", "))}</p>`;
+    }
     invalidateRun();
   }
   model.input.addEventListener("change", () => {
     loadCase();
     persist();
   });
-  model.blockInput.addEventListener("change", () => {
+  model.blockInput?.addEventListener("change", () => {
     model.block = Number(model.blockInput.value);
     model.thread = 0;
     renderThreadTrace();
   });
 
-  find("threads").addEventListener("click", (event) => {
+  find("threads")?.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-thread]");
     if (!button) return;
     model.thread = Number(button.dataset.thread);
     renderThreadTrace();
     find("threads").querySelector(`[data-thread="${model.thread}"]`).focus();
-    const trace = find("trace-panel");
-    if (model.result && trace instanceof HTMLDetailsElement) trace.open = true;
   });
-  find("threads").addEventListener("keydown", (event) => {
+  find("threads")?.addEventListener("keydown", (event) => {
     if (!event.target.matches("[data-thread]")) return;
     const columns = Math.min(model.fixture.threads[0], 8);
     const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -columns, ArrowDown: columns }[event.key];
@@ -453,7 +452,6 @@ function invalidateRun(message = "") {
   model.request++;
   running?.abort();
   model.result = null;
-  model.root.querySelector("#workbench-output").hidden = true;
   model.root.querySelector("#result-panel").hidden = true;
   model.root.querySelector("#error-details").hidden = true;
   setRunBusy(false);
@@ -535,7 +533,6 @@ async function run() {
     renderThreadTrace();
     renderComparison();
     current.root.querySelector("#result-panel").hidden = false;
-    current.root.querySelector("#workbench-output").hidden = false;
     if (current.lesson.evidence.includes("input")) current.root.querySelector("#input-panel").open = true;
   } catch (error) {
     if (isCurrent()) showExecutionError(error.message);
@@ -545,13 +542,15 @@ async function run() {
 }
 
 function renderThreadTrace() {
-  const { fixture, result, block, thread, root } = model;
+  const { fixture, lesson, result, block, thread, root } = model;
+  if (!lesson.evidence.includes("trace")) return;
+  root.querySelector("#workbench-output").hidden = !result;
   const { blocks, threads } = fixture;
   const events = (result?.events ?? []).filter((event) => linearIndex(event.block, blocks) === block);
   const activity = new Set(events.map((event) => linearIndex(event.thread, threads)));
   const threadName = (i) => coordinate(pairFor(i, threads), threads);
   const threadGrid = root.querySelector("#threads");
-  const twoDimensional = threads.length > 1 && threads[1] > 1;
+  const twoDimensional = threads.length > 1;
   threadGrid.style.setProperty("--thread-columns", Math.min(threads[0], 8));
   threadGrid.style.setProperty("--thread-width", twoDimensional ? "40px" : "31px");
   threadGrid.innerHTML = Array.from({ length: launchCount(threads) }, (_, i) => `
@@ -562,62 +561,62 @@ function renderThreadTrace() {
   root.querySelector("#inspector-note").textContent = result
     ? `${threadLabel} · ${eventsForThread.length} recorded ${eventsForThread.length === 1 ? "event" : "events"}`
     : `${threadLabel} · Run the kernel to record events.`;
-  root.querySelector("#trace-output").innerHTML = !result
-    ? '<p class="trace-note">Run the kernel to inspect a thread.</p>'
-    : (eventsForThread.length
-      ? (eventsForThread.some((event) => event.space === "shared")
-        ? '<p class="trace-note">Shared buffers use their allocation line as a name. Phase counts the barriers already crossed.</p>'
-        : "")
-      + formatTable(["Phase", "Action", "Space", "Buffer", "Index", "Word offset", "Value", "Shared bank"],
-        eventsForThread.map((event) => [
-          event.phase, event.action, event.space, event.buffer ?? "–", formatIndex(event.index ?? "–"),
-          event.offset ?? "–", event.value === undefined ? "–" : pretty(event.value),
-          event.space === "shared" ? event.offset % 32 : "–",
-        ]))
-      : '<p class="trace-note">The selected thread recorded no memory or barrier events.</p>')
-      + (result.truncated ? '<p class="trace-note">The first 6,000 events are shown. The counters include every event.</p>' : "");
+  if (!result) return;
+  const details = lesson.traceDetails ?? [];
+  const shared = details.includes("shared") || eventsForThread.some((event) => event.space !== "global");
+  const offset = details.includes("offset");
+  const bank = details.includes("bank");
+  const headers = [...(shared ? ["Phase"] : []), "Action", ...(shared ? ["Memory"] : []), "Array", "Index",
+    ...(offset ? ["Word offset"] : []), "Value", ...(bank ? ["Shared bank"] : [])];
+  root.querySelector("#trace-output").innerHTML = (eventsForThread.length
+    ? (shared ? '<p class="trace-note">A phase starts after the block passes a barrier. Shared arrays are named by the line that creates them (for example, shared:6).</p>' : "")
+      + formatTable(headers, eventsForThread.map((event) => [
+        ...(shared ? [event.phase] : []), event.action, ...(shared ? [event.space] : []),
+        event.buffer ?? "–", formatIndex(event.index ?? "–"), ...(offset ? [event.offset ?? "–"] : []),
+        event.value === undefined ? "–" : pretty(event.value),
+        ...(bank ? [event.space === "shared" ? event.offset % 32 : "–"] : []),
+      ]))
+    : '<p class="trace-note">The browser recorded no events for the selected thread.</p>')
+    + (result.truncated ? '<p class="trace-note">The first 6,000 events are shown. The counters include every event.</p>' : "");
 
+  if (!lesson.evidence.includes("warp")) return;
   const warp = Math.floor(thread / 32);
   const warpAccess = new Map();
+  const includePhase = events.some((event) => event.phase > 0);
   for (const event of events) {
     if (event.space !== "global" || Math.floor(linearIndex(event.thread, threads) / 32) !== warp) continue;
-    const key = `${event.phase} · ${event.action} · ${event.buffer}`;
+    const key = [includePhase ? event.phase : null, event.action, event.buffer].filter((value) => value !== null).join(" · ");
     if (!warpAccess.has(key)) warpAccess.set(key, { sectors: new Set(), count: 0 });
     const row = warpAccess.get(key);
     row.count++;
     row.sectors.add(Math.floor(event.offset / 8));
   }
-  for (const name of ["trace", "warp"]) {
-    root.querySelector(`#${name}-panel`).hidden = !result;
-  }
   root.querySelector("#warp-output").innerHTML =
-    `<p class="trace-note">Warp ${warp} of the selected block. The model assumes 32-byte-aligned array starts and four-byte elements. A sector contains eight words. Each row groups addresses by phase, action, and buffer.</p>`
-    + (warpAccess.size ? formatTable(["Phase · action · buffer", "Accesses", "Distinct sectors", "Sector indices"],
+    `<p class="trace-note">Warp ${warp} of the selected block. Each sector holds eight four-byte values. The model counts different sectors for reads and writes to each array.</p>`
+    + (warpAccess.size ? formatTable([includePhase ? "Phase · action · array" : "Action · array", "Accesses", "Distinct sectors", "Sector indices"],
       Array.from(warpAccess, ([key, { sectors, count }]) =>
         [key, count, sectors.size, [...sectors].sort((a, b) => a - b).join(", ")]))
       : '<p class="trace-note">The selected warp recorded no global accesses.</p>');
 }
 
 function renderComparison() {
-  const { result, root, fixture } = model;
+  const { result, root, fixture, lesson } = model;
   const panel = root.querySelector("#result-output");
   if (!result) {
     panel.replaceChildren();
     return;
   }
   const differences = new Set(result.mismatches);
-  const writers = new Map();
-  for (const event of result.events) {
-    if (event.space === "global" && event.buffer === fixture.output && event.action !== "read") {
-      writers.set(event.offset, event);
-    }
-  }
-  panel.innerHTML = formatTable(["Index", "Actual", "Starter reference", "Last traced writer"], result.output.map((value, i) => {
+  const showWriter = lesson.evidence.includes("trace");
+  const writers = new Map(result.events.filter((event) =>
+    showWriter && event.space === "global" && event.buffer === fixture.output && event.action !== "read")
+    .map((event) => [event.offset, event]));
+  panel.innerHTML = formatTable(["Index", "Actual", "Starter reference", ...(showWriter ? ["Last traced writer"] : [])], result.output.map((value, i) => {
       const writer = writers.get(i);
       return [
         formatIndex(result.shape.length === 1 ? i : [Math.floor(i / result.shape[1]), i % result.shape[1]]),
         pretty(value), pretty(result.expected[i]),
-        writer ? `Block ${coordinate(writer.block, fixture.blocks)} · thread ${coordinate(writer.thread, fixture.threads)}` : "–",
+        ...(showWriter ? [writer ? `Block ${coordinate(writer.block, fixture.blocks)} · thread ${coordinate(writer.thread, fixture.threads)}` : "–"] : []),
       ];
     }), result.output.map((_, i) => differences.has(i) ? "difference" : ""));
 }

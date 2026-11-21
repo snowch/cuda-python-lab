@@ -1,13 +1,51 @@
 export const diagrams = {
+  "vector-add": `
+    <figure class="concept-diagram">
+      <figcaption>Who writes to the array when n is 33?</figcaption>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Thread coverage for 33 elements">
+        <table>
+          <thead><tr><th scope="col">Block</th><th scope="col">Global indices</th><th scope="col">Threads that pass i &lt; 33</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">0</th><td>0–31</td><td>All 32</td></tr>
+            <tr><th scope="row">1</th><td>32–63</td><td>Thread 0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Thread 0 in Block 1 writes out[32]. The other 31 threads in Block 1 skip the array accesses.</p>
+    </figure>`,
+  coalescing: `
+    <figure class="concept-diagram">
+      <figcaption>Where the first eight lanes in the 8 × 32 case read and write</figcaption>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Addresses and sectors for the first eight lanes">
+        <table>
+          <thead><tr><th scope="col">Operation</th><th scope="col">Word offsets</th><th scope="col">Sectors touched</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Read values</th><td>0, 1, 2, 3, 4, 5, 6, 7</td><td>1 (sector 0)</td></tr>
+            <tr><th scope="row">Write out</th><td>0, 8, 16, 24, 32, 40, 48, 56</td><td>8 (sectors 0–7)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Each sector holds eight four-byte values. The two arrays start on sector boundaries in the browser model.</p>
+    </figure>`,
+  reduction: `
+    <figure class="concept-diagram">
+      <figcaption>How the first block combines values 1 through 8</figcaption>
+      <ol class="diagram-flow">
+        <li><strong>Distance 4</strong><span>Four partial sums<br>[6, 8, 10, 12]</span></li>
+        <li><strong>Distance 2</strong><span>Two partial sums<br>[16, 20]</span></li>
+        <li><strong>Distance 1</strong><span>One sum<br>36 → out[0]</span></li>
+      </ol>
+      <p>Every step waits for the previous writes at a block barrier. At distance 4, Thread 1 adds its 2 to the 6 in scratch[5].</p>
+    </figure>`,
   transfers: `
     <figure class="concept-diagram">
-      <figcaption>Payload for 33 float32 elements per array</figcaption>
+      <figcaption>Array copies for 33 float32 values per array</figcaption>
       <ol class="diagram-flow">
         <li><strong>Host → GPU</strong><span>Upload x and y<br>132 bytes each</span></li>
         <li><strong>GPU</strong><span>Compute out<br>66 reads, 33 writes</span></li>
         <li><strong>GPU → host</strong><span>Download out<br>132 bytes</span></li>
       </ol>
-      <p>The arrows assume the inputs start and the output ends on the host. The browser shows the middle step’s logical accesses.</p>
+      <p>These byte counts assume the inputs start on the host and the host needs the output. The browser Console counts the array accesses in the middle step.</p>
     </figure>`,
   histogram: `
     <figure class="concept-diagram">

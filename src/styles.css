@@ -190,8 +190,8 @@ table { width: 100%; border-collapse: collapse; text-align: left; font: .8rem/1.
 th { color: var(--muted); font-weight: 650; background: var(--soft); }
 .table-scroll thead th { position: sticky; top: 0; }
 td, th { padding: .3rem .4rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
-#result-output th, #result-output td:last-child { white-space: normal; }
-#result-output td:last-child { min-width: 6.5rem; }
+#result-output th, #result-output td:nth-child(4) { white-space: normal; }
+#result-output td:nth-child(4) { min-width: 6.5rem; }
 tr.difference td { background: var(--difference); }
 .value-list { overflow-wrap: anywhere; font: .8rem/1.65 var(--mono); margin: .45rem 0; }
 
