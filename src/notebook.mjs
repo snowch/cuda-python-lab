@@ -66,7 +66,14 @@ print(f"Median kernel time:     {np.median(kernel_times):.4f} ms")
 print(f"Median round-trip time: {np.median(round_trip_times):.4f} ms")
 `;
 
-export function makeNotebook(lesson, source, fixture) {
+export function makeNotebook(lesson, source, fixture, { edited = false } = {}) {
+  const integer = fixture.buffers[fixture.output].dtype === "int32";
+  const compare = edited
+    ? `matches = np.${integer ? "equal(actual, expected)" : "isclose(actual, expected, rtol=1e-5, atol=1e-6)"}
+print(f"Edited kernel ran. {np.count_nonzero(~matches)} of {actual.size} values differ from the starter reference.")`
+    : (integer ? "np.testing.assert_array_equal(actual, expected)"
+      : "np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-6)")
+      + '\nprint("Verified against the starter reference:", actual.shape)';
   return {
     nbformat: 4,
     nbformat_minor: 2,
@@ -83,23 +90,25 @@ ${lesson.summary}
 Run this notebook on an NVIDIA GPU. In a hosted notebook, enable a GPU runtime first.
 For a local environment, use the [Numba CUDA installation guide](https://nvidia.github.io/numba-cuda/user/installation.html).
 
-**Investigation.** ${lesson.native}
+Run the cells in order to check the result and collect timings. Read the investigation after the timing cell.
 `),
       code('%pip install "numba-cuda[cu12]==0.30.4" "numpy>=1.26,<2.5"\n'),
       code(setup),
       markdown("## Kernel\n\nThis cell contains the Python source from the browser editor."),
       code(source),
-      markdown(`## Run and verify\n\nCase: ${fixture.label}. Compare the complete GPU output with a NumPy reference.`),
+      markdown(`## Check the output
+
+Selected case: ${fixture.label}
+
+${edited ? "Compare the edited kernel output with the NumPy result for the starter. Differences can be expected when you change the calculation." : "The notebook compares every GPU output value with the NumPy result for the starter."}`),
       code(`case = json.loads(${JSON.stringify(JSON.stringify(fixture))})\n\n${hostSetup}
 expected = ${lesson.reference}
-${fixture.buffers[fixture.output].dtype === "int32"
-  ? "np.testing.assert_array_equal(actual, expected)"
-  : "np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-6)"}
-print("Verified", actual.shape)
+${compare}
 print(actual)
 `),
-      markdown("## Measure on hardware\n\nThe verification launch warmed up compilation. CUDA events time work on the device. The host timer includes copies and waiting. These tiny arrays are good for checking correctness. Increase the size and repeat the measurement to study throughput."),
+      markdown("## Measure on hardware\n\nThe output check ran the kernel once before timing. Compare Median kernel time, which uses GPU events, with Median round-trip time, which includes copies, CPU launch overhead, and waiting. Both are medians of 30 runs in milliseconds. The small case checks correctness. Use the larger workloads in Appendix A to study throughput."),
       code(measure),
+      markdown(`## Optional investigation\n\n${lesson.native}`),
     ],
   };
 }

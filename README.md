@@ -1,8 +1,8 @@
 # CUDA Python Lab
 
-CUDA Python Lab is a standalone course for Python developers who want to write, debug, and profile GPU kernels. It follows the predict, run, and explain format of [GPU Lab](https://snowch.github.io/gpu-lab/v2/).
+CUDA Python Lab teaches GPU programming to Python developers through twelve browser labs that require no physical GPU. It follows the predict, run, and explain format of [GPU Lab](https://snowch.github.io/gpu-lab/v2/).
 
-The browser workbench runs editable Python kernel source with a functional CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Verify the full result against a reference, then export the same source and selected input to a Jupyter notebook for NVIDIA hardware.
+The browser workbench runs editable Python kernel source through Pyodide and a course-specific CUDA model. Inspect individual threads, array addresses, shared-memory accesses, and barriers. Compare the full result with the starter reference. Appendix A covers optional GPU verification and profiling with exported notebooks.
 
 ## Start the course
 
@@ -28,7 +28,7 @@ Use `npm run build` to produce the static site in `dist/`. Serve that directory 
 
 Each lesson can export a notebook with your kernel, an independent NumPy check, CUDA event timing, and a host round-trip measurement. Enable an NVIDIA GPU runtime before running the notebook.
 
-The **GPU setup** page also includes a downloadable archive with three larger investigations. Use it to profile an affine transform with one and two streams, measure direct and tiled transposes, and compare a Numba softmax kernel with `torch.softmax` on the same tensor buffers. [Native investigations](src/gpu/INVESTIGATIONS.md)
+**Appendix A** also includes a downloadable archive with three larger investigations. Use it to profile an affine transform with one and two streams, measure direct and tiled transposes, and compare a Numba softmax kernel with `torch.softmax` on the same tensor buffers. [Native investigations](src/gpu/INVESTIGATIONS.md)
 
 The browser model executes a small CUDA subset in a worker and uses deterministic scheduling within each barrier phase. Its address and value traces are functional teaching tools. Use native compilation, GPU verification, and hardware profiling to study CUDA behavior and speed. [Numba CUDA documentation](https://nvidia.github.io/numba-cuda/)
 
