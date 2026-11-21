@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive course on writing, verifying, and profiling GPU kernels in Python.">
+  <meta name="color-scheme" content="light">
+  <title>CUDA Python Lab</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to lesson</a>
+  <header class="site-header">
+    <a class="brand" href="#course" aria-label="CUDA Python Lab course outline">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>CUDA Python <strong>Lab</strong></span>
+    </a>
+    <nav class="site-nav" aria-label="Course resources">
+      <a href="#course" data-page="course">Course outline</a>
+      <a href="#gpu" data-page="gpu">GPU setup</a>
+    </nav>
+    <a class="upstream" href="https://snowch.github.io/gpu-lab/v2/">GPU Lab</a>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <details id="mobile-nav">
+        <summary>Course lessons <span id="mobile-progress"></span></summary>
+        <div class="sidebar-inner">
+          <div class="progress-label"><span>Your progress</span><span id="progress-label"></span></div>
+          <progress id="progress" aria-label="Course progress"></progress>
+          <nav id="lesson-nav" aria-label="Lessons"></nav>
+        </div>
+      </details>
+    </aside>
+    <main id="main" tabindex="-1">
+      <p class="loading-site" role="status">Loading CUDA Python Lab…</p>
+    </main>
+  </div>
+
+  <noscript><p>This course requires JavaScript for the Python workbench. Enable JavaScript to use the lessons.</p></noscript>
+</body>
+</html>
