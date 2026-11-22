@@ -336,7 +336,7 @@ function showLesson(slug) {
         <p class="editor-note" id="run-status" role="status"></p>
         <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
-        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Connect to the internet, then choose Reload lesson. The page saves your code and prediction before reloading. After it reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error"></pre></details></div>
+        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error"></pre></details></div>
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
       </section>
     </section>
