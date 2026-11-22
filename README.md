@@ -58,7 +58,7 @@ python scripts/check_native.py --ptx --cpu-only
 python scripts/check_native.py
 ```
 
-The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
+The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. Use the Playwright-pinned full Chromium build for media support; bulk export clicks are paced below Chrome’s download-rate limit while still checking every case. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
 
 Walkthrough scripts and transcripts are in `src/walkthroughs.mjs`. The site build uses the checked-in media. To regenerate the videos, run `node scripts/build_walkthroughs.mjs /path/to/en_US-ljspeech-medium.onnx` with Chromium, FFmpeg, uv, and the [Piper voice model and its JSON config](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/ljspeech/medium). The narration uses a synthetic voice.
 
