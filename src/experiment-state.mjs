@@ -1,6 +1,9 @@
 // Adapt the shared two-phase restart protocol to this hash-routed course.
 // Every open tab must save successfully before the worker switches releases.
-const key='cuda-python-lab:restart:'+location.pathname+location.search;
+const readingURL=new URL(location.href);
+readingURL.searchParams.delete('download');
+readingURL.searchParams.delete('gpu-release');
+const key='cuda-python-lab:restart:'+readingURL.pathname+readingURL.search;
 let hook, composing=false, lock, timer;
 export function registerReadingState(value) { hook=value; }
 export function savedReadingState() {
