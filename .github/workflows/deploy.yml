@@ -1,6 +1,7 @@
 name: Deploy CUDA Python Lab
 
 on:
+  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
@@ -21,9 +22,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --omit=dev
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - run: npm test
+      - run: npm run test:runner
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 

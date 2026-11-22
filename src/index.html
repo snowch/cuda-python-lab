@@ -7,6 +7,8 @@
   <meta name="color-scheme" content="light dark">
   <title>CUDA Python Lab</title>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./code-runner.css">
+  <link rel="stylesheet" href="./app-status.css">
   <script type="module" src="./app.mjs"></script>
 </head>
 <body>
@@ -17,8 +19,6 @@
       <span class="brand-copy">CUDA Python Lab<span>Numba CUDA</span></span>
     </a>
     <nav class="site-nav" aria-label="Course resources">
-      <a href="#course" data-page="course">Course outline</a>
-      <a href="#gpu" data-page="gpu">Appendix A</a>
       <button type="button" class="button" id="theme">Theme</button>
     </nav>
   </header>
@@ -28,6 +28,7 @@
       <details id="course-nav">
         <summary>Course lessons <span id="course-progress"></span></summary>
         <div class="contents">
+          <p><a href="#course" data-page="course">Course outline</a> · <a href="#gpu" data-page="gpu">Appendix A</a></p>
           <progress id="progress" aria-label="Course progress"></progress>
           <nav id="lesson-nav" aria-label="Lessons"></nav>
         </div>

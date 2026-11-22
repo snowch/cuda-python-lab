@@ -146,7 +146,8 @@ export const lessons = {
     intro: [
       "A GPU (graphics processing unit) can run many copies of the same function in parallel. A function launched on the GPU is called a kernel. Each thread executes one copy of the kernel.",
       { label: "Import Numba CUDA", from: "from numba import cuda" },
-      "The import gives Python access to Numba’s CUDA tools for defining kernels and managing GPU memory.",
+      "Numba is a library that compiles Python functions into machine code. This course uses its CUDA tools to compile GPU kernels and manage GPU memory. You will learn the CUDA features used here as you go; no previous Numba knowledge is needed.",
+      "from numba import cuda makes those CUDA tools available as cuda in this program.",
       { label: "Define the kernel", from: "@cuda.jit", through: "out[0] = 42" },
       "@cuda.jit tells Numba to compile this function as a GPU kernel. The thread running it stores 42 in the first element of out on the GPU.",
       { label: "Launch from main()", from: "kernel[1, 1](out)", through: "result = out.copy_to_host()" },

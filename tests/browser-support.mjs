@@ -10,15 +10,17 @@ const mime = new Map([
   ["mp4", "video/mp4"], ["vtt", "text/vtt"], ["webp", "image/webp"],
 ]);
 
-export async function serveBuild(t) {
+export async function serveBuild(t, {directory=dist,prefix="/"}={}) {
   const server = createServer(async (request, response) => {
     if (request.method !== "GET") {
       response.writeHead(405).end();
       return;
     }
     try {
-      const path = new URL(request.url, "http://localhost").pathname.slice(1) || "index.html";
-      const contents = await readFile(new URL(path, dist));
+      const pathname=new URL(request.url,"http://localhost").pathname;
+      if(!pathname.startsWith(prefix)) {response.writeHead(404).end();return;}
+      const path = pathname.slice(prefix.length) || "index.html";
+      const contents = await readFile(new URL(path,typeof directory==="function"?directory():directory));
       response.setHeader("Content-Type", mime.get(path.split(".").at(-1)) ?? "application/octet-stream");
       response.end(contents);
     } catch {
@@ -27,7 +29,7 @@ export async function serveBuild(t) {
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   t.after(() => server.close());
-  return `http://127.0.0.1:${server.address().port}/`;
+  return `http://127.0.0.1:${server.address().port}${prefix}`;
 }
 
 export async function launchChromium(t) {

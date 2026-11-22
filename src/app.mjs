@@ -1,3 +1,4 @@
+import { registerReadingState, savedReadingState, restoreReadingState } from "./experiment-state.mjs";
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountProgramEditor } from "./editor.mjs";
@@ -16,16 +17,19 @@ let activeRunner;
 let saved;
 
 try {
-  saved = JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
+  saved = savedReadingState()?.work ?? JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
 } catch {
   saved = {};
 }
-const state = { drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
+const state = { results:{}, drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
 
+let storageSaved=true;
 function persist() {
   try {
     localStorage.setItem(storageKey, JSON.stringify(state));
+    storageSaved=true;
   } catch {
+    storageSaved=false;
     // The workbench still functions when browser storage is unavailable.
   }
 }
@@ -116,7 +120,7 @@ function showGpu() {
       <h2>Run with GPGPU-Sim in the browser</h2>
       <p><strong>Run</strong> executes your full Python program in the browser. Numba and LLVM compile the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
       <p>Use <code>print()</code> in <code>main()</code> to show values in the Console. Use the GPU notebook for print calls inside kernels and for hardware timing.</p>
-      <p><a href="./runtime/gpgpu-sim-LICENSE.txt">GPGPU-Sim and LLVM licences</a> · <a href="./runtime/pyodide-LICENSE.txt">Pyodide licence</a></p>
+      <p><a href="${new URL("./runtime/gpgpu-sim-LICENSE.txt",import.meta.url).href}">GPGPU-Sim and LLVM licences</a> · <a href="${new URL("./runtime/pyodide-LICENSE.txt",import.meta.url).href}">Pyodide licence</a></p>
     </section>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
@@ -129,7 +133,7 @@ function showGpu() {
     </section>
     <section class="reading">
       <h2>Set up Python locally</h2>
-      <p>Use Python 3.12 and an NVIDIA driver compatible with CUDA 12. Download <a href="./gpu/requirements.txt" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
+      <p>Use Python 3.12 and an NVIDIA driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
       <pre><code>python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt</code></pre>
@@ -137,7 +141,7 @@ python -m pip install -r requirements.txt</code></pre>
     </section>
     <section class="reading">
       <h2>Profile larger workloads on hardware</h2>
-      <p><a href="./gpu/cuda-python-investigations.zip" download>Download the native investigations</a>, extract the archive, and open a terminal in the extracted directory. The included INVESTIGATIONS.md explains what to compare for each workload. For the softmax investigation, install a CUDA-enabled build of PyTorch for your GPU.</p>
+      <p><a href="${new URL("./gpu/cuda-python-investigations.zip",import.meta.url).href}" download>Download the native investigations</a>, extract the archive, and open a terminal in the extracted directory. The included INVESTIGATIONS.md explains what to compare for each workload. For the softmax investigation, install a CUDA-enabled build of PyTorch for your GPU.</p>
       <pre><code>python profile_workloads.py affine --sizes 4096 1048576
 python profile_workloads.py transpose --rows 2049 --cols 4093
 python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
@@ -291,9 +295,9 @@ function showLesson(slug) {
       ${diagrams[slug] ?? ""}
       ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details">
         <summary>Video · ${escape(walkthrough.title)}</summary>
-        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="./media/${slug}/poster.webp">
-          <source src="./media/${slug}/walkthrough.mp4" type="video/mp4">
-          <track src="./media/${slug}/captions.vtt" kind="captions" srclang="en" label="English" default>
+        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
+          <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
+          <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
         </video>
         <details class="walkthrough-transcript"><summary>Read the transcript</summary>
           ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
@@ -362,6 +366,8 @@ function showLesson(slug) {
   const runner = attachRunner(main, {
     getSource: () => editor.source,
     filename: `${slug}.py`,
+    getResult: () => state.results[slug]?.[caseIndex],
+    saveResult: result => { (state.results[slug]??={})[caseIndex]=result;persist(); },
   });
   activeRunner = runner;
   activeEditor = editor;
@@ -440,6 +446,8 @@ function route(moveFocus = false) {
   const requested = location.hash.slice(1);
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
   const page = slug === "course" || slug === "gpu" || order.includes(slug) ? slug : order[0];
+  for (const video of main.querySelectorAll("video")) video.pause();
+  dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
   activeEditor?.destroy();
   activeEditor = null;
   activeRunner?.dispose();
@@ -462,11 +470,18 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
 });
 
 try {
-  const response = await fetch("./starters.json");
+  const response = await fetch(new URL("./starters.json",import.meta.url));
   if (!response.ok) throw new Error("Could not load the starter kernels.");
   starters = await response.json();
   route();
+  registerReadingState({save:()=>state});
+  restoreReadingState();
   window.addEventListener("hashchange", () => route(true));
 } catch (error) {
   main.textContent = error.message;
 }
+
+addEventListener('cuda-python-lab:before-restart',event=>{
+  persist();
+  if(!storageSaved) event.detail.reason='This window could not save its work. Allow browser storage before restarting.';
+});
