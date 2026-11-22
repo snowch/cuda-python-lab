@@ -1,4 +1,5 @@
-from numba import cuda, int32
+from numba_cuda_mlir import cuda
+from numba_cuda_mlir.types import int32
 
 
 @cuda.jit

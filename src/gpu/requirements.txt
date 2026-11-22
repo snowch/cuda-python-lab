@@ -1,2 +1,2 @@
-numba-cuda[cu12]==0.30.4
+numba-cuda-mlir[cu12]==0.6.0
 numpy>=1.26,<2.5

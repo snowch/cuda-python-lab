@@ -29,7 +29,7 @@ const panel = `<dialog id="app-status-dialog" aria-labelledby="app-status-title"
 <details id="app-status-details"><summary>Version and download details</summary><p id="running-version"></p><p id="release-detail"></p>
 <button id="check-update" type="button">Check for updates</button>
 <p>Downloads include all lessons, recordings, diagrams, examples, browser simulators and the Python and CUDA compilers. Browser storage overhead is additional. External links need internet access.</p>
-<p>Running examples outside the browser needs separate Python, Numba CUDA and NVIDIA GPU tools.</p>
+<p>Running examples outside the browser needs separate Python, Numba-CUDA-MLIR and NVIDIA GPU tools.</p>
 <button id="remove-offline" type="button" hidden>Remove offline copy</button>
 <div id="remove-confirmation" hidden><p>Remove CUDA Python Lab’s downloaded files from this browser? Your experiment work, preferences and other apps will be kept.</p><button id="confirm-remove" type="button">Remove downloaded files</button><button id="cancel-remove" type="button">Keep offline copy</button></div></details>
 <div id="install-help" hidden></div>

@@ -1,4 +1,4 @@
-"""Exercise exported notebooks and programs with CUDASIM, or compile kernels to PTX."""
+"""Exercise exports on an NVIDIA GPU, or cross-compile with Numba-CUDA-MLIR."""
 
 import argparse
 import ast
@@ -41,7 +41,7 @@ def validate_program(case):
 
 
 def compile_kernel(source, fixture):
-    from numba import cuda, types
+    from numba_cuda_mlir import cuda, types
 
     namespace = {}
     exec(source, namespace)
@@ -58,17 +58,17 @@ def compile_kernel(source, fixture):
         raise AssertionError("Expected a CUDA entry point in the compiled PTX")
 
 
-def validate_investigations():
+def validate_investigations(compile_only=False):
     import sys
 
     import numpy as np
-    from numba import cuda
+    from numba_cuda_mlir import cuda
 
     sys.path[:0] = [str(ROOT / "src"), str(ROOT / "src/gpu")]
     from debug_workloads import shared_handoff, write_indices
     from profile_workloads import chunked_affine, clamp_to_zero, fusion_variants, make_tiled_transpose
 
-    if cuda.config.ENABLE_CUDASIM:
+    if not compile_only:
         values = np.arange(17 * 41, dtype=np.float32).reshape(17, 41)
         for pad in (0, 1):
             out = np.empty_like(values.T, order="C")
@@ -94,7 +94,7 @@ def validate_investigations():
         shared_handoff[1, 64](out, False)
         np.testing.assert_array_equal(out, (np.arange(64, dtype=np.int32) + 32) % 64)
     else:
-        from numba import types
+        from numba_cuda_mlir import types
 
         array = types.Array(types.float32, 2, "C")
         for pad in (0, 1):
@@ -108,12 +108,41 @@ def validate_investigations():
             cuda.compile_ptx(kernel.py_func, (output, types.boolean), cc=(8, 0), lineinfo=True)
 
 
+
+def validate_compiler_lab(compile_only):
+    import numpy as np
+    from numba_cuda_mlir import cuda, types
+    source = subprocess.check_output(["node", "--input-type=module", "-e",
+        "import {compilerProgram} from './src/compiler-lab.mjs';process.stdout.write(compilerProgram)"], cwd=ROOT, text=True)
+    scope = {"__name__": "compiler_lab"}
+    exec(source, scope)
+    signature = (types.Array(types.float32, 1, "C"), types.Array(types.float32, 1, "C"), types.float32)
+    ptx, _ = cuda.compile_ptx(scope["add_bias"].py_func, signature, cc=(8, 0))
+    if ".entry" not in ptx:
+        raise AssertionError("The optional compiler lab did not produce a PTX entry")
+    if not compile_only:
+        np.testing.assert_array_equal(scope["main"](), np.arange(1024, dtype=np.float32) + 1)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ptx", action="store_true", help="compile for SM 8.0 using the installed CUDA toolkit")
+    parser.add_argument("--cpu-only", action="store_true", help="test-only SM 8.0 target fixture for cross-compilation without a CUDA driver")
     args = parser.parse_args()
-    if not args.ptx:
-        os.environ["NUMBA_ENABLE_CUDASIM"] = "1"
+    if args.cpu_only:
+        if not args.ptx:
+            parser.error("--cpu-only requires --ptx; it never executes GPU code")
+        import numba_cuda_mlir
+        from numba_cuda_mlir import tools
+        if numba_cuda_mlir.__version__ != "0.6.0":
+            raise RuntimeError("Review the explicit-target cross-compilation workaround for this compiler version.")
+        # 0.6.0 queries the host capability even with cc=(8,0). This test-only
+        # target fixture supplies SM 8.0 without pretending to own a GPU.
+        tools._cached_cc = (8, 0)
+    elif not args.ptx:
+        from numba_cuda_mlir import cuda
+        if not cuda.is_available():
+            parser.error("An NVIDIA GPU is required to execute notebooks; use --ptx --cpu-only for compiler checks.")
     suite = json.loads(subprocess.check_output(["node", ROOT / "scripts/test-cases.mjs"]))
     checked = 0
     for lesson in suite:
@@ -125,9 +154,10 @@ def main():
                 validate_notebook(case)
                 validate_program(case)
                 checked += 1
-    validate_investigations()
+    validate_investigations(compile_only=args.ptx)
+    validate_compiler_lab(compile_only=args.ptx)
     additional = "native tile, fusion, and debugging kernels" if args.ptx else "native tile, stream, fusion, and debugging examples"
-    print(f"Verified {checked} {'PTX kernels' if args.ptx else 'cases in both notebook and program exports'} and {additional}.")
+    print(f"Verified {checked} {'PTX kernels' if args.ptx else 'cases in both notebook and program exports'} and {additional}, plus the optional compiler lab.")
 
 
 if __name__ == "__main__":

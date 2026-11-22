@@ -1,4 +1,5 @@
-from numba import cuda, float32
+from numba_cuda_mlir import cuda
+from numba_cuda_mlir.types import float32
 
 TILE = 4
 

@@ -17,3 +17,5 @@ NUMBA_DISABLE_OPENMP=1 NUMBA_DISABLE_TBB=1 \
 ```
 
 Copy the resulting wheel into this directory, update its checksum in `scripts/build.mjs`, and run `npm run test:runner`. The browser adapter selects NVPTX64 layouts and compiles for compute capability 7.0. The notebook uses the normal NVIDIA Numba CUDA package.
+
+The course API and GPU notebooks now target Numba-CUDA-MLIR 0.6.0. The wheel above is retained only for the browser compatibility compiler; it is not an MLIR build. See [the migration boundary and checks](../docs/numba-cuda-mlir-migration.md).

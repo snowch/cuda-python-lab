@@ -156,6 +156,11 @@ test("kernel-only drafts reopen with main and can still be restored", async (t) 
     await editorTools(page).click();
     await page.getByRole("button", { name: "Undo restore" }).click();
     assert.equal(await readSource(editor), source);
+    const notebook=await downloadFile(page,page.getByRole("button",{name:"Download notebook"}));
+    const program=JSON.parse(notebook.contents).cells.find(cell=>cell.cell_type==='code'&&cell.source.includes('def main():')).source;
+    assert.match(program,/from numba_cuda_mlir import cuda/);
+    assert.doesNotMatch(program,/from numba import cuda/);
+    assert.equal(await readSource(editor),source,'Export must preserve the saved legacy source');
   });
 });
 
@@ -202,5 +207,21 @@ test("the GPU appendix gives notebook setup, investigations and the occupancy wo
     assert.match(await page.locator("#resource-result").textContent(), /8 resident blocks · 16 of 64 warps · 25%/);
     await page.getByLabel("Threads per block", { exact: true }).selectOption("256");
     assert.match(await page.locator("#resource-result").textContent(), /6 resident blocks · 48 of 64 warps · 75%/);
+  });
+});
+
+
+test("optional compiler lab exports an MLIR notebook and names the quantities to compare",async t=>{
+  await runBrowser(t,{width:390,height:850},async page=>{
+    await page.evaluate(()=>location.hash='compiler');
+    await page.getByRole('heading',{name:'What happens at the first launch?',exact:true}).waitFor();
+    assert.match(await page.locator('main').textContent(),/first_launch_ms/);
+    assert.match(await page.locator('main').textContent(),/signatures_after/);
+    const download=await downloadFile(page,page.locator('#download-compiler-notebook'));
+    const notebook=JSON.parse(download.contents);
+    assert.ok(notebook.cells.some(cell=>cell.source.includes('numba-cuda-mlir[cu12]==0.6.0')));
+    assert.ok(notebook.cells.some(cell=>cell.cell_type==='code'&&cell.source.includes('first_launch_ms =')));
+    assert.ok(notebook.cells.some(cell=>cell.source.includes('does not isolate compiler time')));
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   });
 });
