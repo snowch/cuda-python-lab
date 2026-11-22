@@ -92,8 +92,11 @@ Use the first lesson's actual language and launch syntax. Define kernel in the
 caption and make clear that the browser simulates the hardware. Do not imply a
 physical core count, hardware speed or an execution result measured by the image.
 
-Place the illustration beside the introduction on wide screens and after the
-start link on phones. Keep it compact so prerequisites, the primary start action
+Place the illustration beside the introduction on wide screens and below the
+introductory text and start link when the available width is too narrow. Choose
+the breakpoint by checking that both columns remain readable; do not keep two
+columns merely because the device is called a tablet or desktop. Verify the
+layout at widths immediately above and below that breakpoint, in both themes. Keep it compact so prerequisites, the primary start action
 and the course outline remain easy to find. Bundle a lightweight vector or
 appropriately sized raster image for offline use. Provide a useful text
 alternative, maintain legibility in both themes and at phone size, and avoid

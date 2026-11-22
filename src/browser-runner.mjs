@@ -1,5 +1,4 @@
 import "./code-runner-host.mjs";
-import {saveReadingState} from './experiment-state.mjs';
 const manager = window.cudaPythonCodeRunner;
 
 // Lesson views own their saved results, while the reading window owns the worker.
@@ -38,12 +37,7 @@ export function attachRunner(root, { getSource, filename, getResult=()=>null, sa
   function reset() { manager.detach(client);display(); }
   run.addEventListener('click',start);
   stop.addEventListener('click',()=>manager.detach(client));
-  reload.addEventListener('click',()=>{
-    try{
-      saveReadingState();const url=new URL(location.href);url.searchParams.delete('gpu-release');url.searchParams.delete('download');
-      if(url.href===location.href)location.reload();else location.assign(url.href);
-    }catch(error){root.querySelector('#runtime-recovery-note').textContent='Reload cancelled: '+error.message+' Export .py in Editor tools before reloading if browser storage is unavailable.';}
-  });
+  reload.addEventListener('click',()=>manager.reloadLesson());
   display();
   return {start,reset,dispose:()=>manager.detach(client)};
 }

@@ -73,3 +73,12 @@ test('Python program errors keep the toolchain and do not count as completed run
  assert.equal(r.state,'ready');assert.equal(r.boots,1);assert.equal(r.completedRuns,0);assert.equal(r.lastRunMs,null);assert.equal(replies.at(-1).error,'SyntaxError');
  r.execute({},'',{},()=>{});w[0].reply({stdout:'recovered'});assert.equal(r.boots,1);assert.equal(r.completedRuns,1);
 });
+test('only infrastructure download failures emit runtime recovery',()=>{
+ const {runner:r,workers:w}=fixture(),seen=[];r.addEventListener('runtime-load-error',event=>seen.push(event.detail));
+ r.execute({},'worker',{},()=>{});w[0].reply({error:'name is not defined',programError:true});assert.equal(seen.length,0);
+ r.execute({},'worker',{},()=>{});w.at(-1).reply({error:'archive unavailable',runtimeLoad:true});assert.equal(seen.length,1);assert.equal(seen[0].error,'archive unavailable');
+});
+
+test('a worker import failure during startup opens infrastructure recovery',()=>{
+ const {runner:r,workers:w}=fixture(),seen=[];r.addEventListener('runtime-load-error',event=>seen.push(event.detail));r.execute({},'worker',{},()=>{});w[0].onerror({message:'Worker import failed'});assert.equal(seen.length,1);assert.equal(seen[0].runtimeLoad,true);
+});

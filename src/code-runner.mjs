@@ -66,7 +66,8 @@ export class CodeRunner extends EventTarget {
           const job=this.job,pending=this.pending;this.job=null;this.pending=null;this.cancel(this.runTimer);
           if(reply.error&&!reply.programError) {
             this.release('The code runner stopped. Run starts it again.');
-            job.emit(reply);pending?.emit(reply);return;
+            job.emit(reply);pending?.emit(reply);
+            if(reply.runtimeLoad)this.dispatchEvent(new CustomEvent('runtime-load-error',{detail:reply}));return;
           }
           if(!job.preparing&&!reply.compileError&&!reply.error){this.lastRunMs=Math.max(0,this.now()-job.requestedAt);this.completedRuns++;}
           this.set('ready',job.preparing?'Ready to compile and run your code.':'Ready for another run.');this.touch();job.emit(reply);
@@ -74,8 +75,11 @@ export class CodeRunner extends EventTarget {
         };
         worker.onerror=event=>{
           if(this.worker!==worker)return;
+          const runtimeLoad=this.state==='starting'||this.job?.preparing===true;
           const job=this.job,pending=this.pending;this.job=null;this.pending=null;this.release('The code runner stopped unexpectedly. Run starts it again.');
-          job?.emit({error:event.message||'The code runner stopped unexpectedly.'});pending?.emit({error:event.message||'The code runner stopped unexpectedly.'});
+          const failure={error:event.message||'The code runner stopped unexpectedly.',runtimeLoad};
+          job?.emit(failure);pending?.emit(failure);
+          if(runtimeLoad)this.dispatchEvent(new CustomEvent('runtime-load-error',{detail:failure}));
         };
       }
       this.set(this.state==='stopped'?'starting':'compiling');
