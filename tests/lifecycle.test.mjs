@@ -60,7 +60,8 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  const url=await serveBuild(t,{prefix:'/cuda-python-lab/',directory:()=>current}),browser=await launchChromium(t);
  const context=await browser.newContext({viewport:{width:390,height:850}});
  await context.addInitScript(()=>localStorage.setItem('cuda-python-lab:code-runner-intro:3','1'));
- const page=await context.newPage();await page.goto(url);await editor(page).waitFor();
+ const page=await context.newPage();await page.goto(url+'?download=1');await editor(page).waitFor();
+ await page.locator('#app-status-dialog').waitFor({state:'visible'});await page.locator('#app-status-close').click();
  await page.locator('#app-status-open').click();
  await page.locator('#download-update').filter({hasText:'Save offline copy'}).click();
  await page.locator('#version-status').filter({hasText:'Downloaded and ready to use offline'}).waitFor({timeout:90000});
@@ -71,7 +72,11 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  await page.locator('#run').click();await finished(page);assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  const tab=await context.newPage();await tab.goto(url+'#lesson/vector-add');await editor(tab).waitFor();
  await tab.locator('#case').selectOption('2');await tab.locator('#prediction').fill('Saved in second tab');
- await context.setOffline(false);current=pathToFileURL(directory+'/');
+ await context.setOffline(false);
+ await page.goto(url+'?download=1#lesson/first-value');await editor(page).waitFor();
+ await page.locator('#app-status-dialog').waitFor({state:'visible'});await page.locator('#app-status-close').click();
+ await page.locator('#prediction').fill('Changed after the second tab opened');
+ current=pathToFileURL(directory+'/');
  await page.locator('#app-status-open').click();await page.locator('#app-status-details>summary').click();await page.locator('#check-update').click();
  await page.locator('#version-status').filter({hasText:'Update available'}).waitFor();
  await page.locator('#download-update').filter({hasText:'Update offline copy'}).click();
@@ -81,12 +86,12 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  await page.waitForFunction(id=>document.querySelector('meta[name="gpu-release"]')?.content===id,second.id);
  await tab.waitForFunction(id=>document.querySelector('meta[name="gpu-release"]')?.content===id,second.id);
  await editor(page).waitFor();await editor(tab).waitFor();
- assert.equal(await page.locator('#prediction').inputValue(),'Saved before flight');
+ assert.equal(await page.locator('#prediction').inputValue(),'Changed after the second tab opened');
  assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  assert.equal(await tab.locator('#prediction').inputValue(),'Saved in second tab');assert.equal(await tab.locator('#case').inputValue(),'2');
  await context.setOffline(true);await tab.reload();await editor(tab).waitFor();await tab.locator('#run').click();await finished(tab);
  await context.setOffline(false);await page.locator('#app-status-open').click();await page.locator('#app-status-details>summary').click();
  await page.locator('#remove-offline').click();await page.locator('#confirm-remove').click();
  await page.locator('#app-status-error').filter({hasText:'Downloaded files removed'}).waitFor();
- await page.locator('#app-status-close').click();assert.equal(await page.locator('#prediction').inputValue(),'Saved before flight');
+ await page.locator('#app-status-close').click();assert.equal(await page.locator('#prediction').inputValue(),'Changed after the second tab opened');
 });
