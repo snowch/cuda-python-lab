@@ -99,6 +99,10 @@ appropriately sized raster image for offline use. Provide a useful text
 alternative, maintain legibility in both themes and at phone size, and avoid
 animation, text baked into a tiny bitmap or extra controls on a static image.
 
+Example from CUDA C++ Lab; the Python version uses its own launch syntax:
+
+![Course homepage with a compact CPU-launch, GPU-thread, device-memory and result-copy illustration beside the introduction and Start action](mockups/course-homepage-desktop.png)
+
 ## Headings and clear wording
 
 Review every heading, instruction, label, example and feedback sentence from the
