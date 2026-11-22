@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { chromium } from "playwright-core";
@@ -33,9 +32,10 @@ export async function serveBuild(t, {directory=dist,prefix="/"}={}) {
 }
 
 export async function launchChromium(t) {
-  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-    ?? ["/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
-  const browser = await chromium.launch({ executablePath });
+  // Use the installed Playwright browser, rather than an unrelated CI image browser.
+  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+  const browser = await chromium.launch({ executablePath, channel: executablePath ? undefined : "chromium" });
+  t.diagnostic(`Browser: ${browser.version()}`);
   t.after(() => browser.close());
   return browser;
 }

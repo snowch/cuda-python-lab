@@ -175,7 +175,12 @@ test("architecture walkthroughs play with captions and expose transcripts by key
       assert.equal(await video.getAttribute("aria-label"), walkthrough.title);
       await video.evaluate(async (player) => {
         player.muted = true;
-        await player.play();
+        let timer;
+        try {
+          await Promise.race([player.play(),new Promise((_,reject)=>{
+            timer=setTimeout(()=>reject(new Error(`Video did not start: ${player.error?.message??'no media error'}; readyState=${player.readyState}`)),10000);
+          })]);
+        } finally { clearTimeout(timer); }
       });
       await page.waitForFunction(() => {
         const player = document.querySelector(".walkthrough video");
