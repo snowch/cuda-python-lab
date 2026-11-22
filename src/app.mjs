@@ -1,3 +1,5 @@
+import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
+import { migrateCudaImports } from "./source-migration.mjs";
 import { registerReadingState, savedReadingState, restoreReadingState } from "./experiment-state.mjs";
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
@@ -107,6 +109,7 @@ function showCourse() {
         </ol>
       </section>`).join("")}
     </div>
+    <p class="credit"><a href="#compiler">Optional GPU lab · What happens at the first launch?</a></p>
     <p class="credit">Inspired by the predict, run, and explain activities in <a href="https://snowch.github.io/cuda-cpp-lab/v2/">CUDA C++ Lab</a>.</p>
   </div>`;
 }
@@ -118,12 +121,13 @@ function showGpu() {
     <p class="lead">Use an NVIDIA GPU on your computer or through a hosted notebook service. Start with the lab notebook, then use the investigations to measure and debug GPU work.</p>
     <section class="reading">
       <h2>Run with GPGPU-Sim in the browser</h2>
-      <p><strong>Run</strong> executes your full Python program in the browser. Numba and LLVM compile the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
+      <p><strong>Run</strong> executes your full Python program in the browser. The browser’s compatibility compiler translates the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. The downloaded notebook uses Numba-CUDA-MLIR on an NVIDIA GPU. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
       <p>Use <code>print()</code> in <code>main()</code> to show values in the Console. Use the GPU notebook for print calls inside kernels and for hardware timing.</p>
       <p><a href="${new URL("./runtime/gpgpu-sim-LICENSE.txt",import.meta.url).href}">GPGPU-Sim and LLVM licences</a> · <a href="${new URL("./runtime/pyodide-LICENSE.txt",import.meta.url).href}">Pyodide licence</a></p>
     </section>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
+      <p>The notebooks use Numba-CUDA-MLIR, NVIDIA’s successor to Numba-CUDA. This course teaches its CUDA API; you do not need a separate Numba course. <a href="#compiler">Explore first-launch compilation in an optional GPU lab.</a></p>
       <ol>
         <li>In a lesson, choose <strong>Download notebook</strong>. It contains the complete program in your editor and the expected result for the selected starter case.</li>
         <li>Open the file in Jupyter on a machine with an NVIDIA GPU, or upload it to <a href="https://colab.research.google.com/">Google Colab</a>. In Colab, choose <strong>Runtime → Change runtime type</strong>, select a GPU, and save.</li>
@@ -133,11 +137,11 @@ function showGpu() {
     </section>
     <section class="reading">
       <h2>Set up Python locally</h2>
-      <p>Use Python 3.12 and an NVIDIA driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
+      <p>Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later, and a driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
       <pre><code>python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt</code></pre>
-      <p><a href="https://nvidia.github.io/numba-cuda/user/installation.html">Numba CUDA installation guide</a></p>
+      <p><a href="https://nvidia.github.io/numba-cuda-mlir/">Numba-CUDA-MLIR documentation</a></p>
     </section>
     <section class="reading">
       <h2>Profile larger workloads on hardware</h2>
@@ -422,7 +426,7 @@ function showLesson(slug) {
     download(`${slug}.ipynb`, JSON.stringify(notebook, null, 2), "application/json");
   });
   find("download-source").addEventListener("click", () => {
-    download(`${slug}.py`, editor.source, "text/x-python");
+    download(`${slug}.py`, migrateCudaImports(editor.source), "text/x-python");
   });
   find("complete").addEventListener("click", () => {
     state.completed[slug] = !state.completed[slug];
@@ -449,7 +453,7 @@ function route(moveFocus = false) {
   if (location.hash === "#main") return;
   const requested = location.hash.slice(1);
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
-  const page = slug === "course" || slug === "gpu" || order.includes(slug) ? slug : order[0];
+  const page = slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
   for (const video of main.querySelectorAll("video")) video.pause();
   dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
   activeEditor?.destroy();
@@ -459,8 +463,12 @@ function route(moveFocus = false) {
   updateNav(page);
   if (page === "course") showCourse();
   else if (page === "gpu") showGpu();
+  else if (page === "compiler") {
+    main.innerHTML=compilerLabHTML();
+    document.querySelector("#download-compiler-notebook").addEventListener("click",()=>download("first-launch-mlir.ipynb",JSON.stringify(compilerNotebook(),null,2),"application/json"));
+  }
   else showLesson(page);
-  document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? "Appendix A"} · CUDA Python Lab`;
+  document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? (page === "compiler" ? "First-launch compiler lab" : "Appendix A")} · CUDA Python Lab`;
   if (moveFocus) {
     courseNav.open = false;
     window.scrollTo(0, 0);

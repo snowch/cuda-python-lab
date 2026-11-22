@@ -31,7 +31,7 @@ export function hostProgram(fixture) {
   });
   return `def main():
     import numpy as np
-    from numba import cuda
+    from numba_cuda_mlir import cuda
 
 ${arrays.join("\n\n")}
 

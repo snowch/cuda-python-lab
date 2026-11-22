@@ -1,6 +1,6 @@
 # CUDA Python GPU investigations
 
-Use Python 3.12 and a machine with an NVIDIA GPU and a driver compatible with CUDA 12. Open a terminal in the extracted investigations directory. The scripts use larger inputs than the browser cases to measure performance.
+Use Python 3.12, Numba-CUDA-MLIR 0.6.0, and an NVIDIA GPU with compute capability 7.0 or later and a CUDA 12-compatible driver. Open a terminal in the extracted investigations directory. The scripts use larger inputs than the browser cases to measure performance.
 
 ```sh
 python -m venv .venv
@@ -36,7 +36,7 @@ The direct kernel reads consecutive input values and writes to different rows of
 
 ## Integrate a stable softmax with PyTorch
 
-Install a CUDA-enabled PyTorch wheel using the [PyTorch installation selector](https://pytorch.org/get-started/locally/). The shared CUDA stream orders the Numba and PyTorch work on the same tensor buffers. CUDA array interface views avoid copying the tensors. Keep the original tensors alive and share only compatible shape, dtype, and layout.
+Install a CUDA-enabled PyTorch wheel using the [PyTorch installation selector](https://pytorch.org/get-started/locally/). The shared CUDA stream orders the Numba-CUDA-MLIR and PyTorch work on the same tensor buffers. CUDA array interface views avoid copying the tensors. Keep the original tensors alive and share only compatible shape, dtype, and layout.
 
 ```sh
 python profile_workloads.py softmax --rows 4096 --cols 129

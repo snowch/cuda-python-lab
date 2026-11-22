@@ -246,3 +246,10 @@ td, th { padding: .3rem .4rem; border-bottom: 1px solid var(--line); white-space
   .brand { font-size: 1rem; }
   .site-nav a { font-size: .8rem; }
 }
+
+.compiler-pipeline { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:24px 0; padding:20px; border:1px solid var(--line); border-radius:10px; background:var(--paper); }
+.compiler-pipeline div { display:grid; gap:4px; flex:1 1 155px; }
+.compiler-pipeline strong { color:var(--accent); }
+.compiler-pipeline span { color:var(--muted); font-size:.88rem; }
+.compiler-pipeline figcaption { flex-basis:100%; margin-top:12px; color:var(--muted); font-size:.88rem; }
+@media(max-width:500px) { .compiler-pipeline { display:grid; } .compiler-pipeline>span[aria-hidden] { transform:rotate(90deg); justify-self:center; } }

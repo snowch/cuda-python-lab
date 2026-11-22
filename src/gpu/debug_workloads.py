@@ -3,10 +3,11 @@
 import argparse
 
 import numpy as np
-from numba import cuda, int32
+from numba_cuda_mlir import cuda
+from numba_cuda_mlir.types import int32
 
 
-debug_kernel = cuda.jit if cuda.config.ENABLE_CUDASIM else cuda.jit(lineinfo=True)
+debug_kernel = cuda.jit(lineinfo=True)
 
 
 @debug_kernel
@@ -31,7 +32,7 @@ def main():
     parser.add_argument("example", choices=["bounds", "shared"])
     parser.add_argument("--faulty", action="store_true", help="Enable the fault for a Compute Sanitizer run.")
     args = parser.parse_args()
-    if cuda.config.ENABLE_CUDASIM or not cuda.is_available():
+    if not cuda.is_available():
         parser.exit(1, "An NVIDIA GPU is required for this debugging exercise.\n")
     if args.example == "bounds":
         out = cuda.device_array(33, dtype=np.int32)
