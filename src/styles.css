@@ -284,7 +284,7 @@ button,summary,select,.button{min-height:44px}.codebox .cm-editor{font-size:16px
 .resource-icon,.resource-chevron{color:var(--muted)}.resource-row[open]>summary .resource-chevron{transform:rotate(90deg)}
 .resource-body{padding:0 16px 24px 52px;min-width:0}.resource-body p{max-width:70ch}
 .topic-references{list-style:none;margin:0;padding:0}.topic-references>li+li{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
-.topic-references h3{font-size:17px;margin-bottom:6px}.topic-references h3 a{display:inline-flex;align-items:center;min-height:44px}
+.topic-references h3{font-size:17px;margin-bottom:6px}.topic-references h3 a{display:inline-flex;align-items:center;gap:.35em;min-height:44px}
 .topic-references code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;margin:4px 0 8px}
 .topic-references p{font-size:16px;margin:0}.reference-scope{font-size:14px;color:var(--muted);margin-bottom:16px}
 .lesson-completion{padding:24px 0}.completion-label{display:flex;align-items:center;gap:12px;min-height:44px;width:fit-content}
