@@ -139,7 +139,10 @@ test("case changes preserve the shared kernel and the host draft for each case",
 test("kernel-only drafts reopen with main and can still be restored", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
     const oldDraft = "from numba import cuda\n\n@cuda.jit\ndef kernel(out):\n    out[0] = 21\n";
-    await page.evaluate((source) => {
+    // Seed the historical installation before the app boots. A live tab now
+    // owns its own reading snapshot, so mutating storage under it is not setup.
+    await page.addInitScript((source) => {
+      sessionStorage.clear();
       localStorage.setItem("cuda-python-lab-v1", JSON.stringify({ drafts: { "first-value": source } }));
     }, oldDraft);
     await page.reload();
