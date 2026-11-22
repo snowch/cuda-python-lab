@@ -3,7 +3,7 @@ export function homeArchitecture(language) {
   const python=language==='python';
   const launch=python?'kernel[1, 1](out)':'hello&lt;&lt;&lt;1, 1&gt;&gt;&gt;(output)';
   return `<figure class="home-architecture">
-    <svg viewBox="0 0 480 320" role="img" aria-labelledby="home-map-title home-map-description">
+    <svg viewBox="0 0 480 320" role="img" aria-labelledby="home-map-title" aria-describedby="home-map-description">
       <title id="home-map-title">From a ${python?'Python':'C++'} program to GPU threads and back</title>
       <desc id="home-map-description">The CPU launches one GPU thread on the compute chip. The thread writes 42 to separate device memory, then the CPU copies the result back.</desc>
       <defs><marker id="home-map-arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path class="home-map-arrowhead" d="M0 0 8 4 0 8Z"/></marker></defs>
