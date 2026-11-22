@@ -1,0 +1,450 @@
+<!doctype html><html lang="en" style="color-scheme:light dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shared course design preview</title><style>body{margin:0}</style></head><body><script>try { window.openai={widgetState:JSON.parse(localStorage.getItem('shared-course-design-preview')||'null'),setWidgetState:async function(value){this.widgetState=value;try{localStorage.setItem('shared-course-design-preview',JSON.stringify(value));}catch{}}}; } catch {}</script><!-- Official Material Symbols Rounded, Apache 2.0; asset revision 10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+#course-style-preview{--page:light-dark(#f7faf9,#142326);--paper:light-dark(#fff,#1c2e31);--ink:light-dark(#193237,#e4efeb);--quiet:light-dark(#49636b,#a7bfbd);--line:light-dark(#cad9d9,#3b5356);--accent:light-dark(#146653,#a3ddc2);--soft:light-dark(#e5f3ec,#28473e);--code-bg:light-dark(#122824,#10231e);--code-text:#edf8f1;--code-focus:#b2d3ff;--code-target:#ffdfa3;--gap:32px;--sans:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;width:100%;max-width:100%;margin-inline:auto;container:course-preview / inline-size;font:400 17px/1.65 var(--sans);color:var(--ink);text-align:left}
+#course-style-preview *{box-sizing:border-box}
+#course-style-preview [hidden]{display:none!important}
+#course-style-preview .lab-app{background:var(--page);color:var(--ink)}
+#course-style-preview :is(h1,h2,h3,p,figure,pre){margin:0}
+#course-style-preview a{color:var(--accent);text-underline-offset:4px}
+#course-style-preview button,#course-style-preview input,#course-style-preview select,#course-style-preview textarea{font:inherit}
+#course-style-preview button:focus-visible,#course-style-preview summary:focus-visible,#course-style-preview a:focus-visible,#course-style-preview input:focus-visible,#course-style-preview textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#course-style-preview .lab-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 24px;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--paper)}
+#course-style-preview .lab-brand{display:flex;align-items:center;gap:11px;color:var(--ink);text-decoration:none;line-height:1.2}
+#course-style-preview .lab-mark{display:grid;place-items:center;width:42px;height:42px;flex:none;border-radius:9px;background:#132c25;color:#a3ddc2}
+#course-style-preview .lab-mark :is(i,svg){width:27px;height:27px}
+#course-style-preview .brand-name{display:block;font-size:22px;font-weight:600}
+#course-style-preview .brand-subtitle{display:block;margin-top:4px;font-size:13px;color:var(--quiet)}
+#course-style-preview .header-actions{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-right:84px}
+#course-style-preview .header-actions summary{list-style:none;min-height:44px;align-content:center}
+#course-style-preview summary::-webkit-details-marker{display:none}
+#course-style-preview .header-actions details{position:relative}
+#course-style-preview .header-label{display:block;font-size:14px;line-height:1.4}
+#course-style-preview .header-state{display:block;font-size:12px;color:var(--quiet);line-height:1.5}
+#course-style-preview .theme-button{border:0;background:transparent;color:var(--ink);padding:4px 0;min-height:44px;font-size:14px}
+#course-style-preview .header-panel{position:absolute;z-index:5;top:calc(100% + 10px);right:0;width:280px;max-width:calc(100cqw - 32px);padding:18px;border:1px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:0 8px 22px #00000014}
+#course-style-preview .header-panel p{font-size:14px;margin-bottom:12px}
+#course-style-preview .small{font-size:13px;color:var(--quiet)}
+#course-style-preview .lab-main{padding:24px 32px 32px;max-width:1120px;margin:auto}
+#course-style-preview .course-nav{padding-bottom:14px;margin-bottom:28px;border-bottom:1px solid var(--line)}
+#course-style-preview .course-row{display:flex;align-items:center;flex-wrap:wrap;gap:0 12px;font-size:14px}
+#course-style-preview .course-toggle>summary{display:flex;gap:7px;align-items:center;flex-wrap:wrap;min-height:44px;list-style:none;color:var(--accent);font-size:16px;font-weight:600}
+#course-style-preview .course-toggle>summary svg{width:16px;height:16px}
+#course-style-preview .course-toggle[open]>summary .outline-chevron{transform:rotate(180deg)}
+#course-style-preview .course-progress{color:var(--quiet);font-size:13px;font-weight:400;margin-left:5px}
+#course-style-preview .crumbs{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:baseline;color:var(--quiet);padding:0;margin:0;list-style:none;min-width:0}
+#course-style-preview .crumbs li{display:flex;gap:12px;min-width:0}
+#course-style-preview .crumbs .divider{color:var(--quiet)}
+#course-style-preview .outline{padding-top:14px}
+#course-style-preview .outline-top{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+#course-style-preview .outline-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+#course-style-preview .outline h3{font-size:14px;line-height:1.4;font-weight:600;margin-bottom:9px}
+#course-style-preview .outline ol{list-style:none;margin:0;padding:0}
+#course-style-preview .outline a.lesson-link{display:grid;grid-template-columns:2ch 1fr auto;align-items:baseline;gap:8px;padding:8px 6px;min-height:44px;text-decoration:none;color:var(--quiet);font-size:13px;line-height:1.45;border-radius:5px}
+#course-style-preview .outline a.lesson-link:hover,#course-style-preview .outline a[aria-current=page]{background:var(--soft);color:var(--accent)}
+#course-style-preview .lesson-number{color:var(--accent);font:12px var(--mono)}
+#course-style-preview .outline [aria-current=page]{font-weight:600}
+#course-style-preview .done-tick{font-weight:600}
+#course-style-preview .lesson-intro{margin-bottom:var(--gap)}
+#course-style-preview .lesson-intro h1{font-size:clamp(36px,5cqw,52px);font-weight:600;line-height:1.1;letter-spacing:-1.8px;margin-bottom:14px}
+#course-style-preview .lead{max-width:64ch;color:var(--quiet);font-size:19px;line-height:1.6}
+#course-style-preview .lesson-section{margin-top:var(--gap)}
+#course-style-preview .lesson-section h2{font-size:26px;font-weight:600;line-height:1.25;letter-spacing:-.5px;margin-bottom:12px}
+#course-style-preview .reading{max-width:70ch}
+#course-style-preview .reading+p{margin-top:12px}
+#course-style-preview code{font-family:var(--mono);font-size:.93em;overflow-wrap:anywhere}
+#course-style-preview .excerpt{margin-top:18px;background:light-dark(#eaf1fa,#20354c);color:light-dark(#245b91,#b2d3ff);border-left:3px solid light-dark(#245b91,#b2d3ff);border-radius:0 7px 7px 0}
+#course-style-preview .excerpt figcaption{padding:12px 18px 0;font-size:13px;font-weight:600}
+#course-style-preview .excerpt pre{padding:12px 18px 16px;font:15px/1.65 var(--mono);white-space:pre;overflow-x:auto}
+#course-style-preview .excerpt .edit-value{color:light-dark(#795300,#ffdfa3)}
+#course-style-preview .run-instructions{margin-top:18px;padding:16px 18px;background:var(--soft);border-left:3px solid var(--accent);border-radius:0 8px 8px 0}
+#course-style-preview .run-instructions strong{display:block;margin-bottom:4px;font-weight:600;color:var(--accent)}
+#course-style-preview .prediction-field{margin-top:14px}
+#course-style-preview .prediction-field label{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
+#course-style-preview .prediction-field input{width:100%;max-width:400px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;color:var(--ink);min-height:44px}
+#course-style-preview .workbench{margin-top:20px;border:1px solid #49615c;border-radius:11px;background:var(--code-bg);color:var(--code-text);overflow:hidden}
+#course-style-preview .editor-head{padding:18px 20px 12px;display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+#course-style-preview .filename{font:500 19px var(--mono);color:var(--code-text)}
+#course-style-preview .editor-tools>summary{list-style:none;color:#c4dbd0;font-size:14px;min-height:34px}
+#course-style-preview .tool-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:7px}
+#course-style-preview .quiet-button{border:1px solid var(--line);border-radius:6px;padding:8px 12px;min-height:42px;background:var(--paper);color:var(--ink);font-size:14px}
+#course-style-preview .tool-actions .quiet-button{background:#223d35;color:var(--code-text);border-color:#49615c}
+#course-style-preview .editor-note{padding:0 20px 12px;font-size:14px;line-height:1.6;color:#bed3c9;max-width:74ch}
+#course-style-preview .editor-note .context-word{color:var(--code-focus)}
+#course-style-preview .editor-note .target-word{color:var(--code-target)}
+#course-style-preview .editor-shell{position:relative;margin:0 20px;height:272px;border:1px solid #49615c;border-radius:7px;background:#10221d;overflow:hidden}
+#course-style-preview .source-mirror,#course-style-preview .source-input{position:absolute;inset:0;width:100%;height:100%;padding:14px 16px;margin:0;border:0;font:400 16px/1.7 var(--mono);letter-spacing:0;tab-size:4;white-space:pre;overflow:auto;border-radius:7px}
+#course-style-preview .source-mirror{pointer-events:none;color:#d8e6df;overflow:hidden;background:transparent}
+#course-style-preview .source-input{background:transparent;color:transparent;caret-color:#edf8f1;resize:none;-webkit-text-fill-color:transparent}
+#course-style-preview .source-input::selection{background:#547f7a70}
+#course-style-preview .focus-code{color:var(--code-focus)}
+#course-style-preview .source-mirror .edit-value{color:var(--code-target)}
+#course-style-preview .execution-bar{padding:16px 20px;display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap}
+#course-style-preview .shortcut{font-size:12px;color:#b8cdc4}
+#course-style-preview .primary-button{background:#a7e3c8;color:#172f29;font-weight:600;border:1px solid #a7e3c8;border-radius:7px;padding:11px 17px;min-height:46px}
+#course-style-preview .console{padding:18px 20px 20px;background:#192f29;border-top:1px solid #49615c}
+#course-style-preview .console-title{font-size:17px;font-weight:600;line-height:1.4}
+#course-style-preview .console-title span{font-size:13px;font-weight:400;color:#b8cdc4;margin-left:8px}
+#course-style-preview .console-note{font-size:13px;color:#b8cdc4;margin:5px 0 12px}
+#course-style-preview .console-output{padding:12px 14px;background:#10221d;border:1px solid #49615c;border-radius:6px;font:16px/1.55 var(--mono);color:#edf8f1;min-height:49px;white-space:pre-wrap}
+#course-style-preview .console-inspection{margin-top:12px;color:#c1d8cd;font-size:14px}
+#course-style-preview .console-inspection summary{min-height:32px;align-content:center}
+#course-style-preview .console-inspection p{font-size:13px;color:#b8cdc4;max-width:65ch;margin-top:8px}
+#course-style-preview .hardware-figure{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}
+#course-style-preview .hardware-figure figcaption{font-size:15px;font-weight:600;margin-bottom:14px}
+#course-style-preview .hardware-flow{display:grid;grid-template-columns:1fr 150px 1.3fr;gap:16px;align-items:center}
+#course-style-preview .hardware-node{padding:14px;border:1px solid var(--line);border-radius:7px;background:var(--page);min-width:0}
+#course-style-preview .hardware-node h3{font-size:15px;font-weight:600;margin-bottom:6px}
+#course-style-preview .hardware-node p{font-size:14px;color:var(--quiet)}
+#course-style-preview .hardware-arrow{display:grid;gap:16px;text-align:center;color:var(--accent);font-size:13px}
+#course-style-preview .compute-chip{padding:10px;border:1px solid var(--line);border-radius:6px;margin:9px 0 10px}
+#course-style-preview .hardware-small-label{font-size:12px;color:var(--quiet)}
+#course-style-preview .sm-focus{padding:9px;background:var(--soft);border-radius:5px;margin-top:6px;color:var(--accent);font-size:14px}
+#course-style-preview .gpu-memory{padding:9px;border:1px solid var(--line);border-radius:5px;font-size:14px}
+#course-style-preview .diagram-caption{margin-top:12px;font-size:13px;color:var(--quiet)}
+#course-style-preview .next-experiment{padding:16px 18px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--soft)}
+#course-style-preview .next-experiment h2{font-size:18px;letter-spacing:0;margin-bottom:6px}
+#course-style-preview .resources{margin-top:var(--gap);border-top:1px solid var(--line)}
+#course-style-preview .resource{border-bottom:1px solid var(--line)}
+#course-style-preview .resource>summary{display:grid;grid-template-columns:24px 1fr 20px;align-items:center;gap:18px;min-height:92px;padding:19px 10px;list-style:none}
+#course-style-preview .resource-icon,#course-style-preview .resource-chevron{color:var(--quiet);width:22px;height:22px}
+#course-style-preview .resource-title{display:block;font-size:18px;font-weight:600;line-height:1.4}
+#course-style-preview .resource-description{display:block;font-size:15px;line-height:1.5;color:var(--quiet);margin-top:4px}
+#course-style-preview .resource[open] .resource-chevron{transform:rotate(90deg)}
+#course-style-preview .resource-body{padding:0 18px 22px 52px}
+#course-style-preview .resource-body p{margin-bottom:10px}
+#course-style-preview .resource-body ul{margin:0;padding-left:20px}
+#course-style-preview .video-placeholder{display:grid;place-content:center;justify-items:center;gap:10px;aspect-ratio:16/7;border:1px solid var(--line);border-radius:7px;background:var(--page);text-align:center}
+#course-style-preview .video-placeholder .video-symbol{width:32px;height:32px;color:var(--accent)}
+#course-style-preview .transcript{margin-top:14px;font-size:14px}
+#course-style-preview .transcript>summary{color:var(--accent);min-height:40px;align-content:center}
+#course-style-preview .transcript p{margin-top:8px;max-width:68ch}
+#course-style-preview .completion{padding:23px 0 25px}
+#course-style-preview .completion-label{display:flex;align-items:center;gap:12px;min-height:44px;width:max-content;max-width:100%;font-size:17px}
+#course-style-preview .completion input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+#course-style-preview .completion-note{font-size:13px;color:var(--quiet);margin:2px 0 0 32px}
+#course-style-preview .lesson-pager{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#course-style-preview .lesson-card{min-height:112px;padding:20px 24px;border:1px solid var(--line);border-radius:12px;background:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:10px;text-decoration:none}
+#course-style-preview .lesson-card:hover{border-color:var(--accent)}
+#course-style-preview .lesson-direction{color:var(--quiet);font-size:14px}
+#course-style-preview .lesson-destination{font-size:18px;font-weight:600;line-height:1.4}
+#course-style-preview .lesson-card.next{align-items:flex-end;text-align:right}
+#course-style-preview .lab-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;margin-top:32px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;color:var(--quiet)}
+#course-style-preview .footer-links{display:flex;gap:20px;flex-wrap:wrap}
+#course-style-preview .app-status-note{font-size:13px;color:var(--quiet);margin-top:8px}
+@container course-preview (max-width:850px){#course-style-preview .outline-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#course-style-preview .header-actions{margin-right:0;gap:20px}#course-style-preview .lab-header{padding-top:20px}#course-style-preview .lab-brand{padding-right:70px}#course-style-preview .hardware-flow{grid-template-columns:1fr 130px 1.2fr}}
+@container course-preview (max-width:600px){#course-style-preview .lab-main{padding:18px 18px 24px}#course-style-preview .lab-header{padding:16px 18px;gap:14px}#course-style-preview .header-actions{width:100%;justify-content:space-between;gap:12px}#course-style-preview .brand-name{font-size:20px}#course-style-preview .header-label,#course-style-preview .theme-button{font-size:13px}#course-style-preview .header-state{font-size:11px}#course-style-preview .course-row{gap:4px 10px}#course-style-preview .crumbs{gap:6px 10px}#course-style-preview .course-nav{margin-bottom:23px}#course-style-preview .lesson-intro h1{font-size:37px;letter-spacing:-1.3px}#course-style-preview .lead{font-size:18px}#course-style-preview .lesson-section h2{font-size:24px}#course-style-preview .next-experiment h2{font-size:18px}#course-style-preview .hardware-flow{grid-template-columns:minmax(0,1fr)}#course-style-preview .hardware-arrow{grid-template-columns:1fr 1fr;gap:10px}#course-style-preview .hardware-arrow .launch-direction::after{content:" ↓"}#course-style-preview .hardware-arrow .copy-direction::before{content:"↑ "}#course-style-preview .hardware-arrow .desktop-arrow{display:none}#course-style-preview .lesson-pager{grid-template-columns:minmax(0,1fr);gap:12px}#course-style-preview .resource>summary{gap:12px;padding:18px 4px;grid-template-columns:22px 1fr 18px}#course-style-preview .resource-title{font-size:17px}#course-style-preview .resource-description{font-size:14px}#course-style-preview .resource-body{padding:0 2px 20px}#course-style-preview .editor-head{padding:16px 14px 10px}#course-style-preview .editor-note{padding-inline:14px}#course-style-preview .editor-shell{margin-inline:12px}#course-style-preview .execution-bar,#course-style-preview .console{padding-inline:14px}#course-style-preview .lab-header{position:relative}#course-style-preview .header-actions details{position:static}#course-style-preview .header-panel{position:absolute;top:100%;left:18px;right:18px;width:auto;max-width:none}#course-style-preview .shortcut{display:none}#course-style-preview .lesson-card{padding:18px 20px;min-height:102px}}
+@container course-preview (max-width:500px){#course-style-preview .outline-grid{grid-template-columns:minmax(0,1fr)}}
+@media(forced-colors:active){#course-style-preview .source-input{color:CanvasText;-webkit-text-fill-color:CanvasText}#course-style-preview .source-mirror{display:none}}
+
+#course-style-preview .material-symbol{display:inline-block;flex-shrink:0;width:24px;height:24px;vertical-align:middle;background-color:currentColor;-webkit-mask-image:var(--symbol);mask-image:var(--symbol);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+#course-style-preview .lab-mark .material-symbol{width:26px;height:26px}
+#course-style-preview .outline-chevron.material-symbol,#course-style-preview .resource-chevron.material-symbol,#course-style-preview .done-tick.material-symbol{width:20px;height:20px}
+#course-style-preview .resource-icon.material-symbol{width:24px;height:24px}
+#course-style-preview .video-symbol.material-symbol{width:32px;height:32px}
+#course-style-preview .editor-tools>summary{display:flex;align-items:center;gap:6px}
+#course-style-preview .tools-chevron.material-symbol{width:20px;height:20px}
+#course-style-preview .editor-tools[open] .tools-chevron{transform:rotate(90deg)}
+#course-style-preview .reference-topic+.reference-topic{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+#course-style-preview .reference-topic h3{font-size:16px;font-weight:600;margin-bottom:4px}
+#course-style-preview .reference-topic h3>a{display:inline-flex;align-items:center;min-height:44px}
+#course-style-preview .reference-code{display:block;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0 8px}
+#course-style-preview .reference-topic p{font-size:15px;margin:0}
+</style>
+<section id="course-style-preview" aria-label="Shared course lesson design preview">
+  <div class="lab-app">
+    <header class="lab-header">
+      <a class="lab-brand" href="https://snowch.github.io/cuda-cpp-lab/" target="_blank" rel="noopener">
+        <span class="lab-mark"><span class="material-symbol " aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjQiPjxwYXRoIGQ9Ik0zNjAtNDAwdi0xNjBxMC0xNyAxMS41LTI4LjVUNDAwLTYwMGgxNjBxMTcgMCAyOC41IDExLjVUNjAwLTU2MHYxNjBxMCAxNy0xMS41IDI4LjVUNTYwLTM2MEg0MDBxLTE3IDAtMjguNS0xMS41VDM2MC00MDBabTgwLTQwaDgwdi04MGgtODB2ODBabS04MCAyODB2LTQwaC04MHEtMzMgMC01Ni41LTIzLjVUMjAwLTI4MHYtODBoLTQwcS0xNyAwLTI4LjUtMTEuNVQxMjAtNDAwcTAtMTcgMTEuNS0yOC41VDE2MC00NDBoNDB2LTgwaC00MHEtMTcgMC0yOC41LTExLjVUMTIwLTU2MHEwLTE3IDExLjUtMjguNVQxNjAtNjAwaDQwdi04MHEwLTMzIDIzLjUtNTYuNVQyODAtNzYwaDgwdi00MHEwLTE3IDExLjUtMjguNVQ0MDAtODQwcTE3IDAgMjguNSAxMS41VDQ0MC04MDB2NDBoODB2LTQwcTAtMTcgMTEuNS0yOC41VDU2MC04NDBxMTcgMCAyOC41IDExLjVUNjAwLTgwMHY0MGg4MHEzMyAwIDU2LjUgMjMuNVQ3NjAtNjgwdjgwaDQwcTE3IDAgMjguNSAxMS41VDg0MC01NjBxMCAxNy0xMS41IDI4LjVUODAwLTUyMGgtNDB2ODBoNDBxMTcgMCAyOC41IDExLjVUODQwLTQwMHEwIDE3LTExLjUgMjguNVQ4MDAtMzYwaC00MHY4MHEwIDMzLTIzLjUgNTYuNVQ2ODAtMjAwaC04MHY0MHEwIDE3LTExLjUgMjguNVQ1NjAtMTIwcS0xNyAwLTI4LjUtMTEuNVQ1MjAtMTYwdi00MGgtODB2NDBxMCAxNy0xMS41IDI4LjVUNDAwLTEyMHEtMTcgMC0yOC41LTExLjVUMzYwLTE2MFptMzIwLTEyMHYtNDAwSDI4MHY0MDBoNDAwWk00ODAtNDgwWiIvPjwvc3ZnPg==)"></span></span>
+        <span><span class="brand-name">CUDA C++ Lab</span><span class="brand-subtitle">GPU architecture</span></span>
+      </a>
+      <nav class="header-actions" aria-label="Course resources">
+        <details class="runner-menu">
+          <summary><span class="header-label">Code runner</span><span class="header-state runner-state">Ready</span></summary>
+          <div class="header-panel">
+            <p><strong>Ready for another run</strong></p>
+            <p>The runner stays ready between lessons and stops after 30 minutes without a run.</p>
+            <button class="quiet-button free-memory" type="button">Free memory</button>
+            <p class="app-status-note">Layout preview. No runtime is started.</p>
+          </div>
+        </details>
+        <details>
+          <summary><span class="header-label">App status</span><span class="header-state">Up to date online</span></summary>
+          <div class="header-panel"><p><strong>Up to date online</strong></p><p>An offline copy has not been saved.</p><p class="small">The live course provides its download and update controls here.</p></div>
+        </details>
+        <button class="theme-button" type="button">Dark theme</button>
+      </nav>
+    </header>
+    <main class="lab-main">
+      <nav class="course-nav" aria-label="Course navigation and breadcrumb">
+        <div class="course-row">
+          <details class="course-toggle">
+            <summary aria-controls="mock-course-outline">Course lessons <span class="material-symbol outline-chevron" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Ik00NzkuOC0zNDhxLTcuMiAwLTEzLjUtMi41VDQ1NS0zNThMMjY1LjM0LTU0Ny42NlEyNTQtNTU5IDI1NC41LTU3My41VDI2Ni01OTlxMTEtMTEgMjUuNS0xMXQyNS41IDExbDE2MyAxNjQgMTY0LTE2NHExMS0xMSAyNS41LTEwLjVUNjk1LTU5OHExMSAxMSAxMSAyNS41dC0xMS4zNCAyNS43OEw1MDUtMzU4cS01LjQgNS0xMS43IDcuNS02LjMgMi41LTEzLjUgMi41WiIvPjwvc3ZnPg==)"></span><span class="course-progress">0 / 27 complete</span></summary>
+          </details>
+          <ol class="crumbs">
+            <li><span class="divider" aria-hidden="true">/</span><a href="https://snowch.github.io/cuda-cpp-lab/#part-cuda-foundations" target="_blank" rel="noopener">CUDA foundations</a></li>
+            <li><span class="divider" aria-hidden="true">/</span><span aria-current="page">Write your first GPU value</span></li>
+          </ol>
+        </div>
+        <div class="outline" id="mock-course-outline" hidden>
+          <p class="outline-top"><a href="https://snowch.github.io/cuda-cpp-lab/" target="_blank" rel="noopener">Course overview</a></p>
+          <div class="outline-grid"></div>
+        </div>
+      </nav>
+      <header class="lesson-intro">
+        <h1>Write your first GPU value</h1>
+        <p class="lead">Launch one thread, write one value, and read it back in <code>main()</code>.</p>
+      </header>
+      <section class="lesson-section">
+        <h2>Which value does the CPU print?</h2>
+        <p class="reading"><code>hello</code> is a kernel: a function that runs on the GPU. A GPU thread runs the kernel's body once. Here, the single thread stores a value at <code>output[0]</code> in GPU memory.</p>
+        <p class="reading">A block is a group of GPU threads. The two <code>1</code>s in the launch below request one block containing one thread.</p>
+        <figure class="excerpt">
+          <figcaption>Read-only excerpt · Kernel and launch</figcaption>
+          <pre><code>__global__ void hello(float* output) {
+    output[0] = <span class="edit-value">42.0f</span>;
+}
+
+hello&lt;&lt;&lt;1, 1&gt;&gt;&gt;(output);</code></pre>
+        </figure>
+        <div class="run-instructions">
+          <strong>Run the starter</strong>
+          <p>The complete program is ready in the editor. Click <b>Compile and run</b>, then find the printed value in Console. Keep the memory setup and error checks unchanged for now.</p>
+          <div class="prediction-field">
+            <label for="mock-course-prediction">Your prediction <span class="small">· Optional</span></label>
+            <input id="mock-course-prediction" placeholder="Which number will main() print?" autocomplete="off">
+          </div>
+        </div>
+        <div class="workbench">
+          <div class="editor-head">
+            <h3 class="filename">hello.cu</h3>
+            <details class="editor-tools"><summary><span class="material-symbol tools-chevron" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Ik01MjItNDgwIDM1OC02NDRxLTExLTExLTExLTI1LjV0MTEtMjUuNXExMS0xMSAyNS41LTExdDI1Ljg0IDExLjM0TDU5OS01MDVxNSA1LjQgNy41IDExLjcgMi41IDYuMyAyLjUgMTMuNXQtMi41IDEzLjVRNjA0LTQ2MCA1OTktNDU1TDQwOS4zNC0yNjUuMzRRMzk4LTI1NCAzODQtMjU0LjVUMzU5LTI2NnEtMTEtMTEtMTEtMjUuNXQxMS0yNS41bDE2My0xNjNaIi8+PC9zdmc+)"></span>Editor tools</summary><div class="tool-actions"><button class="quiet-button show-kernel" type="button">Show target line</button><button class="quiet-button show-launch" type="button">Show launch</button><button class="quiet-button restore-starter" type="button">Restore starter</button></div></details>
+          </div>
+          <p class="editor-note">The kernel and launch use <span class="context-word">blue text</span>. The value to change uses <span class="target-word">gold text</span>. The remaining setup can stay unchanged.</p>
+          <div class="editor-shell">
+            <pre class="source-mirror" aria-hidden="true"></pre>
+            <textarea class="source-input" aria-label="CUDA source" spellcheck="false" wrap="off" maxlength="6000">#include &lt;cuda_runtime.h&gt;
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+
+__global__ void hello(float* output) {
+    output[0] = 42.0f;
+}
+
+int main() {
+    float* output = nullptr;
+    cudaError_t result = cudaMalloc(&amp;output, sizeof(float));
+    if (result != cudaSuccess) {
+        std::fprintf(stderr, "%s\n", cudaGetErrorString(result));
+        return EXIT_FAILURE;
+    }
+
+    hello&lt;&lt;&lt;1, 1&gt;&gt;&gt;(output);
+    result = cudaGetLastError();
+    if (result != cudaSuccess) {
+        std::fprintf(stderr, "%s\n", cudaGetErrorString(result));
+        cudaFree(output);
+        return EXIT_FAILURE;
+    }
+
+    float value = 0.0f;
+    result = cudaMemcpy(&amp;value, output, sizeof(value), cudaMemcpyDeviceToHost);
+    if (result != cudaSuccess) {
+        std::fprintf(stderr, "%s\n", cudaGetErrorString(result));
+        cudaFree(output);
+        return EXIT_FAILURE;
+    }
+
+    std::printf("%.1f\n", value);
+    cudaFree(output);
+    return EXIT_SUCCESS;
+}</textarea>
+          </div>
+          <div class="execution-bar"><span class="shortcut">Ctrl / ⌘ + Enter</span><button class="primary-button run-preview" type="button">Compile and run</button></div>
+          <section class="console" aria-label="Console">
+            <h3 class="console-title">Console <span>Preview output</span></h3>
+            <p class="console-note" role="status">Try the button to preview the output layout. No code is executed.</p>
+            <pre class="console-output" aria-live="polite">No result yet.</pre>
+            <details class="console-inspection"><summary>Inspect generated PTX</summary><p>In the course, this optional tool shows the instructions produced by the compiler. The lesson's main result stays visible above.</p></details>
+          </section>
+        </div>
+      </section>
+      <section class="lesson-section">
+        <h2>Where does the value go?</h2>
+        <p class="reading">An <strong>SM</strong> (streaming multiprocessor) is a part of the GPU chip that runs threads. The kernel writes into GPU memory. <code>main()</code> copies that value into the CPU variable <code>value</code> before printing it.</p>
+        <figure class="hardware-figure">
+          <figcaption>The same value, from GPU memory to CPU output</figcaption>
+          <div class="hardware-flow">
+            <section class="hardware-node">
+              <h3>CPU · host</h3>
+              <p><code>main()</code> launches the kernel.</p>
+              <div class="compute-chip"><span class="hardware-small-label">CPU memory</span><p><code>value</code> receives the copy.</p></div>
+              <p><code>printf</code> prints <code>value</code>.</p>
+            </section>
+            <div class="hardware-arrow"><span class="launch-direction">Launch <span class="desktop-arrow">→</span></span><span class="copy-direction"><span class="desktop-arrow">← </span>Copy result back</span></div>
+            <section class="hardware-node">
+              <h3>GPU · device</h3>
+              <div class="compute-chip"><span class="hardware-small-label">Compute chip</span><div class="sm-focus"><strong>SM</strong> · One thread runs <code>hello</code></div></div>
+              <div class="gpu-memory"><strong>Device memory</strong><p><code>output[0]</code> holds the value.</p></div>
+            </section>
+          </div>
+          <p class="diagram-caption">Simplified architecture. GPU memory is separate from the compute chip. A thread is not a dedicated physical processor.</p>
+        </figure>
+      </section>
+      <section class="lesson-section next-experiment">
+        <h2>Change the value and run again</h2>
+        <p>In <code>hello</code>, change <code>output[0] = 42.0f</code> to <code>output[0] = 7.0f</code>. Predict the printed number and click <b>Compile and run</b> again. Can the launch still use one thread?</p>
+      </section>
+      <section class="resources" aria-label="Optional lesson resources">
+        <details class="resource">
+          <summary><span class="material-symbol resource-icon" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjQiPjxwYXRoIGQ9Im00MTEtMzIwIDIyMy0xNDNxOS02IDktMTd0LTktMTdMNDExLTY0MHEtMTAtNy0yMC41LTFUMzgwLTYyM3YyODZxMCAxMiAxMC41IDE4dDIwLjUtMVpNMTYwLTE2MHEtMzMgMC01Ni41LTIzLjVUODAtMjQwdi00ODBxMC0zMyAyMy41LTU2LjVUMTYwLTgwMGg2NDBxMzMgMCA1Ni41IDIzLjVUODgwLTcyMHY0ODBxMCAzMy0yMy41IDU2LjVUODAwLTE2MEgxNjBabTAtODBoNjQwdi00ODBIMTYwdjQ4MFptMCAwdi00ODAgNDgwWiIvPjwvc3ZnPg==)"></span><span><span class="resource-title">Follow the value through the GPU and back</span><span class="resource-description">2 min 16 sec · Video, captions and transcript</span></span><span class="material-symbol resource-chevron" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Ik01MjItNDgwIDM1OC02NDRxLTExLTExLTExLTI1LjV0MTEtMjUuNXExMS0xMSAyNS41LTExdDI1Ljg0IDExLjM0TDU5OS01MDVxNSA1LjQgNy41IDExLjcgMi41IDYuMyAyLjUgMTMuNXQtMi41IDEzLjVRNjA0LTQ2MCA1OTktNDU1TDQwOS4zNC0yNjUuMzRRMzk4LTI1NCAzODQtMjU0LjVUMzU5LTI2NnEtMTEtMTEtMTEtMjUuNXQxMS0yNS41bDE2My0xNjNaIi8+PC9zdmc+)"></span></summary>
+          <div class="resource-body">
+            <div class="video-placeholder" role="img" aria-label="Video placement preview"><span class="material-symbol video-symbol" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjQiPjxwYXRoIGQ9Im00MjYtMzMwIDE5NS0xMjVxMTQtOSAxNC0yNXQtMTQtMjVMNDI2LTYzMHEtMTUtMTAtMzAuNS0xLjVUMzgwLTYwNXYyNTBxMCAxOCAxNS41IDI2LjVUNDI2LTMzMFptNTQgMjUwcS04MyAwLTE1Ni0zMS41VDE5Ny0xOTdxLTU0LTU0LTg1LjUtMTI3VDgwLTQ4MHEwLTgzIDMxLjUtMTU2VDE5Ny03NjNxNTQtNTQgMTI3LTg1LjVUNDgwLTg4MHE4MyAwIDE1NiAzMS41VDc2My03NjNxNTQgNTQgODUuNSAxMjdUODgwLTQ4MHEwIDgzLTMxLjUgMTU2VDc2My0xOTdxLTU0IDU0LTEyNyA4NS41VDQ4MC04MFptMC04MHExMzQgMCAyMjctOTN0OTMtMjI3cTAtMTM0LTkzLTIyN3QtMjI3LTkzcS0xMzQgMC0yMjcgOTN0LTkzIDIyN3EwIDEzNCA5MyAyMjd0MjI3IDkzWm0wLTMyMFoiLz48L3N2Zz4=)"></span><strong>CPU → GPU → CPU</strong><span class="small">Video placement preview</span></div>
+            <details class="transcript"><summary>Read the transcript</summary><p>The CPU requests one thread. An SM runs that thread, which stores a value in GPU memory. The CPU copies the value into its own memory before printing. Changing the stored number changes the output; it does not require more threads.</p></details>
+          </div>
+        </details>
+        <details class="resource">
+          <summary><span class="material-symbol resource-icon" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjQiPjxwYXRoIGQ9Ik0yNjAtMzIwcTQ3IDAgOTEuNSAxMC41VDQ0MC0yNzh2LTM5NHEtNDEtMjQtODctMzZ0LTkzLTEycS0zNiAwLTcxLjUgN1QxMjAtNjkydjM5NnEzNS0xMiA2OS41LTE4dDcwLjUtNlptMjYwIDQycTQ0LTIxIDg4LjUtMzEuNVQ3MDAtMzIwcTM2IDAgNzAuNSA2dDY5LjUgMTh2LTM5NnEtMzMtMTQtNjguNS0yMXQtNzEuNS03cS00NyAwLTkzIDEydC04NyAzNnYzOTRabS00MCA5N3EtMTQgMC0yNi41LTMuNVQ0MzAtMTk0cS0zOS0yMy04Mi0zNC41VDI2MC0yNDBxLTQyIDAtODIuNSAxMVQxMDAtMTk4cS0yMSAxMS00MC41LTFUNDAtMjM0di00ODJxMC0xMSA1LjUtMjFUNjItNzUycTQ2LTI0IDk2LTM2dDEwMi0xMnE1OCAwIDExMy41IDE1VDQ4MC03NDBxNTEtMzAgMTA2LjUtNDVUNzAwLTgwMHE1MiAwIDEwMiAxMnQ5NiAzNnExMSA1IDE2LjUgMTV0NS41IDIxdjQ4MnEwIDIzLTE5LjUgMzV0LTQwLjUgMXEtMzctMjAtNzcuNS0zMVQ3MDAtMjQwcS00NSAwLTg4IDExLjVUNTMwLTE5NHEtMTEgNi0yMy41IDkuNVQ0ODAtMTgxWk0yODAtNDk0Wm0yODAtMTE1cTAtOSA2LjUtMTguNVQ1ODEtNjQwcTI5LTEwIDU4LTE1dDYxLTVxMjAgMCAzOS41IDIuNVQ3NzgtNjUxcTkgMiAxNS41IDEwdDYuNSAxOHEwIDE3LTExIDI1dC0yOCA0cS0xNC0zLTI5LjUtNC41VDcwMC02MDBxLTI2IDAtNTEgNXQtNDggMTNxLTE4IDctMjkuNS0xVDU2MC02MDlabTAgMjIwcTAtOSA2LjUtMTguNVQ1ODEtNDIwcTI5LTEwIDU4LTE1dDYxLTVxMjAgMCAzOS41IDIuNVQ3NzgtNDMxcTkgMiAxNS41IDEwdDYuNSAxOHEwIDE3LTExIDI1dC0yOCA0cS0xNC0zLTI5LjUtNC41VDcwMC0zODBxLTI2IDAtNTEgNC41VDYwMS0zNjNxLTE4IDctMjkuNS0uNVQ1NjAtMzg5Wm0wLTExMHEwLTkgNi41LTE4LjVUNTgxLTUzMHEyOS0xMCA1OC0xNXQ2MS01cTIwIDAgMzkuNSAyLjVUNzc4LTU0MXE5IDIgMTUuNSAxMHQ2LjUgMThxMCAxNy0xMSAyNXQtMjggNHEtMTQtMy0yOS41LTQuNVQ3MDAtNDkwcS0yNiAwLTUxIDV0LTQ4IDEzcS0xOCA3LTI5LjUtMVQ1NjAtNDk5WiIvPjwvc3ZnPg==)"></span><span><span class="resource-title">References</span><span class="resource-description">Kernel definitions · Launch syntax · Copying results</span></span><span class="material-symbol resource-chevron" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Ik01MjItNDgwIDM1OC02NDRxLTExLTExLTExLTI1LjV0MTEtMjUuNXExMS0xMSAyNS41LTExdDI1Ljg0IDExLjM0TDU5OS01MDVxNSA1LjQgNy41IDExLjcgMi41IDYuMyAyLjUgMTMuNXQtMi41IDEzLjVRNjA0LTQ2MCA1OTktNDU1TDQwOS4zNC0yNjUuMzRRMzk4LTI1NCAzODQtMjU0LjVUMzU5LTI2NnEtMTEtMTEtMTEtMjUuNXQxMS0yNS41bDE2My0xNjNaIi8+PC9zdmc+)"></span></summary>
+          <div class="resource-body quick-reference">
+            <section class="reference-topic"><h3><a href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/intro-to-cuda-cpp.html#specifying-kernels" target="_blank" rel="noopener">Kernel definition ↗</a></h3><code class="reference-code">__global__ void hello(float* output)</code><p>Declares hello as a function that runs on the GPU.</p></section>
+            <section class="reference-topic"><h3><a href="https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/intro-to-cuda-cpp.html#triple-chevron-notation" target="_blank" rel="noopener">Launch syntax ↗</a></h3><code class="reference-code">hello&lt;&lt;&lt;1, 1&gt;&gt;&gt;(output);</code><p>Requests one block containing one thread.</p></section>
+            <section class="reference-topic"><h3><a href="https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/group__CUDART__MEMORY.html" target="_blank" rel="noopener">Copying the result to the CPU ↗</a></h3><code class="reference-code">cudaMemcpy(&amp;value, output, sizeof(value), cudaMemcpyDeviceToHost);</code><p>Copies the GPU value into the CPU variable value before printing.</p></section>
+          </div>
+        </details>
+        <details class="resource">
+          <summary><span class="material-symbol resource-icon" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjQiPjxwYXRoIGQ9Ik0yMDAtMTIwcS01MSAwLTcyLjUtNDUuNVQxMzgtMjUwbDIyMi0yNzB2LTI0MGgtNDBxLTE3IDAtMjguNS0xMS41VDI4MC04MDBxMC0xNyAxMS41LTI4LjVUMzIwLTg0MGgzMjBxMTcgMCAyOC41IDExLjVUNjgwLTgwMHEwIDE3LTExLjUgMjguNVQ2NDAtNzYwaC00MHYyNDBsMjIyIDI3MHEzMiAzOSAxMC41IDg0LjVUNzYwLTEyMEgyMDBabTAtODBoNTYwTDUyMC00OTJ2LTI2OGgtODB2MjY4TDIwMC0yMDBabTI4MC0yODBaIi8+PC9zdmc+)"></span><span><span class="resource-title">Further GPU investigation</span><span class="resource-description">Run the example on an NVIDIA GPU</span></span><span class="material-symbol resource-chevron" aria-hidden="true" style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Ik01MjItNDgwIDM1OC02NDRxLTExLTExLTExLTI1LjV0MTEtMjUuNXExMS0xMSAyNS41LTExdDI1Ljg0IDExLjM0TDU5OS01MDVxNSA1LjQgNy41IDExLjcgMi41IDYuMyAyLjUgMTMuNXQtMi41IDEzLjVRNjA0LTQ2MCA1OTktNDU1TDQwOS4zNC0yNjUuMzRRMzk4LTI1NCAzODQtMjU0LjVUMzU5LTI2NnEtMTEtMTEtMTEtMjUuNXQxMS0yNS41bDE2My0xNjNaIi8+PC9zdmc+)"></span></summary>
+          <div class="resource-body"><p>Run the same example on your GPU and compare the printed value with the simulated result.</p><a href="https://snowch.github.io/cuda-cpp-lab/lessons/desktop.html" target="_blank" rel="noopener">GPU setup and tools ↗</a></div>
+        </details>
+      </section>
+      <section class="completion" aria-label="Lesson completion">
+        <label class="completion-label"><input type="checkbox" class="complete-checkbox"><span>Mark lesson complete</span></label>
+        <p class="completion-note">Saved in this preview.</p>
+      </section>
+      <nav class="lesson-pager" aria-label="Lesson sequence">
+        <a class="lesson-card" href="https://snowch.github.io/cuda-cpp-lab/" target="_blank" rel="noopener"><span class="lesson-direction">Course overview</span><span class="lesson-destination">Choose a lesson</span></a>
+        <a class="lesson-card next" href="https://snowch.github.io/cuda-cpp-lab/v2/one-thread-one-element.html" target="_blank" rel="noopener"><span class="lesson-direction">Next lesson →</span><span class="lesson-destination">One thread, one element</span></a>
+      </nav>
+      <footer class="lab-footer"><span>Copyright © 2026 Christopher Snow</span><span class="footer-links"><a href="https://snowch.github.io/cuda-cpp-lab/v2/cuda-source-workbench.html#software-licences" target="_blank" rel="noopener">Sources and licences</a><a href="https://github.com/snowch/cuda-cpp-lab/issues" target="_blank" rel="noopener">Report a problem</a></span></footer>
+    </main>
+  </div>
+</section>
+<script>
+(function(){
+  const root=document.getElementById("course-style-preview");
+  const find=function(selector){return root.querySelector(selector);};
+  const source=find(".source-input"),mirror=find(".source-mirror"),starter=source.value;
+  const config={width:"Responsive",density:"Comfortable"};
+  const state={source:starter,prediction:"",complete:false,theme:"auto",output:null,stale:false};
+  const groups=[
+    ["CUDA foundations",[
+      ["first-kernel","Write your first GPU value"],["one-thread-one-element","One thread, one element"],["more-threads-than-elements","More threads than elements"],["from-cpu-array-to-gpu-result","From CPU array to GPU result"]]],
+    ["GPU execution and AI workloads",[
+      ["coalescing","Same load, different addresses"],["scheduling","What runs while a warp waits?"],["divergence","When lanes take different branches"],["reduction","Add values across a block"],["shared-memory-banks","When shared-memory addresses collide"],["matmul","Reuse inputs in a matrix tile"],["precision","What changes when inputs use fewer bits?"],["tensor-cores","How a warp cooperates on a matrix tile"],["attention","Keep less intermediate data in attention"],["inference","Follow the key-value cache during inference"],["matmul-investigation","Investigate a matrix multiplication"]]],
+    ["Parallel patterns",[
+      ["histograms","Count token destinations safely"],["scan","Build positions from prefix sums"],["compaction","Pack surviving tokens in order"],["progress","Find a parallel program's progress dependency"],["pipelines","Overlap copies with computation"],["token-routing","Investigate stable token routing"]]],
+    ["Practical GPU investigations",[
+      ["verify-every-output","Check every GPU result"],["grid-stride-loops","Process more inputs than the launch has threads"],["multi-block-scan","Carry a prefix across blocks"],["resource-tradeoffs","Explain an SM resource trade-off"],["measure-a-kernel","Measure a GPU kernel fairly"],["softmax-capstone","Build and verify a stable softmax"]]]
+  ];
+  const escapeHTML=function(text){return String(text).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");};
+  let index=0;
+  find(".outline-grid").innerHTML=groups.map(function(group){
+    return '<section><h3>'+escapeHTML(group[0])+'</h3><ol>'+group[1].map(function(lesson){
+      index+=1;
+      return '<li><a class="lesson-link" href="https://snowch.github.io/cuda-cpp-lab/v2/'+lesson[0]+'.html" target="_blank" rel="noopener" '+(index===1?'aria-current="page"':'')+'><span class="lesson-number">'+String(index).padStart(2,"0")+'</span><span>'+escapeHTML(lesson[1])+'</span>'+(index===1?'<span class="material-symbol done-tick" role="img" aria-label="Complete" hidden style="--symbol:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iMjAiPjxwYXRoIGQ9Im0zODktMzY5IDI5OS0yOTlxMTAuOTEtMTEgMjUuNDUtMTFRNzI4LTY3OSA3MzktNjY4dDExIDI1LjU4cTAgMTQuNTgtMTAuNjEgMjUuMTlMNDE1LTI5MnEtMTAuOTEgMTEtMjUuNDUgMTFRMzc1LTI4MSAzNjQtMjkyTDIyMS00MzVxLTExLTExLTExLTI1LjV0MTEtMjUuNXExMS0xMSAyNS42Ny0xMSAxNC42NiAwIDI1LjMzIDExbDExNyAxMTdaIi8+PC9zdmc+)"></span>':'')+'</a></li>';
+    }).join("")+'</ol></section>';
+  }).join("");
+  function paintSource(){
+    mirror.innerHTML=escapeHTML(source.value)
+      .replace(/(__global__[\s\S]*?\n\})/g,'<span class="focus-code">$1</span>')
+      .replace(/(hello&lt;&lt;&lt;[^;]*;)/g,'<span class="focus-code">$1</span>')
+      .replace(/(output\[0\]\s*=\s*)(-?\d+(?:\.\d+)?f?)/g,'$1<span class="edit-value">$2</span>');
+    mirror.scrollTop=source.scrollTop;mirror.scrollLeft=source.scrollLeft;
+  }
+  function syncOutput(){
+    find(".console-output").textContent=state.output===null?"No result yet.":state.output;
+    find(".console-note").textContent=state.stale?"Source changed. Run again to update this preview.":state.output===null?"Try the button to preview the output layout. No code is executed.":"Preview result from the assigned numeric value. No code was executed.";
+  }
+  function syncProgress(){
+    find(".course-progress").textContent=(state.complete?1:0)+" / 27 complete";
+    find(".done-tick").hidden=!state.complete;
+    find(".complete-checkbox").checked=state.complete;
+  }
+  function themeLabel(){
+    const values=getComputedStyle(find(".lab-app")).backgroundColor.match(/\d+/g);
+    const dark=values&&(+values[0]+ +values[1]+ +values[2])/3<128;
+    find(".theme-button").textContent=dark?"Light theme":"Dark theme";
+  }
+  function renderOptions(){
+    root.style.maxWidth=config.width==="Phone"?"390px":"100%";
+    root.style.setProperty("--gap",config.density==="Compact"?"24px":"32px");
+  }
+  function remember(){
+    const payload={modelContent:{preview:"Shared course style",width:config.width,density:config.density},privateContent:{source:source.value,prediction:find("#mock-course-prediction").value,complete:state.complete,theme:state.theme,output:state.output,stale:state.stale,width:config.width,density:config.density}};
+    const saved=window.openai&&window.openai.setWidgetState&&window.openai.setWidgetState(payload);
+    if(saved&&saved.catch)saved.catch(function(){});
+  }
+  function restore(value){
+    const prior=value&&(value.privateContent||value);
+    if(!prior||typeof prior!=="object")return;
+    if(typeof prior.source==="string"&&prior.source.length<=6000)source.value=prior.source;
+    if(typeof prior.prediction==="string")find("#mock-course-prediction").value=prior.prediction;
+    state.complete=prior.complete===true;
+    if(["auto","light","dark"].includes(prior.theme))state.theme=prior.theme;
+    state.output=typeof prior.output==="string"?prior.output:null;
+    state.stale=prior.stale===true;
+    if(["Responsive","Phone"].includes(prior.width))config.width=prior.width;
+    if(["Comfortable","Compact"].includes(prior.density))config.density=prior.density;
+  }
+  function render(){
+    if(state.theme==="auto")root.style.removeProperty("color-scheme");
+    else root.style.colorScheme=state.theme;
+    renderOptions();paintSource();syncProgress();syncOutput();themeLabel();
+  }
+  function runPreview(){
+    const match=source.value.match(/output\[0\]\s*=\s*(-?\d+(?:\.\d+)?)(?:f)?\s*;/);
+    state.output=match?Number(match[1]).toFixed(1):"Preview could not find a numeric assignment to output[0].";
+    state.stale=false;syncOutput();remember();
+  }
+  function reveal(term,selectValue){
+    find(".editor-tools").open=false;
+    let start=source.value.indexOf(term);if(start<0)return;
+    let end=source.value.indexOf("\n",start);if(end<0)end=source.value.length;
+    if(selectValue){const match=source.value.slice(start,end).match(/=\s*(-?\d+(?:\.\d+)?f?)/);if(match){start+=match.index+match[0].indexOf(match[1]);end=start+match[1].length;}}
+    source.focus();source.setSelectionRange(start,end);
+    const lines=source.value.slice(0,start).split("\n").length-1;
+    source.scrollTop=Math.max(0,lines*parseFloat(getComputedStyle(source).lineHeight)-90);
+    paintSource();
+  }
+  find(".course-toggle").addEventListener("toggle",function(){find(".outline").hidden=!this.open;});
+  find(".course-nav").addEventListener("keydown",function(event){
+    if(event.key==="Escape"&&find(".course-toggle").open){find(".course-toggle").open=false;find(".outline").hidden=true;find(".course-toggle>summary").focus();event.preventDefault();}
+  });
+  find(".run-preview").addEventListener("click",runPreview);
+  source.addEventListener("input",function(){state.stale=state.output!==null;paintSource();syncOutput();remember();});
+  source.addEventListener("scroll",paintSource);
+  source.addEventListener("keydown",function(event){if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();runPreview();}});
+  find(".show-kernel").addEventListener("click",function(){reveal("output[0]",true);});
+  find(".show-launch").addEventListener("click",function(){reveal("hello<<<",false);});
+  find(".restore-starter").addEventListener("click",function(){source.value=starter;source.scrollTop=0;state.stale=state.output!==null;paintSource();syncOutput();remember();});
+  find("#mock-course-prediction").addEventListener("input",remember);
+  find(".complete-checkbox").addEventListener("change",function(){state.complete=this.checked;syncProgress();remember();});
+  find(".theme-button").addEventListener("click",function(){
+    const values=getComputedStyle(find(".lab-app")).backgroundColor.match(/\d+/g);
+    state.theme=values&&(+values[0]+ +values[1]+ +values[2])/3<128?"light":"dark";
+    render();remember();
+  });
+  find(".free-memory").addEventListener("click",function(){
+    const stopped=find(".runner-state").textContent==="Stopped";
+    find(".runner-state").textContent=stopped?"Ready":"Stopped";
+    this.textContent=stopped?"Free memory":"Start code runner";
+  });
+  restore(window.openai&&window.openai.widgetState);render();
+  window.addEventListener("openai:set_globals",function(event){const globals=event.detail&&event.detail.globals;if(globals&&globals.widgetState){restore(globals.widgetState);render();}});
+  if(globalThis.Tweak){
+    const tweak=new Tweak({container:root,onChange:function(){renderOptions();remember();}});
+    tweak.addSelect(config,"width",{label:"Preview width",options:["Responsive","Phone"]});
+    tweak.addSelect(config,"density",{label:"Spacing",options:["Comfortable","Compact"]});
+  }
+})();
+</script>
+</body></html>
