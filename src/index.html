@@ -25,14 +25,17 @@
 
   <div class="layout">
     <aside class="course-navigation">
+      <div class="course-row">
       <details id="course-nav">
-        <summary>Course lessons <span id="course-progress"></span></summary>
-        <div class="contents">
+        <summary aria-controls="course-contents">Course lessons <span id="course-progress"></span></summary>
+        <div class="contents" id="course-contents">
           <p><a href="#course" data-page="course">Course outline</a> · <a href="#gpu" data-page="gpu">Appendix A</a> · <a href="#compiler" data-page="compiler">Compiler lab</a></p>
           <progress id="progress" aria-label="Course progress"></progress>
           <nav id="lesson-nav" aria-label="Lessons"></nav>
         </div>
       </details>
+      <nav id="course-location" aria-label="Breadcrumb"></nav>
+      </div>
     </aside>
     <main id="main" tabindex="-1">
       <p class="loading-site" role="status">Loading CUDA Python Lab…</p>

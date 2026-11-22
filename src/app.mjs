@@ -12,6 +12,24 @@ import { attachRunner } from "./browser-runner.mjs";
 const order = modules.flatMap((module) => module.lessons);
 const main = document.querySelector("main");
 const courseNav = document.querySelector("#course-nav");
+const courseNavigation = document.querySelector(".course-navigation");
+const courseContents = document.querySelector("#course-contents");
+courseNavigation.append(courseContents);
+const syncCourseNav = () => { courseContents.hidden = !courseNav.open; };
+syncCourseNav();
+courseNav.addEventListener("toggle", syncCourseNav);
+courseNavigation.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !courseNav.open) return;
+  courseNav.open = false;
+  syncCourseNav();
+  const trigger = courseNav.querySelector("summary");
+  trigger.focus({ preventScroll: true });
+  const bounds = trigger.getBoundingClientRect();
+  const header = document.querySelector(".site-header").getBoundingClientRect().bottom;
+  if (bounds.top < header || bounds.bottom > innerHeight)
+    scrollTo({ top: scrollY + bounds.top - header - 12, behavior: "instant" });
+  event.preventDefault();
+});
 const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
@@ -68,6 +86,12 @@ themeControl.addEventListener("click", () => {
 });
 
 function updateNav(page) {
+  const module = modules.find((part) => part.lessons.includes(page));
+  const current = lessons[page]?.title ?? { course: "Course outline", gpu: "Appendix A", compiler: "Compiler lab" }[page];
+  document.querySelector("#course-location").innerHTML = `<ol>
+    ${module ? `<li><span aria-hidden="true">/</span><span>${escape(module.title)}</span></li>` : ""}
+    <li><span aria-hidden="true">/</span><span aria-current="page">${escape(current)}</span></li>
+  </ol>`;
   const completed = order.filter((slug) => state.completed[slug]).length;
   document.querySelector("#progress").max = order.length;
   document.querySelector("#progress").value = completed;
@@ -116,7 +140,6 @@ function showCourse() {
 
 function showGpu() {
   main.innerHTML = `<div class="resource-page">
-    <p class="breadcrumb"><a href="#course">Course outline</a></p>
     <h1 class="appendix-title">Appendix A. Run on an NVIDIA GPU</h1>
     <p class="lead">Use an NVIDIA GPU on your computer or through a hosted notebook service. Start with the lab notebook, then use the investigations to measure and debug GPU work.</p>
     <section class="reading">
@@ -231,11 +254,9 @@ function showLesson(slug) {
   const lesson = lessons[slug];
   const index = order.indexOf(slug);
   const walkthrough = walkthroughs[slug];
-  const module = modules.find((part) => part.lessons.includes(slug));
   const defaultProgram = standaloneProgram(starters[slug], lesson.cases[0]);
   main.innerHTML = `<article>
     <header class="lesson-heading">
-      <p class="breadcrumb"><a href="#course">Course</a><span aria-hidden="true">/</span><span>${escape(module.title)}</span></p>
       <h1>${escape(lesson.title)}</h1>
       <p class="lead">${escape(lesson.summary)}</p>
       <div class="reading lesson-context">
@@ -471,6 +492,7 @@ function route(moveFocus = false) {
   document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? (page === "compiler" ? "First-launch compiler lab" : "Appendix A")} · CUDA Python Lab`;
   if (moveFocus) {
     courseNav.open = false;
+    syncCourseNav();
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }
