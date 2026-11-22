@@ -1,5 +1,9 @@
 # Working on CUDA Python Lab
 
+Consult the [shared course design guide](docs/course-design-guide.md) when changing
+course layout or interactions. It records the preferred patterns across courses;
+its adoption gaps do not authorise unrelated UI changes during another task.
+
 ## Read the course as a learner
 
 Assume the learner can read Python functions, loops, and array indices. Teach CUDA and GPU architecture through the lessons. Review the course outline, the preceding lesson, the changed lesson, and the next lesson in the built site. Include headings, editor source and labels, cases, instructions, diagrams, feedback, and optional GPU materials in the review.
