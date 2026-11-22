@@ -1,9 +1,11 @@
-import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { build } from "esbuild";
 import { strToU8, unzipSync, zipSync } from "fflate";
+import { execFileSync } from "node:child_process";
+import { buildOffline } from "./offline.mjs";
 import { lessons, modules } from "../src/course.mjs";
 
 const root = new URL("../", import.meta.url);
@@ -12,12 +14,13 @@ const dist = new URL("dist/", root);
 const vendor = new URL("vendor/", root);
 const pyodide = new URL("node_modules/pyodide/", root);
 
+await rm(dist, {recursive:true, force:true});
 for (const directory of ["", "gpu/", "runtime/"]) {
   await mkdir(new URL(directory, dist), { recursive: true });
 }
 await Promise.all(
   ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs",
-    "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
+    "code-runner.mjs", "code-runner-host.mjs", "code-runner-settings.mjs", "code-runner.css", "app-status.css", "offline.mjs", "release-contract.mjs", "release-metadata.mjs", "media-range.mjs", "experiment-state.mjs", "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
 await cp(new URL("media/", src), new URL("media/", dist), { recursive: true });
@@ -110,3 +113,17 @@ for (const [slug, source] of Object.entries(starters)) {
 await writeFile(new URL("gpu/requirements.txt", dist), archive["requirements.txt"]);
 await writeFile(new URL("gpu/cuda-python-investigations.zip", dist), zipSync(archive));
 console.log(`Built ${slugs.length} lessons in ${fileURLToPath(dist)}`);
+
+let identity = {commit:null,date:null};
+let version = '<span class="build-info">Development build</span>';
+try {
+  const dirty = execFileSync('git',['status','--porcelain'],{cwd:root,encoding:'utf8'}).trim();
+  if (!dirty) {
+    const [commit, date] = execFileSync('git',['log','-1','--format=%H%n%cs'],{cwd:root,encoding:'utf8'}).trim().split('\n');
+    identity = {commit,date};
+    version = `<span class="build-info">Commit <a href="https://github.com/snowch/cuda-python-lab/commit/${commit}">${commit.slice(0,7)}</a> · ${date}</span>`;
+  }
+} catch { /* Source archives remain buildable without inventing a revision. */ }
+const html = (await readFile(new URL('index.html',dist),'utf8')).replace('</body>',`<span hidden>${version}</span></body>`);
+await writeFile(new URL('index.html',dist),html);
+await buildOffline(fileURLToPath(dist),identity);

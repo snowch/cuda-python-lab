@@ -47,7 +47,19 @@ export async function loadCompiler(python) {
   python.runPython('import sys\nsys.path.insert(0, "/llvmlite.zip")');
   const lower = python.runPython(frontend + "\nlower_kernel");
   const diagnostics = [];
+  const module = await WebAssembly.compile(wasm);
+  let memory;
   const backend = await createNvptxCompiler({
+    instantiateWasm(imports, receive) {
+      const instance = new WebAssembly.Instance(module, imports);
+      // Inspect declared memories only: Emscripten import proxies are not enumerable safely.
+      memory = Object.values(instance.exports).find(value => value instanceof WebAssembly.Memory);
+      for (const item of WebAssembly.Module.imports(module).filter(item => item.kind === "memory")) {
+        memory ??= imports[item.module][item.name];
+      }
+      receive(instance, module);
+      return instance.exports;
+    },
     wasmBinary: new Uint8Array(wasm),
     noInitialRun: true,
     printErr(line) {
@@ -56,7 +68,7 @@ export async function loadCompiler(python) {
     },
   });
 
-  return (kernel) => {
+  const compile = (kernel) => {
     const ir = intrinsicMath(lower(JSON.stringify(kernel)));
     diagnostics.length = 0;
     backend.FS.writeFile("/kernel.ll", ir);
@@ -73,4 +85,6 @@ export async function loadCompiler(python) {
       }
     }
   };
+  compile.memoryBuffer = () => memory?.buffer;
+  return compile;
 }

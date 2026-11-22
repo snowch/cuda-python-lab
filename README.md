@@ -57,6 +57,14 @@ python scripts/check_native.py
 python scripts/check_native.py --ptx
 ```
 
-The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
+The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. Use the Playwright-pinned full Chromium build for media support; bulk export clicks are paced below Chrome’s download-rate limit while still checking every case. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
 
 Walkthrough scripts and transcripts are in `src/walkthroughs.mjs`. The site build uses the checked-in media. To regenerate the videos, run `node scripts/build_walkthroughs.mjs /path/to/en_US-ljspeech-medium.onnx` with Chromium, FFmpeg, uv, and the [Piper voice model and its JSON config](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/ljspeech/medium). The narration uses a synthetic voice.
+
+## Browser code runner and offline access
+
+The header offers **Code runner**, **App status**, and the theme switch on every view. The Python/Numba compiler stays ready between lessons in the same tab. Each run gets a fresh program namespace and simulator device. Header **Start code runner** prepares the tools without executing the editor. **Free memory** and **Stop run** terminate the worker while preserving saved code, predictions, case selections, completion and previous results. The default idle timeout is 30 minutes; choose 5, 15, 30 or 60 minutes in Code runner.
+
+App status checks for published versions automatically. Normal online reloads use the live course. **Save offline copy** explicitly saves every required file, including recordings, Pyodide, NumPy, Numba and the CUDA compiler. **Update offline copy** stages a newer verified version and offers **Restart to update**. Wait for **Downloaded and ready to use offline** before disconnecting. External links and native GPU tools still need their own connectivity/installations.
+
+See [runner design](docs/code-runner-design.md) and [offline/update design](docs/offline-update-design.md) for ownership, resource reporting, preservation and verification details.

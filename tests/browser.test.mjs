@@ -40,7 +40,9 @@ async function replaceSource(page, editor, program) {
 }
 
 async function downloadFile(page, locator) {
-  const [download] = await Promise.all([page.waitForEvent("download"), locator.click()]);
+  // Keep bulk case coverage below Chrome’s per-second download limit.
+  // A fast CI runner can otherwise click dozens of exports in one second.
+  const [download] = await Promise.all([page.waitForEvent("download"), locator.click({ delay: 200 })]);
   return { name: download.suggestedFilename(), contents: await readFile(await download.path()) };
 }
 
@@ -139,7 +141,10 @@ test("case changes preserve the shared kernel and the host draft for each case",
 test("kernel-only drafts reopen with main and can still be restored", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
     const oldDraft = "from numba import cuda\n\n@cuda.jit\ndef kernel(out):\n    out[0] = 21\n";
-    await page.evaluate((source) => {
+    // Seed the historical installation before the app boots. A live tab now
+    // owns its own reading snapshot, so mutating storage under it is not setup.
+    await page.addInitScript((source) => {
+      sessionStorage.clear();
       localStorage.setItem("cuda-python-lab-v1", JSON.stringify({ drafts: { "first-value": source } }));
     }, oldDraft);
     await page.reload();
@@ -167,7 +172,12 @@ test("architecture walkthroughs play with captions and expose transcripts by key
       assert.equal(await video.getAttribute("aria-label"), walkthrough.title);
       await video.evaluate(async (player) => {
         player.muted = true;
-        await player.play();
+        let timer;
+        try {
+          await Promise.race([player.play(),new Promise((_,reject)=>{
+            timer=setTimeout(()=>reject(new Error(`Video did not start: ${player.error?.message??'no media error'}; readyState=${player.readyState}`)),10000);
+          })]);
+        } finally { clearTimeout(timer); }
       });
       await page.waitForFunction(() => {
         const player = document.querySelector(".walkthrough video");

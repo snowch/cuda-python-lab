@@ -163,6 +163,11 @@ export function openDevice(wasmModule, compile, status) {
         throw new Error(`GPGPU-Sim could not execute this PTX.\n${report}`, { cause: error });
       }
     },
+    memoryBuffer() { return module?.HEAPU8?.buffer; },
+    dispose() {
+      module = undefined;
+      buffers.length = 0; compiled.clear(); ptxModules.length = 0;
+    },
     report() {
       return { ptx: ptxModules.join("\n"), launched };
     },
