@@ -264,9 +264,21 @@ that rotates when opened. The whole summary is a touch and keyboard target.
 Use subtle horizontal separators rather than another set of coloured cards.
 Omit resource rows that have no useful content.
 
-Consolidate references. Do not repeat the same link list above a documentation
-exercise containing those links. Keep external-link behaviour clear. Use nested
-answer disclosures only when the learner has a question to attempt first.
+For coding lessons, include one lesson-specific **References** row near the
+bottom, after the main explanation and before completion and navigation.
+Name the topics covered in its subtitle, typically two to four related topics:
+for example, **Kernel definitions · Launch syntax · Copying results**.
+
+Inside, give each topic a short reminder or syntax example and a direct link to
+the relevant documentation section or API entry. Match the language and library
+version taught in the lesson. Cover the concepts and operations used on this page;
+keep further reading and new investigations in their own row. Required definitions
+and instructions still belong beside the experiment.
+
+Consolidate references rather than adding another generic course-wide link list.
+Do not repeat the same links above a documentation exercise containing them. Keep
+external-link behaviour clear. Use nested answer disclosures only when the learner
+has a question to attempt first.
 
 Follow resources with a separate completion row:
 
@@ -339,6 +351,8 @@ Check closed/open resources, empty/results/error states, selected cases, complet
 and saved work. Verify phones, tablets and desktops, both themes, browser zoom,
 keyboard order, visible focus and screen-reader names. The page itself must not
 scroll horizontally; code, diagrams and tables can have labelled local scrolling.
+For coding lessons, check that References names the page's topics, gives useful
+reminders or syntax, and links to the relevant documentation sections and versions.
 
 Run the actual starter and suggested edit when execution or instructions change.
 For navigation changes, follow real links, back/forward and reload, checking that
