@@ -67,20 +67,20 @@ test('an open lesson runs after deployment; an expired runtime recovers without 
  current=pathToFileURL(next+'/');await page.locator('#run').click();await finished(page);assert.equal(await page.locator('#run-output').textContent(),'out = [43.0]');
  assert.equal(await page.locator('meta[name="gpu-release"]').getAttribute('content'),original.id);
  // Beyond retention, classify download failure separately and keep the previous result.
- current=pathToFileURL(expired+'/');await recover.locator('#run').click();await recover.locator('#runtime-recovery').waitFor();
+ current=pathToFileURL(expired+'/');await recover.locator('#run').click();await recover.getByRole('alertdialog').waitFor();assert.equal(await recover.getByRole('alertdialog').evaluate(el=>el.matches(':modal')),true);
  assert.equal(await recover.locator('#run-status').textContent(),'Code runner files could not be loaded.');
  assert.equal(await recover.locator('#run-output').textContent(),'out = [42.0]');
  assert.equal(await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).results['first-value'][0].output),'out = [42.0]');
  for(const [width,theme]of[[390,'dark'],[1440,'light']]){
   await recover.setViewportSize({width,height:1000});await recover.emulateMedia({colorScheme:theme});
   assert.ok(await recover.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  await recover.locator('.run-console').screenshot({path:`test-results/runtime-recovery-${width}-${theme}.png`});
+  await recover.screenshot({path:`test-results/runtime-recovery-${width}-${theme}.png`});
  }
  await recover.evaluate(()=>{window.savedStorageSetter=Storage.prototype.setItem;Storage.prototype.setItem=function(){throw new DOMException('Blocked','SecurityError');};});
- await recover.getByRole('button',{name:'Reload lesson',exact:true}).click();await recover.locator('#runtime-recovery-note').filter({hasText:'Reload cancelled:'}).waitFor();
+ await recover.getByRole('alertdialog').getByRole('button',{name:'Reload lesson',exact:true}).click();await recover.locator('#runtime-recovery-dialog-error').filter({hasText:'Reload cancelled:'}).waitFor();
  assert.equal(await recover.locator('meta[name="gpu-release"]').getAttribute('content'),original.id);
  await recover.evaluate(()=>{Storage.prototype.setItem=window.savedStorageSetter;});
- await recover.getByRole('button',{name:'Reload lesson',exact:true}).click();await recover.waitForFunction(id=>document.querySelector('meta[name="gpu-release"]')?.content===id,second.id);await editor(recover).waitFor();
+ await recover.getByRole('alertdialog').getByRole('button',{name:'Reload lesson',exact:true}).click();await recover.waitForFunction(id=>document.querySelector('meta[name="gpu-release"]')?.content===id,second.id);await editor(recover).waitFor();
  assert.equal(await recover.locator('#prediction').inputValue(),'Keep this prediction and 43.');
  assert.ok(await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0].includes('out[0] = 43')));
  await recover.locator('#editor-tools > summary').click();await recover.getByRole('button',{name:'Update CUDA imports',exact:true}).click();
