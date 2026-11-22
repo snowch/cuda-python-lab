@@ -68,6 +68,9 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  await page.locator('#app-status-close').click();await page.locator('#prediction').fill('Saved before flight');
  await context.setOffline(true);await page.reload();await editor(page).waitFor();
  assert.equal(await page.locator('#prediction').inputValue(),'Saved before flight');
+ await page.goto(url);await page.getByRole('img',{name:'From a Python program to GPU threads and back',exact:true}).waitFor();
+ await page.getByRole('link',{name:'Start the first lab',exact:true}).click();await editor(page).waitFor();
+ assert.equal(await page.locator('#prediction').inputValue(),'Saved before flight');
  for(const slug of ['vector-add','vector-add','first-value'])await lesson(page,slug);
  await page.locator('#run').click();await finished(page);assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  const tab=await context.newPage();await tab.goto(url+'#lesson/vector-add');await editor(tab).waitFor();
