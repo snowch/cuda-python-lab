@@ -18,6 +18,36 @@ Cache names are scoped to the app's full base URL. Download progress represents 
 
 Check whole-release completeness from stored bytes before declaring readiness or switching the selected release. Requests for a pinned file cannot fall through unchecked to a different deployment. An unchanged live alias may repair a file only if its original size and hash match. Media Range requests return proper partial responses. Missing/evicted files produce a recovery page without silently selecting mixed assets or erasing learner work.
 
+## Open lessons across deployments
+
+Builds use a fixed ZIP timestamp for the compiler archive and GPU downloads. A
+content-identical archive must have identical bytes: otherwise an ordinary text
+edit can change the runtime hash and break an older open lesson's first run.
+All local scripts and styles in the HTML are pinned to the document's release.
+
+Before publishing, the main build retains the two most recent prior releases,
+including their manifests and every declared file. It reuses local files only
+when size and SHA-256 match, and verifies downloaded prior files before copying
+them. The current manifest records these retained IDs in the same response as
+the current release identity. Retention failure stops publication. Older copies
+are excluded from the current offline download manifest and its size.
+
+An old open tab can therefore fetch its original runtime after a deployment.
+Beyond the retention window, unchanged current aliases still require the old
+hash to match. Never bypass verification or substitute a different compiler.
+A fully verified saved offline course does not depend on server retention.
+
+Failure to load runner files is infrastructure feedback, separate from a Python
+execution error. Show Reload lesson with an online/retry explanation; save the
+source, case, prediction, disclosures and reading position before reloading.
+Block reload when the work cannot be saved. Keep the last genuine program
+result; a runtime download failure is transient and must not replace it.
+Reload does not execute code automatically.
+
+Saved legacy CUDA imports are kept until the learner chooses Update CUDA
+imports in Editor tools. That action changes recognised imports while keeping
+other edits and an editor undo step. Source exports already adapt those imports.
+
 ## Restart transaction
 
 The service worker asks all affected course tabs to prepare. Each tab rejects while its runner is busy, while text composition is active, before the editor has loaded, or if its work cannot be saved. Save per-tab work, disclosures and reading position in session storage; lock lesson/header navigation briefly. Commit the selected release only when all tabs acknowledge. On failure, release the locks and keep the existing course selected. On success reload each tab, preserving its hash route and saved code, case, prediction, completion and Console/PTX results. Never rerun code automatically. Restart snapshot keys discard temporary `download=1` recovery and release-pin parameters, because the App status link removes those parameters before reloading; retaining them in the key would strand the tab’s snapshot. The Python course needs no iframe restoration or document-swap router.

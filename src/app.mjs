@@ -310,6 +310,7 @@ function showLesson(slug) {
               <button class="button" id="show-main" type="button">Show main()</button>
               <button class="button" id="restore" type="button">Restore starter</button>
               <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
+              <button class="button" id="update-imports" type="button" hidden>Update CUDA imports</button>
               <button class="button" id="download-source" type="button">Export .py</button>
             </div>
             <p class="editor-note" id="target-note" role="status" hidden></p>
@@ -333,7 +334,9 @@ function showLesson(slug) {
       <section class="workbench-card run-console" aria-labelledby="console-title">
         <h2 id="console-title">Console <span>GPGPU-Sim</span></h2>
         <p class="editor-note" id="run-status" role="status"></p>
+        <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
+        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Connect to the internet, then choose Reload lesson. The page saves your code and prediction before reloading. After it reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error"></pre></details></div>
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
       </section>
     </section>
@@ -351,7 +354,7 @@ function showLesson(slug) {
           <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
           <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
         </video>
-        <details class="walkthrough-transcript"><summary>Read the transcript</summary>
+        <details id="walkthrough-transcript" class="walkthrough-transcript"><summary>Read the transcript</summary>
           ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
         </details></div>
       </details>` : ""}
@@ -398,6 +401,9 @@ function showLesson(slug) {
 
   function updateRestore(message = "") {
     const isStarter = editor.source === starter;
+    const legacy=migrateCudaImports(editor.source)!==editor.source;
+    find('update-imports').hidden=!legacy;
+    if(legacy)message='This saved program uses an older CUDA import. In Editor tools, choose Update CUDA imports to adapt it. Your other edits are kept.';
     find("restore").disabled = isStarter;
     find("undo-restore").hidden = !isStarter || restoredSource() === undefined;
     draftNote.textContent = message;
@@ -443,6 +449,10 @@ function showLesson(slug) {
 
   find("show-target").addEventListener("click", () => showLine(lesson.sourceTarget));
   find("show-main").addEventListener("click", () => showLine("def main(", { align: "start" }));
+  find('update-imports').addEventListener('click',()=>{
+    editor.replace(migrateCudaImports(editor.source));find('editor-tools').open=false;
+    updateRestore('CUDA imports updated. Your other edits are kept. Ctrl/⌘ + Z restores the previous code.');
+  });
   find("restore").addEventListener("click", () => {
     restoredPrograms[caseIndex] = editor.source;
     find("editor-tools").open = false;

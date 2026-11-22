@@ -19,6 +19,7 @@ function snapshot() {
   const encoded=JSON.stringify(value);sessionStorage.setItem(key,encoded);
   if(sessionStorage.getItem(key)!==encoded)throw new Error('This window could not save its work. Allow browser storage and retry.');
 }
+export {snapshot as saveReadingState};
 function unlock(){clearTimeout(timer);lock=null;document.querySelector('main').inert=false;document.querySelector('.site-header').inert=false;document.querySelector('.course-navigation').inert=false;}
 addEventListener('compositionstart',()=>{composing=true;});addEventListener('compositionend',()=>{composing=false;});
 navigator.serviceWorker?.addEventListener('message',({data,ports})=>{

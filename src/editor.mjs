@@ -49,6 +49,10 @@ export function mountProgramEditor(parent, source, onEdit, onRun) {
       view.setState(createState(source));
       if (focus) view.focus();
     },
+    replace(source) {
+      view.dispatch({changes:{from:0,to:view.state.doc.length,insert:source}});
+      view.focus();
+    },
     destroy() {
       view.destroy();
     },

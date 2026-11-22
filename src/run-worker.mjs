@@ -23,7 +23,7 @@ async function initialise() {
 self.onmessage = async ({data:{type,source,filename}}) => {
   try {
     status(runtime ? "Preparing the CUDA program…" : "Loading Python, the compiler, and GPGPU-Sim…");
-    activeRuntime = await (runtime ??= initialise().catch(error => {runtime=undefined;throw error;}));
+    activeRuntime = await (runtime ??= initialise().catch(error => {runtime=undefined;const failure=new Error(String(error.message??error));failure.runtimeLoad=true;throw failure;}));
     if (type === 'prepare') { postMessage({prepared:true,wasmBytes:memoryBytes()});return; }
     const {execute,compile,python,wasmModule} = activeRuntime;
     device = openDevice(wasmModule, compile, status);
@@ -35,6 +35,6 @@ self.onmessage = async ({data:{type,source,filename}}) => {
     postMessage({...result,...report,programError:Boolean(result.error),wasmBytes:memoryBytes()});
   } catch(error) {
     device?.dispose();device=undefined;
-    postMessage({error:error.message,wasmBytes:memoryBytes()});
+    postMessage({error:error.message,runtimeLoad:Boolean(error.runtimeLoad),wasmBytes:memoryBytes()});
   }
 };
