@@ -93,6 +93,17 @@ h3 { font-size: 1rem; line-height: 1.35; font-weight: 650; }
 .reading { min-width: 0; }
 .reading p, .reading li { max-width: 72ch; }
 .lesson-context p { margin-bottom: .55rem; }
+.lesson-excerpt {
+  margin: .75rem 0;
+  max-width: 72ch;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 7px 7px 0;
+  background: var(--soft);
+}
+.lesson-excerpt figcaption { padding: .55rem .75rem .15rem; color: var(--accent); font-size: .875rem; font-weight: 650; }
+.lesson-excerpt pre { margin: 0; padding: .35rem .75rem .65rem; overflow-x: auto; font: .875rem/1.55 var(--mono); }
+.lesson-excerpt code { font: inherit; }
 
 .prediction { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 7px 7px 0; padding: .8rem 1rem; margin-bottom: 1.4rem; }
 .prediction label { display: block; font-weight: 700; margin-bottom: .14rem; }

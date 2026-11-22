@@ -50,6 +50,16 @@ test("every case exports a CUDA notebook containing its complete program", async
       await openLesson(page, slug);
       assert.ok(await page.getByRole("button", { name: "Run", exact: true }).isVisible());
       const kernel = await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8");
+      const starter = standaloneProgram(kernel, lesson.cases[0]);
+      const excerpts = await page.locator(".lesson-excerpt code").allTextContents();
+      assert.ok(excerpts.length > 0, slug);
+      for (const excerpt of excerpts) {
+        const lines = excerpt.split("\n");
+        const firstLine = starter.split("\n").find((line) => line.trimStart() === lines[0]);
+        assert.ok(firstLine, slug);
+        const indent = firstLine.match(/^ */)[0];
+        assert.ok(starter.includes(lines.map((line) => line && indent + line).join("\n")), slug);
+      }
       for (const [index, fixture] of lesson.cases.entries()) {
         if (lesson.cases.length > 1) await page.getByRole("combobox", { name: "Case", exact: true }).selectOption(String(index));
         const file = await downloadFile(page, page.getByRole("button", { name: "Download notebook" }));
@@ -76,6 +86,7 @@ test("the full first program is keyboard accessible and edits reach both exports
     const edited = starter.replace("out[0] = 42", "out[0] = 73")
       .replace("    return result", "    print(out_host.tolist())\n    return result");
     await replaceSource(page, editor, edited);
+    assert.match(await page.locator(".lesson-excerpt code").nth(1).textContent(), /out\[0\] = 42/);
     await editor.press("Escape");
     await page.keyboard.press("Tab");
     assert.equal(await page.locator("#run").evaluate((button) => button === document.activeElement), true);
