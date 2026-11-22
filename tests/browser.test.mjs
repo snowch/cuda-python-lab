@@ -40,7 +40,9 @@ async function replaceSource(page, editor, program) {
 }
 
 async function downloadFile(page, locator) {
-  const [download] = await Promise.all([page.waitForEvent("download"), locator.click()]);
+  // Keep bulk case coverage below Chrome’s per-second download limit.
+  // A fast CI runner can otherwise click dozens of exports in one second.
+  const [download] = await Promise.all([page.waitForEvent("download"), locator.click({ delay: 200 })]);
   return { name: download.suggestedFilename(), contents: await readFile(await download.path()) };
 }
 
