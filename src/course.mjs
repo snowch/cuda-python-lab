@@ -145,12 +145,17 @@ export const lessons = {
     summary: "Launch one GPU thread, write one value, and copy the result back to the CPU.",
     intro: [
       "A GPU (graphics processing unit) can run many copies of the same function in parallel. A function launched on the GPU is called a kernel. Each thread executes one copy of the kernel.",
-      "Numba CUDA lets you write GPU kernels in Python. The @cuda.jit line marks the kernel. The CPU program is called the host and the GPU is called the device. Read both parts in the editor.",
+      { label: "Import Numba CUDA", from: "from numba import cuda" },
+      "The import gives Python access to Numba’s CUDA tools for defining kernels and managing GPU memory.",
+      { label: "Define the kernel", from: "@cuda.jit", through: "out[0] = 42" },
+      "@cuda.jit tells Numba to compile this function as a GPU kernel. The thread running it stores 42 in the first element of out on the GPU.",
+      { label: "Launch from main()", from: "kernel[1, 1](out)", through: "result = out.copy_to_host()" },
+      "The CPU program is the host and the GPU is the device. From the host, the first 1 requests one block, a group of threads, and the second 1 requests one thread in that block. The host passes the device array out and copies its contents back after the launch.",
     ],
     predict: "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
     exercise: [
-      "Find main() in the program. It creates a CPU array with one float32 value, a 32-bit floating-point number. Find kernel[1, 1](out). The first 1 requests one block, a group of GPU threads. The second requests one thread in that block.",
-      "Run the starter program and find out = [42.0] in the output. Which line in main() copies the result back before printing it?",
+      "Find main() in the program. It creates a CPU array with one float32 value, a 32-bit floating-point number. Which line in main() copies that starting value to the GPU?",
+      "Run the starter program and find out = [42.0] in the output.",
       "Change out[0] = 42 to out[0] = 73 and rerun the program. Then add print(out_host.tolist()) just before return result and rerun. Compare the original CPU array with the result copied from the GPU.",
     ],
     explain: "The GPU thread writes to a separate device array. The original CPU array still holds zero. copy_to_host() waits for the GPU result and returns a new CPU array, which main() prints.",
@@ -162,8 +167,9 @@ export const lessons = {
     title: "One thread, one element",
     summary: "Map threads to array indices and skip threads beyond the end of the input.",
     intro: [
-      "A launch can start several blocks. Each thread has a number within its block. cuda.grid(1) returns the thread’s global index, its unique number across all blocks. Multiply the block number by the number of threads per block, then add the thread’s number within the block. All indices start at zero.",
-      "In main(), the launch starts enough whole blocks to cover the arrays. In the kernel, i < n keeps threads with indices beyond the array length from reading or writing those arrays.",
+      "A launch can start several blocks. In main(), the launch starts enough whole blocks to cover the arrays.",
+      { label: "Map a thread to an array element", from: "i = cuda.grid(1)", through: "out[i] = a[i] + b[i]" },
+      "cuda.grid(1) returns the thread’s global index in a one-dimensional launch. Multiply the block number by the number of threads per block, then add the thread’s number within the block. All indices start at zero. The guard i < n lets only threads with a valid index read and write the arrays.",
     ],
     predict: "In the 33-element case with 32 threads per block, which block and thread write index 32? How many threads in that block skip the write?",
     exercise: [
@@ -180,8 +186,10 @@ export const lessons = {
     title: "Let each thread do more work",
     summary: "Use a loop so each thread can visit more than one array index.",
     intro: [
-      "A grid is the collection of blocks in a launch. In grid-stride.py, cuda.gridDim.x is the number of blocks and cuda.blockDim.x is the number of threads per block.",
-      "Each thread starts at its global index. The stride is the step between indices visited by the same thread. Using the total thread count as the stride lets each thread cover a different set of indices below n, the array length.",
+      "A grid is the collection of blocks in a launch. For a one-dimensional grid and block, cuda.gridDim.x counts blocks and cuda.blockDim.x counts threads per block.",
+      { label: "Step by the total thread count", from: "first = cuda.grid(1)",
+        through: "out[i] = values[i] * 2" },
+      "Each thread starts at its global index, first. The stride is the step between indices visited by that thread. Here it equals the total number of threads. The loop stops before n, the array length, so each thread covers a different set of valid indices.",
     ],
     predict: "With 16 threads total and 35 elements, which indices does Block 0, Thread 3 visit?",
     exercise: [
@@ -198,7 +206,11 @@ export const lessons = {
     title: "Count bytes moved between host and GPU",
     summary: "Separate the kernel’s array accesses from the copies that get data to and from a GPU.",
     intro: [
-      "The host is the CPU-side Python program. The device is the GPU. In main(), cuda.to_device copies x and y to the GPU, cuda.device_array reserves space for out on the GPU, and copy_to_host copies out back.",
+      "In main(), cuda.to_device copies x and y to the GPU.",
+      { label: "Allocate, launch, and copy back in the 33-element case", from: "out = cuda.device_array(33, dtype=np.float32)",
+        through: "result = out.copy_to_host()" },
+      "cuda.device_array reserves space for out on the GPU. After the kernel writes to out, copy_to_host copies its contents to the CPU.",
+      { label: "Read and write arrays already on the GPU", from: "if i < n:", through: "out[i] = alpha * x[i] + y[i]" },
       "Each active thread reads one element from each input and writes one value to out. These are global memory accesses because the arrays are in GPU memory available to all threads. The arrays use float32, a format that takes four bytes per element.",
     ],
     predict: "In the 33-element case, how many bytes of array data cross between host and device if x and y start on the host and out returns to the host?",
@@ -217,7 +229,9 @@ export const lessons = {
     summary: "Use a matrix transpose to see why neighboring threads can read nearby addresses and write far apart.",
     intro: [
       "A streaming multiprocessor (SM) executes the threads of a block in groups called warps. Each warp has 32 positions called lanes. A partial warp leaves some lanes unused. In a two-dimensional block, lanes are numbered across x before moving to the next y. The kernel uses x for the column and y for the row.",
-      "A transpose swaps the row and column of every value. The arrays store each row together. Adjacent lanes read consecutive columns of values[row, col] and write to different rows of out[col, row].",
+      { label: "Read one matrix element and swap its coordinates", from: "col, row = cuda.grid(2)",
+        through: "out[col, row] = values[row, col]" },
+      "cuda.grid(2) gives the thread’s global x and y coordinates. A transpose swaps the row and column of each value. Because the arrays store each row together, adjacent lanes read consecutive columns of values and write to different rows of out.",
       "A sector is an aligned group of 32 bytes. Eight float32 values fit in a sector. Count word offsets in four-byte units from the start of an array. For the address calculations below, assume each array starts on a sector boundary.",
     ],
     predict: "For the first eight lanes in 8 rows × 32 columns, will the reads of values or the writes to out reach more 32-byte sectors?",
@@ -236,6 +250,7 @@ export const lessons = {
     summary: "Compare how two arrangements of the same number of negative and positive inputs affect groups of GPU threads.",
     intro: [
       "A branch is a choice between paths, such as the if and else parts of an if statement. Warp divergence occurs when threads in one warp take different paths. A GPU can run a path with only the lanes that chose it active.",
+      { label: "Choose a path for each input", from: "x = values[i]", through: "out[i] = x" },
       "Each block in these cases has one warp. The kernel scales negative inputs by 0.25 and leaves positive inputs unchanged, so the output sign tells you which path each thread took.",
     ],
     predict: "Both cases have 64 inputs. Alternating signs switches between negative and positive, starting with a negative value. Grouped signs puts the negative values first, then the positive values, 32 of each. How many lanes in Block 0 take the negative path in each case? How many blocks contain both paths?",
@@ -257,6 +272,8 @@ export const lessons = {
     summary: "Add values in pairs until each block has one partial sum.",
     intro: [
       "A reduction combines many values into fewer results. Here each block adds its portion of the input to make one sum. Each thread writes one input value into scratch. Threads beyond the last input write zero. Scratch is in shared memory, which threads in one block can read and write.",
+      { label: "Fill scratch before any thread reads a neighbor", from: "scratch[lane] = values[i] if i < n else 0.0",
+        through: "cuda.syncthreads()" },
       "A block barrier, written cuda.syncthreads(), makes every thread in the block wait until all have reached that line. The first barrier lets every thread finish writing its starting value. The block then adds pairs of values, with another barrier between steps. The starter uses a power-of-two block size of at most 32 threads, the size of scratch.",
     ],
     predict: "In the eight-thread block, the first pairs are four positions apart. Which thread adds scratch[5] to its own value? What must be ready before it reads scratch[5]?",
@@ -275,6 +292,7 @@ export const lessons = {
     summary: "Count how many inputs choose each category when several threads update the same counter.",
     intro: [
       "A histogram counts how many inputs fall into each category. The inputs here are integers called tokens. Each token selects one of four counters in counts. main() copies a fresh array of zeros to the GPU for each run.",
+      { label: "Increment the counter selected by this token", from: "cuda.atomic.add(counts, tokens[i], 1)" },
       "cuda.atomic.add reads a counter, adds one, and writes the new value as one update. Each increment is counted even when several threads choose the same counter.",
     ],
     predict: "When all 32 tokens go to destination 2, which counter changes? What count could two threads produce if both read zero before either writes?",
@@ -293,6 +311,8 @@ export const lessons = {
     summary: "Build running totals and use them to find positions for values you keep.",
     intro: [
       "An inclusive scan at index i adds values[0] through values[i]. If the values are flags (1 means keep, 0 means discard), a kept item’s position is its running total minus one. The kernel writes the running totals to out so you can find those positions.",
+      { label: "Read, wait, and update one scan stage", from: "previous = scratch[lane - distance] if lane >= distance else 0",
+        through: "distance *= 2" },
       "At each step, a thread looks back a fixed distance and saves the old value from scratch before changing its own entry. One barrier lets the threads finish reading. A second barrier lets them finish writing before the distance doubles.",
     ],
     predict: "For [1, 0, 1, 1, 0, 0, 1], what running total do you expect at index 6? Where would that element move?",
@@ -311,6 +331,7 @@ export const lessons = {
     summary: "Pass values through shared memory so neighboring threads can write neighboring output columns.",
     intro: [
       "A tile is a small rectangular region of a matrix. Each block loads one tile into shared memory. After a barrier, threads read it with the coordinates swapped and write the transposed values.",
+      { label: "Set the shared tile’s row width", from: "TILE = 8", through: "TILE_STRIDE = TILE + PADDING" },
       "GPU shared memory is divided into banks that can serve requests independently. In the 32-bank calculation for four-byte values, the bank is the word offset modulo 32. Padding adds an unused word to each row of the tile and changes where the next row starts.",
     ],
     predict: "In Block (0, 0) of the 8 × 8 case, which thread loads the input value that Thread (2, 0) writes to out[0, 2]?",
@@ -329,6 +350,8 @@ export const lessons = {
     summary: "Reuse pieces of the two input matrices while computing a matrix product.",
     intro: [
       "To compute out[row, col], take one row of a and one column of b. Multiply entries at the same position and sum the products. The number of products is the inner dimension k, the number of columns in a and rows in b.",
+      { label: "Choose which inputs to stage for this pass", from: "a_col = start + tx",
+        through: "tile_b[ty, tx] = b[b_row, col] if b_row < k and col < n else 0" },
       "In each pass the block copies one 4 × 4 tile from each input into shared memory, using zero for positions outside the input. A barrier makes both tiles ready. Each thread adds four products to its own total. A second barrier waits for the threads to finish using both tiles before loading the next pair.",
     ],
     predict: "For 5 × 6 times 6 × 7, which inner indices fall outside the input in the second pass?",
@@ -347,7 +370,8 @@ export const lessons = {
     summary: "Turn scores into probabilities without overflowing the exponential.",
     intro: [
       "Softmax converts a row of scores, also called logits, to probabilities that add to one. Use math.exp to raise e to the power of each score. Divide each result by the sum of those results. The exponential of a large score can be too large for the numeric format, which is called overflow.",
-      "The kernel first subtracts the row maximum. Every shifted score is then zero or negative, so every exponential is at most one. The common shift preserves the probability ratios. One block handles each row. A thread with no column contributes −∞ to the maximum and zero to the sum, so it leaves both calculations unchanged.",
+      { label: "Write a probability from the shifted score", from: "out[row, col] = math.exp(values[row, col] - row_max) / scratch[0]" },
+      "Subtracting the row maximum makes every shifted score zero or negative, so every exponential is at most one. The common shift preserves the probability ratios. One block handles each row and stores the sum of the shifted exponentials in scratch[0]. A thread with no column contributes −∞ to the maximum and zero to the sum.",
     ],
     predict: "Row 0 is [1000, 999, 1000, 997, −1000]. What is the exponential of the largest score after subtracting the row maximum? Which two columns should have equal probabilities?",
     exercise: [
@@ -367,6 +391,7 @@ export const lessons = {
     title: "Read values through an index array",
     summary: "Trace a gather, where each output selects an input using a separate index array.",
     intro: [
+      { label: "Look up an input through indices", from: "out[i] = values[indices[i]]" },
       "A gather looks up values at positions listed in another array. Thread i reads indices[i], uses it to select a value from values, and writes the answer to out[i]. Each case supplies eight indices and a table of 64 values.",
       "Both cases read indices consecutively. Use an aligned 32-byte sector containing eight four-byte values to group addresses in the values array.",
     ],
@@ -386,6 +411,8 @@ export const lessons = {
     summary: "Sum each element and its neighbors while reusing inputs in shared memory.",
     intro: [
       "A stencil applies the same rule at each position using nearby inputs. Here the rule adds the left neighbor, the current value, and the right neighbor. The kernel uses zero for neighbors outside the array.",
+      { label: "Load the center values and the halo", from: "tile[lane + 1] = values[i] if i < n else 0.0",
+        through: "tile[WIDTH + 1] = values[i + 1] if i + 1 < n else 0.0" },
       "The shared version uses eight threads per block. Each thread loads one center value into a tile. The first and last threads load the two extra neighboring values, called the halo. A barrier makes those values available to the whole block before it writes outputs.",
     ],
     predict: "At the first position of Block 1, which input from Block 0 must the stencil include? Which shared entry holds it?",
@@ -405,6 +432,7 @@ export const lessons = {
     summary: "Group the same three values in two orders and check their float32 results.",
     intro: [
       "Float32 stores numbers with limited precision. Around 16,777,216, the next larger float32 value is 16,777,218. Adding 1 to 16,777,216 and rounding to float32 gives 16,777,216 again.",
+      { label: "Round after each addition", from: "first = float32(a[i] + b[i])", through: "out[i] = float32(first + c[i])" },
       "The explicit float32 calls make the intended rounding points visible. Changing the grouping changes when addition can lose a small value.",
     ],
     predict: "For a = 16,777,216, b = 1, and c = −16,777,216, what happens to the 1 when you add a and b first? What if you add a and c first?",
@@ -423,6 +451,8 @@ export const lessons = {
     summary: "Compare a full and partial block to see why every thread reaches the barrier.",
     intro: [
       "Each block has four threads. A thread stores its global index in shared memory, or −1 if its index is outside the output. After a block barrier, each active thread copies the next entry. The last thread in a block reads the first entry.",
+      { label: "Reach the barrier before checking the output bound", from: "slot[lane] = i if i < n else -1",
+        through: "out[i] = slot[(lane + 1) % 4]" },
       "Every thread in a block must participate in the barrier in this program. In the partial-block case, one thread in Block 1 has an index outside the output but supplies a value to another thread.",
     ],
     predict: "In the 7-output case, which thread in Block 1 supplies the −1? What happens to the barrier if that thread returns first?",
@@ -441,6 +471,8 @@ export const lessons = {
     summary: "Keep a value inside a thread instead of writing it out and reading it back.",
     intro: [
       "The first operation scales x and adds y. The second replaces negative results with zero. Putting both operations in one kernel is called fusion. A thread can keep an intermediate value locally and avoid reading or writing a temporary array.",
+      { label: "Use the local value or take the temporary-array path", from: "value = float32(alpha * x[i] + y[i])",
+        through: "out[i] = max(value, float32(0))" },
       "These two cases each launch one kernel. One case stores temp and reads it back. The other keeps the value in a local variable. The profiling capstone compares separate launches with a fused launch.",
     ],
     predict: "For eight inputs, how many global reads and writes can you remove if each thread skips its write to temp and its read from temp?",

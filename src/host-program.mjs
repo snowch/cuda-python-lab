@@ -62,3 +62,12 @@ export function splitProgram(source) {
 export function standaloneProgram(kernel, fixture) {
   return joinProgram(kernel, hostProgram(fixture));
 }
+
+export function programExcerpt(program, { from, through = from }) {
+  const lines = program.split("\n");
+  const first = lines.findIndex((line) => line.trim() === from);
+  const last = lines.findIndex((line, index) => index >= first && line.trim() === through);
+  if (first < 0 || last < 0) throw new Error(`Missing starter code excerpt from "${from}" through "${through}".`);
+  const indent = lines[first].search(/\S/);
+  return lines.slice(first, last + 1).map((line) => line.slice(indent)).join("\n");
+}

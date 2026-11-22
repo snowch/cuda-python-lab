@@ -1,7 +1,7 @@
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountProgramEditor } from "./editor.mjs";
-import { joinProgram, splitProgram, standaloneProgram } from "./host-program.mjs";
+import { joinProgram, programExcerpt, splitProgram, standaloneProgram } from "./host-program.mjs";
 import { makeNotebook } from "./notebook.mjs";
 import { walkthroughs } from "./walkthroughs.mjs";
 import { attachRunner } from "./browser-runner.mjs";
@@ -208,18 +208,30 @@ function formatTable(headers, rows) {
   </table></div>`;
 }
 
+function formatLessonIntro(intro, program) {
+  return intro.map((part, index) => {
+    if (typeof part === "string") return `<p>${escape(part)}</p>`;
+    const caption = `excerpt-caption-${index}`;
+    return `<figure class="lesson-excerpt">
+      <figcaption id="${caption}">${escape(part.label)}</figcaption>
+      <pre tabindex="0" aria-labelledby="${caption}"><code>${escape(programExcerpt(program, part))}</code></pre>
+    </figure>`;
+  }).join("");
+}
+
 function showLesson(slug) {
   const lesson = lessons[slug];
   const index = order.indexOf(slug);
   const walkthrough = walkthroughs[slug];
   const module = modules.find((part) => part.lessons.includes(slug));
+  const defaultProgram = standaloneProgram(starters[slug], lesson.cases[0]);
   main.innerHTML = `<article>
     <header class="lesson-heading">
       <p class="breadcrumb"><a href="#course">Course</a><span aria-hidden="true">/</span><span>${escape(module.title)}</span></p>
       <h1>${escape(lesson.title)}</h1>
       <p class="lead">${escape(lesson.summary)}</p>
       <div class="reading lesson-context">
-        ${lesson.intro.map((paragraph) => `<p>${escape(paragraph)}</p>`).join("")}
+        ${formatLessonIntro(lesson.intro, defaultProgram)}
       </div>
     </header>
 
