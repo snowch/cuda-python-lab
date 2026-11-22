@@ -4,9 +4,10 @@ Learn GPU programming through seventeen hands-on labs for Python developers. Edi
 
 ## Take the course
 
-1. Pick a lesson and, where available, a case. The editor shows the data, launch dimensions, kernel, and result copy for that case.
-2. Select **Download notebook**. Open the file in Jupyter on a machine with an NVIDIA GPU, or upload it to [Google Colab](https://colab.research.google.com/) and select a GPU under **Runtime → Change runtime type**.
-3. Run the notebook cells in order, including the dependency installation. Continue the experiment by editing and rerunning the program cell. Use **Check the output** to compare with the selected starter case.
+1. Pick a lesson and, where available, a case. The editor shows the complete prepared program. Enter an optional prediction.
+2. Choose **Run** to execute it in the browser simulator. Inspect the named values in Console, make the suggested edit and run again. No GPU or installation is needed for this path.
+3. For an optional NVIDIA GPU experiment, choose **Download notebook**. Open it in Jupyter or Google Colab with a GPU runtime, then run the cells in order, including dependency installation. **Check the output** compares with the selected starter case.
+
 
 Choose **Export .py** in **Editor tools** to run the complete program directly with Python. Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later and a CUDA 12-compatible driver, and the dependencies in [requirements.txt](src/gpu/requirements.txt).
 
