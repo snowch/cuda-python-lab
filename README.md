@@ -30,6 +30,10 @@ The build pins Pyodide 0.27.7, Numba 0.68.1, llvmlite IR 0.50.0, and the [CUDA C
 
 ## Develop and verify
 
+Use the [shared course design guide](docs/course-design-guide.md) for preferred
+layout and interaction patterns across courses. It compares the CUDA C++ and
+Python treatments and records remaining adoption work.
+
 Use Node.js 22 or later.
 
 ```sh
