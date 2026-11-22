@@ -43,7 +43,7 @@ export async function buildOffline(directory, identity = { commit: null, date: n
       .replace('</body>', `${panel}</body>`)
       .replace('</head>', `<meta name="gpu-base" content="${base}"><meta name="gpu-release" content="__BUILD_ID__"><script type="module" src="${base}offline.mjs"></script></head>`);
     // Pin executable assets to this release even before a worker controls the page.
-    html = html.replace(/((?:src|href)=")\.\/(app\.mjs|styles\.css|offline\.mjs|code-runner\.css|app-status\.css)/g, `$1./releases/__BUILD_ID__/$2`);
+    html = html.replace(/((?:src|href)=")\.\/([^"/]+\.(?:mjs|js|css))/g, `$1./releases/__BUILD_ID__/$2`);
     await writeFile(`${directory}/${path}`, html);
   }
   const worker = await readFile(new URL('./service-worker.js', import.meta.url), 'utf8');

@@ -28,6 +28,8 @@ jobs:
       - run: npm test
       - run: npm run test:runner
       - run: npm run build
+        env:
+          PUBLISHED_COURSE_URL: ${{ github.ref == 'refs/heads/main' && 'https://snowch.github.io/cuda-python-lab/' || '' }}
       - if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:

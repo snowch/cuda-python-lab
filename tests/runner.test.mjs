@@ -5,7 +5,7 @@ import { lessons } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
 import { launchChromium, serveBuild } from "./browser-support.mjs";
 
-const displayedRun = /Ran in GPGPU-Sim|Execution stopped|too long|Could not|without a CUDA launch/;
+const displayedRun = /Ran in GPGPU-Sim|Execution stopped|Code runner files|too long|Could not|without a CUDA launch/;
 
 async function runProgram(page) {
   await page.getByRole("button", { name: "Run", exact: true }).click();

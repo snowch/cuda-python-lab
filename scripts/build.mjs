@@ -6,6 +6,7 @@ import { build } from "esbuild";
 import { strToU8, unzipSync, zipSync } from "fflate";
 import { execFileSync } from "node:child_process";
 import { buildOffline } from "./offline.mjs";
+import {retainPublishedReleases} from './retain-releases.mjs';
 import { lessons, modules } from "../src/course.mjs";
 
 const root = new URL("../", import.meta.url);
@@ -13,6 +14,8 @@ const src = new URL("src/", root);
 const dist = new URL("dist/", root);
 const vendor = new URL("vendor/", root);
 const pyodide = new URL("node_modules/pyodide/", root);
+// ZIP timestamps must not invalidate unchanged compiler files after deployment.
+const archiveOptions={mtime:new Date(1980,0,1)};
 
 await rm(dist, {recursive:true, force:true});
 for (const directory of ["", "gpu/", "runtime/"]) {
@@ -68,7 +71,7 @@ await Promise.all([
   writeFile(new URL("llvmlite.zip", runtime), zipSync({
     ...unzipSync(llvmlite),
     "llvmlite/binding/__init__.py": binding,
-  })),
+  },archiveOptions)),
   writeFile(new URL(numpy.file_name, runtime), numpyWheel),
   cp(new URL("compiler/compile_kernel.py", root), new URL("compile_kernel.py", dist)),
   cp(new URL("pyodide-LICENSE.txt", vendor), new URL("pyodide-LICENSE.txt", runtime)),
@@ -113,7 +116,7 @@ for (const [slug, source] of Object.entries(starters)) {
 }
 
 await writeFile(new URL("gpu/requirements.txt", dist), archive["requirements.txt"]);
-await writeFile(new URL("gpu/cuda-python-investigations.zip", dist), zipSync(archive));
+await writeFile(new URL("gpu/cuda-python-investigations.zip", dist), zipSync(archive,archiveOptions));
 console.log(`Built ${slugs.length} lessons in ${fileURLToPath(dist)}`);
 
 let identity = {commit:null,date:null};
@@ -128,4 +131,9 @@ try {
 } catch { /* Source archives remain buildable without inventing a revision. */ }
 const html = (await readFile(new URL('index.html',dist),'utf8')).replace('</body>',`<span hidden>${version}</span></body>`);
 await writeFile(new URL('index.html',dist),html);
-await buildOffline(fileURLToPath(dist),identity);
+const release=await buildOffline(fileURLToPath(dist),identity);
+if(process.env.PUBLISHED_COURSE_URL){
+ release.retainedReleases=await retainPublishedReleases(fileURLToPath(dist),process.env.PUBLISHED_COURSE_URL,{currentId:release.id});
+ await writeFile(new URL('release.json',dist),JSON.stringify(release));
+ await writeFile(new URL(`releases/${release.id}/release.json`,dist),JSON.stringify(release));
+}
