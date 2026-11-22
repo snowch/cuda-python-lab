@@ -1,3 +1,6 @@
+import {materialSymbol} from "./material-symbols.mjs";
+import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from "./lesson-resources.mjs";
+import {mediaDurations} from "./media-durations.mjs";
 import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
 import { migrateCudaImports } from "./source-migration.mjs";
 import { registerReadingState, savedReadingState, restoreReadingState } from "./experiment-state.mjs";
@@ -34,6 +37,7 @@ const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
 let activeRunner;
+let activePage;
 let saved;
 
 try {
@@ -43,10 +47,17 @@ try {
 }
 const state = { results:{}, drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
 
+const completionChanges=new Map();
+try{const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');if(durable.completed)state.completed=durable.completed;}catch{}
 let storageSaved=true;
 function persist() {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');
+    state.completed={...(durable.completed??state.completed),...Object.fromEntries(completionChanges)};
+    const encoded=JSON.stringify(state);
+    localStorage.setItem(storageKey,encoded);
+    if(localStorage.getItem(storageKey)!==encoded)throw new Error('Work was not saved');
+    completionChanges.clear();
     storageSaved=true;
   } catch {
     storageSaved=false;
@@ -58,7 +69,7 @@ const escape = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<",
   .replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 const number = (slug) => String(order.indexOf(slug) + 1).padStart(2, "0");
 const lessonURL = (slug) => `#lesson/${slug}`;
-const lessonLink = (slug) => `<a href="${lessonURL(slug)}">${escape(lessons[slug].title)}</a>`;
+const lessonLink = (slug) => `<a data-progress-lesson="${slug}" href="${lessonURL(slug)}">${escape(lessons[slug].title)}<span class="lesson-done" role="img" aria-label="Complete" ${state.completed[slug]?'':'hidden'}>${materialSymbol('check')}</span></a>`;
 const themeControl = document.querySelector("#theme");
 const prefersDark = matchMedia("(prefers-color-scheme: dark)");
 let themeChoice;
@@ -73,6 +84,7 @@ function applyTheme() {
   themeControl.textContent = theme === "dark" ? "Light theme" : "Dark theme";
 }
 if (themeChoice !== "light" && themeChoice !== "dark") themeChoice = null;
+document.querySelector("#course-nav > summary").insertAdjacentHTML("beforeend",materialSymbol("expand_more","course-chevron"));
 applyTheme();
 prefersDark.addEventListener("change", applyTheme);
 themeControl.addEventListener("click", () => {
@@ -85,11 +97,12 @@ themeControl.addEventListener("click", () => {
   }
 });
 
+const sectionID=module=>"section-"+modules.indexOf(module);
 function updateNav(page) {
   const module = modules.find((part) => part.lessons.includes(page));
   const current = lessons[page]?.title ?? { course: "Course outline", gpu: "Appendix A", compiler: "Compiler lab" }[page];
   document.querySelector("#course-location").innerHTML = `<ol>
-    ${module ? `<li><span aria-hidden="true">/</span><span>${escape(module.title)}</span></li>` : ""}
+    ${module ? `<li><span aria-hidden="true">/</span><a href="#course/${sectionID(module)}">${escape(module.title)}</a></li>` : ""}
     <li><span aria-hidden="true">/</span><span aria-current="page">${escape(current)}</span></li>
   </ol>`;
   const completed = order.filter((slug) => state.completed[slug]).length;
@@ -100,6 +113,7 @@ function updateNav(page) {
     if (link.dataset.page === page) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  const focusedHref=document.activeElement?.closest("#lesson-nav a")?.getAttribute("href");
   document.querySelector("#lesson-nav").innerHTML = modules.map((module) => `
     <section class="nav-group">
       <h2>${escape(module.title)}</h2>
@@ -107,10 +121,12 @@ function updateNav(page) {
         <li><a class="lesson-link" href="${lessonURL(slug)}" ${page === slug ? 'aria-current="page"' : ""}>
           <span class="lesson-index">${number(slug)}</span>
           <span>${escape(lessons[slug].title)}</span>
-          ${state.completed[slug] ? '<span class="lesson-done" aria-label="Complete">✓</span>' : ""}
+          ${state.completed[slug] ? '<span class="lesson-done" role="img" aria-label="Complete">'+materialSymbol('check')+'</span>' : ""}
         </a></li>`).join("")}
       </ul>
     </section>`).join("");
+  if(focusedHref)document.querySelector('#lesson-nav a[href="'+focusedHref+'"]')?.focus({preventScroll:true});
+  for(const link of main.querySelectorAll('[data-progress-lesson]'))link.querySelector('.lesson-done').hidden=!state.completed[link.dataset.progressLesson];
 }
 
 function showCourse() {
@@ -119,13 +135,13 @@ function showCourse() {
     <p class="lead">Learn GPU programming with CUDA Python. Edit complete programs and run them with GPGPU-Sim in the browser or in a notebook on an NVIDIA GPU.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
-      <p>You’ll need to know how to read Python functions, loops, and array indices. Use a local GPU with Jupyter or a hosted GPU runtime such as Google Colab. Diagrams and recordings show how CUDA maps your code to hardware.</p>
+      <p>You’ll need to know how to read Python functions, loops, and array indices. The browser simulator needs no GPU or installation. For optional hardware experiments, use an NVIDIA GPU with Jupyter or a hosted GPU runtime such as Google Colab. Diagrams and recordings show how CUDA maps your code to hardware.</p>
       <p>Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
       <p><a href="#gpu">Appendix A</a> covers notebook setup, debugging, and profiling.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
     </section>
     <div class="course-modules">
-      ${modules.map((module) => `<section class="course-module">
+      ${modules.map((module) => `<section class="course-module" id="${sectionID(module)}">
         <h2>${escape(module.title)}</h2>
         <p>${escape(module.description)}</p>
         <ol start="${Number(number(module.lessons[0]))}">
@@ -318,28 +334,32 @@ function showLesson(slug) {
       <h2>Explain the result</h2>
       <p>${escape(lesson.explain)}</p>
       ${diagrams[slug] ?? ""}
-      ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details">
-        <summary>Video · ${escape(walkthrough.title)}</summary>
+      ${hardwareLocation(slug)}
+    </section>
+    <section class="lesson-resources" aria-label="Optional lesson resources">
+      ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details resource-row">
+        ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Video, captions and transcript`)}<div class="resource-body">
         <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
           <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
           <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
         </video>
         <details class="walkthrough-transcript"><summary>Read the transcript</summary>
           ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
-        </details>
+        </details></div>
       </details>` : ""}
-    </section>
+      ${lessonReferences(slug)}
 
-    <details class="native-card">
-      <summary>Further GPU investigation</summary>
+    <details id="native-investigation" class="native-card resource-row">
+      ${resourceSummary("science","Further GPU investigation","Run or measure this example on an NVIDIA GPU")}<div class="resource-body">
       <p>${escape(lesson.native)}</p>
       <p><a href="#gpu">Appendix A · GPU setup and tools</a></p>
-    </details>
-    <footer class="lesson-footer">
-      ${index > 0 ? `<span>Previous · ${lessonLink(order[index - 1])}</span>` : ""}
-      <button type="button" id="complete" class="button complete">${state.completed[slug] ? "Completed ✓" : "Mark complete"}</button>
-      ${index < order.length - 1 ? `<span>Next · ${lessonLink(order[index + 1])}</span>` : '<span><a href="#course">Course outline</a></span>'}
-    </footer>
+    </div></details>
+    </section>
+    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note">Saved in this browser.</p></section>
+    <nav class="lesson-footer" aria-label="Lesson sequence">
+      <a class="lesson-card" href="${index>0?lessonURL(order[index-1]):'#course'}"><span class="lesson-direction">${index>0?'← Previous lesson':'Course overview'}</span><strong>${index>0?escape(lessons[order[index-1]].title):'Choose a lesson'}</strong></a>
+      <a class="lesson-card lesson-next" href="${index<order.length-1?lessonURL(order[index+1]):'#course'}"><span class="lesson-direction">${index<order.length-1?'Next lesson →':'Course overview'}</span><strong>${index<order.length-1?escape(lessons[order[index+1]].title):'Choose a lesson'}</strong></a>
+    </nav>
   </article>`;
   const find = (id) => main.querySelector(`#${id}`);
   find("walkthrough")?.addEventListener("toggle", ({ currentTarget }) => {
@@ -449,10 +469,11 @@ function showLesson(slug) {
   find("download-source").addEventListener("click", () => {
     download(`${slug}.py`, migrateCudaImports(editor.source), "text/x-python");
   });
-  find("complete").addEventListener("click", () => {
-    state.completed[slug] = !state.completed[slug];
-    find("complete").textContent = state.completed[slug] ? "Completed ✓" : "Mark complete";
+  find("complete").addEventListener("change", () => {
+    state.completed[slug] = find("complete").checked;
+    completionChanges.set(slug,state.completed[slug]);
     persist();
+    find("completion-note").textContent=storageSaved?"Saved in this browser.":"This mark is kept in this tab. Browser storage is unavailable.";
     updateNav(slug);
   });
 }
@@ -474,13 +495,15 @@ function route(moveFocus = false) {
   if (location.hash === "#main") return;
   const requested = location.hash.slice(1);
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
-  const page = slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
+  const section = requested.startsWith("course/") ? requested.slice(7) : null;
+  const page = section!==null ? "course" : slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
   for (const video of main.querySelectorAll("video")) video.pause();
   dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
   activeEditor?.destroy();
   activeEditor = null;
   activeRunner?.dispose();
   activeRunner = null;
+  activePage=page;
   updateNav(page);
   if (page === "course") showCourse();
   else if (page === "gpu") showGpu();
@@ -496,6 +519,7 @@ function route(moveFocus = false) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }
+  if(section)requestAnimationFrame(()=>document.getElementById(section)?.scrollIntoView({block:"start"}));
 }
 
 document.querySelector(".skip-link").addEventListener("click", (event) => {
@@ -519,3 +543,10 @@ addEventListener('cuda-python-lab:before-restart',event=>{
   persist();
   if(!storageSaved) event.detail.reason='This window could not save its work. Allow browser storage before restarting.';
 });
+
+addEventListener('storage',event=>{
+ if(event.key!==storageKey)return;
+ try{const durable=JSON.parse(event.newValue||'{}');state.completed={...(durable.completed??{}),...Object.fromEntries(completionChanges)};if(activePage)updateNav(activePage);const mark=main.querySelector('#complete');if(mark)mark.checked=Boolean(state.completed[activePage]);}catch{}
+});
+const header=document.querySelector('.site-header');
+new ResizeObserver(()=>document.documentElement.style.setProperty('--course-header-height',header.getBoundingClientRect().height+'px')).observe(header);

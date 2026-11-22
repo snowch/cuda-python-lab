@@ -174,7 +174,7 @@ test("case changes preserve the shared kernel and the host draft for each case",
     assert.match(final, /kernel\[3, 16\]\(a, b, out, 33\)/);
 
     await page.getByRole("textbox", { name: "Predict before you run" }).fill("Block 2, Thread 0");
-    await page.getByRole("button", { name: "Mark complete" }).click();
+    await page.getByRole("checkbox", { name: "Mark lesson complete" }).check();
     await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
     assert.equal(await readSource(editor), first);
@@ -184,7 +184,7 @@ test("case changes preserve the shared kernel and the host draft for each case",
     assert.equal(await readSource(editor), final);
     assert.equal(await input.inputValue(), "0");
     assert.equal(await page.getByRole("textbox", { name: "Predict before you run" }).inputValue(), "Block 2, Thread 0");
-    await page.getByRole("button", { name: "Completed" }).waitFor();
+    assert.equal(await page.getByRole("checkbox", { name: "Mark lesson complete" }).isChecked(),true);
   });
 });
 

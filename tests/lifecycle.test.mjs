@@ -37,7 +37,7 @@ test('manual startup introduces the runner once, retains it between lessons, and
  assert.equal(await page.evaluate(()=>window.cudaPythonCodeRunner.wasmBytes),0);
  await page.locator('[data-runner-close]').click();
  await page.reload();await editor(page).waitFor();assert.equal(await page.locator('#prediction').inputValue(),'The CPU prints 7');
- assert.match(await page.locator('#complete').textContent(),/Completed/);assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
+ assert.equal(await page.locator('#complete').isChecked(),true);assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  await page.locator('#code-runner-open').click();assert.equal(await page.locator('#code-runner-timeout').inputValue(),'15');
  await page.keyboard.press('Escape');assert.equal(await page.locator('#code-runner-open').evaluate(el=>el===document.activeElement),true);
  for(const width of [360,390,768,1280])for(const theme of ['light','dark']){
