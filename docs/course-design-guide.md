@@ -23,7 +23,7 @@ runtime and offline contracts supply the implementation details.
 | Body typography | IBM Plex Sans, 17px body; Plex Mono for code | System font, 16px body | C++'s reading typography, with locally bundled fonts |
 | Predictions | Questions in tasks; saved numeric predictions in some optional models | Consistent saved prediction field before execution | A short, optional saved prediction beside the experiment's question |
 | Editor and results | Complete program, focused code colours, reveal controls, Console and optional inspection | Complete program, syntax-aware editor, case selection, Console and optional PTX | Shared visual hierarchy and focus controls; retain language-appropriate editing |
-| Diagrams | Execution diagrams plus a recurring hardware map | Focused lesson diagrams, including a host/device view in lesson one | Focused concept diagrams with a compact, relevant system locator |
+| Diagrams | Execution diagrams plus a recurring hardware map | Focused lesson diagrams, including a host/device view in lesson one | Focused concept diagrams with a small overview showing the relevant components |
 | Optional resources | Full-width icon, title, description and chevron rows | Smaller video and further-investigation disclosures | C++'s resource rows, with the relevant Python investigation content |
 | Completion | No manual completion control in the current course | Saved completion button, count and outline ticks | Explicit, reversible completion in its own row, plus outline progress |
 | Previous and next | Large cards with direction and lesson title | Inline links alongside completion | C++'s navigation cards, separated from completion |
@@ -79,7 +79,7 @@ Opening Course lessons expands a full-width outline below the complete row and
 pushes the lesson down. Use plain section headings and direct lesson links, not
 a floating card or another accordion for every section. Section breadcrumbs
 should lead to the actual section in the course outline; the current lesson is
-plain text with a current-page semantic. Do not repeat a separate breadcrumb bar.
+plain text marked with `aria-current="page"`. Do not repeat a separate breadcrumb bar.
 
 The outline highlights the current lesson with text weight and a quiet accent
 surface, as well as an accessible current-page state. Use a separate tick for a
@@ -90,8 +90,8 @@ Use one column on narrow phones, two where titles fit comfortably and up to four
 on wide screens. Avoid fixed heights and internal scrolling for the whole outline.
 Outside interaction leaves an inline outline open. Selecting a destination closes
 it. Escape from within the outline closes it and returns focus to the course
-control below the sticky header. Course navigation is transient UI, not a saved
-lesson experiment or a reason to rerun code.
+control below the sticky header. Opening course navigation must not rerun an experiment or change saved lesson
+settings and disclosures.
 
 ## Typography and visual defaults
 
@@ -156,7 +156,7 @@ Show useful output, not unrelated diagnostics. Distinguish:
 
 A valid edited result must not appear to be an execution failure because it
 differs from the starter. Identify previous output after an edit, preserve its
-provenance, and do not imply that new source has already run.
+source, and do not imply that new source has already run.
 
 ## Diagrams and recordings
 
@@ -166,10 +166,10 @@ the relevant parts, connections, values, units and assumptions beside the
 explanation. Replace prose that merely describes the same relationships.
 
 For architecture courses, distinguish the operation from where it happens.
-Use a small recurring system locator to highlight the relevant component and a
-focused local diagram for the current operation. Add architectural detail as it
+Use a small overview diagram to highlight where the operation happens, and a
+focused local diagram for the operation itself. Add architectural detail as it
 becomes necessary; avoid repeating a full glossary or every component on each
-page. Other subjects can use a comparable process or system locator when useful.
+page. Other subjects can use a comparable overview of their process or system.
 
 A recording should add a trace, comparison, system connection or explanation
 that helps answer the lesson question. Reading the existing code and output aloud
@@ -202,7 +202,7 @@ Saved in this browser.
 └───────────────────────────┘   └─────────────────────────┘
 ```
 
-Use a persistent, reversible checkbox or an equivalently explicit toggle. Report
+Use a persistent, reversible checkbox or a toggle with a clear completion state. Report
 storage limitations honestly. Completion is the learner's own progress marker,
 not proof of understanding. Do not complete a lesson automatically after a run,
 video or page visit, and do not lock the next lesson behind it.
@@ -229,7 +229,8 @@ interrupt the lesson. Report measured resource quantities only with their scope;
 do not present an estimate as device CPU usage or total memory.
 
 Online freshness and a saved offline copy are different facts. Use one primary
-offline action appropriate to the saved copy's state. Do not combine an unexplained
+offline action appropriate to the saved copy's state: Save offline copy, Update
+offline copy or Repair offline copy. Do not combine an unexplained
 Up to date message with an Update course button. Confirm offline readiness only
 after verifying the required files, and preserve a usable previous copy during an
 interrupted update.
@@ -246,7 +247,7 @@ The highest-priority remaining alignment is:
 2. Give Python the shared resource rows and previous/next cards, with completion
    in its own row.
 3. Align typography, section spacing and phone outline columns.
-4. Apply the common experiment hierarchy and focused system locator where useful.
+4. Apply the common experiment hierarchy and focused overview diagrams where useful.
 
 The combined course row is implemented in both CUDA labs. The other changes above
 are adoption work, not changes delivered by this guide.
