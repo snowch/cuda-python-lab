@@ -56,6 +56,26 @@ needs additional tools, and where to start. Follow with the grouped course outli
 and saved progress. Avoid a marketing-sized introduction that pushes the course
 choices far down the page.
 
+## Headings and clear wording
+
+Review every heading, instruction, label, example and feedback sentence from the
+learner's stated prerequisites.
+
+- Give each sentence a clear purpose: context, explanation, learner action,
+  automatic behaviour or result interpretation. Separate prepared setup from
+  changes the learner must make.
+- Name the control, editable location, exact change and evidence to inspect.
+  For comparisons, name the cases, output fields, units and question to answer.
+- Define necessary terms before using them in prose, code captions or diagrams.
+  Explain only the helpers and implementation details needed for the current task.
+- Replace vague references such as this, it or the result when the reader must
+  guess the array, action, quantity or decision. When something matters or is
+  better, state the goal and conditions that make the distinction useful.
+- Match claims to the example. Distinguish observations, illustrative models,
+  assumptions and conclusions requiring measurements or further evidence.
+- Use consistent stage names and specific question headings. Remove repetition,
+  filler and empty labels while preserving the context needed to act and explain.
+
 ## Header and course row
 
 The header contains a home-linked course mark and name, a short subject subtitle,
@@ -164,6 +184,9 @@ Choose a diagram when the learner must understand a flow, dependency, boundary,
 branch or relationship between quantities. Name the question it answers. Show
 the relevant parts, connections, values, units and assumptions beside the
 explanation. Replace prose that merely describes the same relationships.
+When proposing a new diagram, quote the passage, name the question the visual
+answers, and specify its parts, connections, placement and sentences it replaces.
+Keep essential assumptions visible.
 
 For architecture courses, distinguish the operation from where it happens.
 Use a small overview diagram to highlight where the operation happens, and a
