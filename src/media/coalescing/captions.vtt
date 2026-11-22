@@ -1,47 +1,58 @@
 WEBVTT
 
-00:00:00.180 --> 00:00:04.987
+00:00:00.500 --> 00:00:03.832
 An S M executes the threads in a block in
-groups called warps.
 
-00:00:05.167 --> 00:00:09.950
-In the eight rows by thirty-two columns
-case, the block has one warp.
+00:00:03.832 --> 00:00:06.497
+groups called warps. In the eight rows by
 
-00:00:10.130 --> 00:00:12.789
-Each lane identifies one thread in that
-warp.
+00:00:06.497 --> 00:00:08.829
+thirty-two columns case, the block has one
 
-00:00:13.460 --> 00:00:17.303
+00:00:08.829 --> 00:00:11.162
+warp. Each lane identifies one thread in
+
+00:00:11.162 --> 00:00:11.828
+that warp.
+
+00:00:13.328 --> 00:00:16.241
 A word offset counts four byte values from
-the start of the array.
 
-00:00:17.483 --> 00:00:20.629
-The first eight lanes read consecutive
-columns.
+00:00:16.241 --> 00:00:19.154
+the start of the array. The first eight
 
-00:00:20.809 --> 00:00:23.921
-Their eight values fit in one thirty-two
-byte sector.
+00:00:19.154 --> 00:00:20.974
+lanes read consecutive columns. Their
 
-00:00:24.620 --> 00:00:27.244
-The transpose swaps row and column.
+00:00:20.974 --> 00:00:23.523
+eight values fit in one thirty-two byte
 
-00:00:27.424 --> 00:00:31.035
-In the output, these lanes write eight
-words apart.
+00:00:23.523 --> 00:00:23.887
+sector.
 
-00:00:31.215 --> 00:00:34.709
-The same eight lanes now touch eight
-distinct sectors.
+00:00:25.387 --> 00:00:28.402
+The transpose swaps row and column. In the
 
-00:00:35.380 --> 00:00:41.057
+00:00:28.402 --> 00:00:30.664
+output, these lanes write eight words
+
+00:00:30.664 --> 00:00:33.302
+apart. The same eight lanes now touch
+
+00:00:33.302 --> 00:00:34.433
+eight distinct sectors.
+
+00:00:35.933 --> 00:00:39.014
 Across all lanes, the addresses cover four
+
+00:00:39.014 --> 00:00:41.655
 read sectors and thirty-two write sectors.
 
-00:00:41.237 --> 00:00:43.606
-The calculation groups addresses.
+00:00:41.655 --> 00:00:43.856
+The calculation groups addresses. Measured
 
-00:00:43.786 --> 00:00:49.939
-Measured GPU traffic also depends on caches
-and the instructions the hardware runs.
+00:00:43.856 --> 00:00:47.377
+GPU traffic also depends on caches and the
+
+00:00:47.377 --> 00:00:49.138
+instructions the hardware runs.

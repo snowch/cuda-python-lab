@@ -59,4 +59,15 @@ python scripts/check_native.py --ptx
 
 The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
 
-Walkthrough scripts and transcripts are in `src/walkthroughs.mjs`. The site build uses the checked-in media. To regenerate the videos, run `node scripts/build_walkthroughs.mjs /path/to/en_US-ljspeech-medium.onnx` with Chromium, FFmpeg, uv, and the [Piper voice model and its JSON config](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_US/ljspeech/medium). The narration uses a synthetic voice.
+## Record walkthroughs
+
+`src/walkthroughs.mjs` supplies the slides and transcript. The site build uses checked-in media. To rebuild it, install Chromium, FFmpeg, and uv, and clone [snowch/claude-skills](https://github.com/snowch/claude-skills) at `c9a7c521568632aa216932f4c965df386498602a`. Pass that checkout's `plugins/demo-video/skills/record-demo` directory and a work directory to the producer.
+
+```sh
+node scripts/build_walkthroughs.mjs /path/to/record-demo /path/to/work prepare
+node scripts/build_walkthroughs.mjs /path/to/record-demo /path/to/work narrate
+node scripts/build_walkthroughs.mjs /path/to/record-demo /path/to/work screen
+node scripts/build_walkthroughs.mjs /path/to/record-demo /path/to/work export
+```
+
+Append lesson slugs such as `vector-add` to each command to rebuild just those walkthroughs. Review the speech output and slides before export. The work directory retains the WAVs, screening reports, silent masters, and shot lists. The export updates the browser MP4, WebVTT captions, and poster for each walkthrough. See [the contributor rules](AGENTS.md#record-walkthroughs).
