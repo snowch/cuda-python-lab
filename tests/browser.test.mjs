@@ -14,7 +14,7 @@ async function runBrowser(t, viewport, exercise) {
   const page = await browser.newPage({ viewport, acceptDownloads: true, permissions: ["clipboard-read", "clipboard-write"] });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(url);
+  await page.goto(url+'#lesson/first-value');
   await exercise(page);
   assert.deepEqual(errors, []);
 }

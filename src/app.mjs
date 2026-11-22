@@ -1,4 +1,5 @@
 import {materialSymbol} from "./material-symbols.mjs";
+import {homeArchitecture} from "./home-architecture.mjs";
 import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from "./lesson-resources.mjs";
 import {mediaDurations} from "./media-durations.mjs";
 import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
@@ -131,6 +132,7 @@ function updateNav(page) {
 
 function showCourse() {
   main.innerHTML = `<div class="resource-page">
+    <div class="course-home-opening"><div class="course-home-copy">
     <h1>CUDA Python Lab</h1>
     <p class="lead">Learn GPU programming with CUDA Python. Edit complete programs and run them with GPGPU-Sim in the browser or in a notebook on an NVIDIA GPU.</p>
     <section class="reading course-start">
@@ -139,7 +141,7 @@ function showCourse() {
       <p>Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
       <p><a href="#gpu">Appendix A</a> covers notebook setup, debugging, and profiling.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
-    </section>
+    </section></div>${homeArchitecture('python')}</div>
     <div class="course-modules">
       ${modules.map((module) => `<section class="course-module" id="${sectionID(module)}">
         <h2>${escape(module.title)}</h2>
@@ -496,7 +498,7 @@ function route(moveFocus = false) {
   const requested = location.hash.slice(1);
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
   const section = requested.startsWith("course/") ? requested.slice(7) : null;
-  const page = section!==null ? "course" : slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
+  const page = section!==null || requested==='' ? "course" : slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
   for (const video of main.querySelectorAll("video")) video.pause();
   dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
   activeEditor?.destroy();

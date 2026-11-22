@@ -19,7 +19,7 @@ for (const directory of ["", "gpu/", "runtime/"]) {
   await mkdir(new URL(directory, dist), { recursive: true });
 }
 await Promise.all(
-  ["index.html", "app.mjs", "styles.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs",
+  ["index.html", "app.mjs", "styles.css", "home-architecture.mjs", "home-architecture.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs",
     "code-runner.mjs", "code-runner-host.mjs", "code-runner-settings.mjs", "code-runner.css", "app-status.css", "offline.mjs", "release-contract.mjs", "release-metadata.mjs", "media-range.mjs", "experiment-state.mjs", "source-migration.mjs", "compiler-lab.mjs", "material-symbols.mjs", "material-symbols.css", "lesson-resources.mjs", "media-durations.mjs", "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );

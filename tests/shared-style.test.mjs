@@ -3,6 +3,15 @@ import test from 'node:test';
 import {modules,lessons} from '../src/course.mjs';
 import {serveBuild,launchChromium} from './browser-support.mjs';
 const editor=page=>page.getByRole('textbox',{name:'Python program source'});
+test('the bare homepage orients visitors and the start link preserves saved lesson work',async t=>{
+ const base=await serveBuild(t),browser=await launchChromium(t),page=await browser.newPage();
+ await page.goto(base+'#lesson/first-value');await editor(page).waitFor();await page.locator('#prediction').fill('I expect 73.');
+ await page.goto(base);await page.getByRole('img',{name:'From a Python program to GPU threads and back',exact:true}).waitFor();
+ assert.equal(await editor(page).count(),0);
+ await page.getByRole('link',{name:'Start the first lab',exact:true}).focus();await page.keyboard.press('Enter');await editor(page).waitFor();
+ assert.equal(await page.locator('#prediction').inputValue(),'I expect 73.');
+ assert.equal(await page.locator('#run-output').textContent(),'');
+});
 test('all lesson topic references and shared ending components are present',async t=>{
  const base=await serveBuild(t),browser=await launchChromium(t),page=await browser.newPage({viewport:{width:1440,height:1000}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));

@@ -14,7 +14,7 @@ async function lesson(page,slug){await page.evaluate(slug=>location.hash='lesson
 test('manual startup introduces the runner once, retains it between lessons, and releases memory without losing work',{timeout:150000},async t=>{
  const url=await serveBuild(t,{prefix:'/cuda-python-lab/'}),browser=await launchChromium(t);
  const page=await browser.newPage({viewport:{width:390,height:850}}),errors=[];page.on('pageerror',error=>errors.push(error.message));
- await page.goto(url);await editor(page).waitFor();
+ await page.goto(url+'#lesson/first-value');await editor(page).waitFor();
  assert.deepEqual(await page.locator('.site-nav button').evaluateAll(elements=>elements.map(el=>el.id)),['code-runner-open','app-status-open','theme']);
  await page.locator('#code-runner-open').click();await page.locator('[data-runner-start]').click();
  const intro=page.locator('#code-runner-intro-dialog');await intro.waitFor({state:'visible',timeout:2000});
@@ -60,7 +60,7 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  const url=await serveBuild(t,{prefix:'/cuda-python-lab/',directory:()=>current}),browser=await launchChromium(t);
  const context=await browser.newContext({viewport:{width:390,height:850}});
  await context.addInitScript(()=>localStorage.setItem('cuda-python-lab:code-runner-intro:3','1'));
- const page=await context.newPage();await page.goto(url+'?download=1');await editor(page).waitFor();
+ const page=await context.newPage();await page.goto(url+'?download=1#lesson/first-value');await editor(page).waitFor();
  await page.locator('#app-status-dialog').waitFor({state:'visible'});await page.locator('#app-status-close').click();
  await page.locator('#app-status-open').click();
  await page.locator('#download-update').filter({hasText:'Save offline copy'}).click();

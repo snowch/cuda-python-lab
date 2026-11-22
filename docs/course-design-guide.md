@@ -76,7 +76,28 @@ controls and results. Label optional models separately from program execution.
 The course home page states the prerequisites, what runs in the browser, what
 needs additional tools, and where to start. Follow with the grouped course outline
 and saved progress. Avoid a marketing-sized introduction that pushes the course
-choices far down the page.
+choices far down the page. The bare site URL opens this course home; direct
+lesson URLs still open their lessons and retain saved work.
+
+### Homepage image
+
+Add a homepage image when it helps a newcomer recognise the subject or see the
+central relationship the course will teach. Prefer an original concept
+illustration with accurate, readable labels over a decorative stock image.
+An image is optional when the title and introduction already orient the learner.
+
+For the CUDA labs, show CPU code launching a kernel on the GPU compute chip,
+GPU threads accessing device memory, and the result copied back to the CPU.
+Use the first lesson's actual language and launch syntax. Define kernel in the
+caption and make clear that the browser simulates the hardware. Do not imply a
+physical core count, hardware speed or an execution result measured by the image.
+
+Place the illustration beside the introduction on wide screens and after the
+start link on phones. Keep it compact so prerequisites, the primary start action
+and the course outline remain easy to find. Bundle a lightweight vector or
+appropriately sized raster image for offline use. Provide a useful text
+alternative, maintain legibility in both themes and at phone size, and avoid
+animation, text baked into a tiny bitmap or extra controls on a static image.
 
 ## Headings and clear wording
 
@@ -339,6 +360,7 @@ Both CUDA labs now use the shared course components:
 - Lesson-specific topic references, optional resource rows and human-readable video durations.
 - Compact reading layouts, appropriate-width code/results and focused hardware context.
 - Optional saved predictions and clearly separated program execution and teaching models.
+- Compact homepage architecture illustrations with language-specific launch syntax.
 
 The course examples, editors, case controls and specialised models remain appropriate
 for their language and learning goal. The reference mockup illustrates these patterns;
@@ -366,4 +388,5 @@ verification separately from evidence of learning effectiveness.
 - [C++ hardware context](https://github.com/snowch/cuda-cpp-lab/blob/main/content/v2-hardware.mjs)
 - [Python lesson layout and completion](../src/app.mjs)
 - [Python visual styles](../src/styles.css)
+- [Shared homepage illustration source](../src/home-architecture.mjs) and [styles](../src/home-architecture.css)
 - [Python combined course row](../src/index.html)
