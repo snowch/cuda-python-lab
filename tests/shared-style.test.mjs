@@ -7,7 +7,7 @@ test('all lesson topic references and shared ending components are present',asyn
  const base=await serveBuild(t),browser=await launchChromium(t),page=await browser.newPage({viewport:{width:1440,height:1000}});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  for(const slug of modules.flatMap(m=>m.lessons)){
-  await page.goto(base+'#lesson/'+slug);await editor(page).waitFor();
+  await page.goto(base+'#lesson/'+slug);await page.waitForFunction(title=>document.querySelector('h1')?.textContent===title,lessons[slug].title);await editor(page).waitFor();
   const references=page.locator('#lesson-references');await references.locator('summary').click();
   assert.ok(await references.locator('.topic-references li').count()>=2,slug);
   for(const link of await references.locator('.topic-references a').all()){
@@ -21,7 +21,7 @@ test('all lesson topic references and shared ending components are present',asyn
  }
  for(const width of [390,820,1440])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
-  await page.goto(base+'#lesson/coalescing');await editor(page).waitFor();
+  await page.goto(base+'#lesson/coalescing');await page.reload();await editor(page).waitFor();
   await page.locator('#course-nav > summary').click();
   const columns=await page.locator('#lesson-nav').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length);
   assert.equal(columns,{390:1,820:2,1440:4}[width]);
