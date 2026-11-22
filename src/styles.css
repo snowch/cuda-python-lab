@@ -305,3 +305,6 @@ button,summary,select,.button{min-height:44px}.codebox .cm-editor{font-size:16px
 html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-module{scroll-margin-top:0}.lesson-done{display:inline-flex;vertical-align:middle}.course-module .lesson-done{margin-left:8px}
 
 .site-footer{display:flex;justify-content:space-between;gap:14px 24px;flex-wrap:wrap;max-width:1120px;margin:auto;padding:20px clamp(16px,4vw,44px);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}.site-footer nav{display:flex;gap:12px 20px;flex-wrap:wrap}.site-footer a{min-height:44px;display:inline-flex;align-items:center}
+
+@media(max-width:1000px){#lesson-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:500px){#lesson-nav{grid-template-columns:minmax(0,1fr)}}

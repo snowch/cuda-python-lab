@@ -52,7 +52,7 @@ try{const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');if(durable.
 let storageSaved=true;
 function persist() {
   try {
-    const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');
+    let durable={};try{durable=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch{}
     state.completed={...(durable.completed??state.completed),...Object.fromEntries(completionChanges)};
     const encoded=JSON.stringify(state);
     localStorage.setItem(storageKey,encoded);
@@ -355,7 +355,7 @@ function showLesson(slug) {
       <p><a href="#gpu">Appendix A · GPU setup and tools</a></p>
     </div></details>
     </section>
-    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note">Saved in this browser.</p></section>
+    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note" role="status">Saved in this browser.</p></section>
     <nav class="lesson-footer" aria-label="Lesson sequence">
       <a class="lesson-card" href="${index>0?lessonURL(order[index-1]):'#course'}"><span class="lesson-direction">${index>0?'← Previous lesson':'Course overview'}</span><strong>${index>0?escape(lessons[order[index-1]].title):'Choose a lesson'}</strong></a>
       <a class="lesson-card lesson-next" href="${index<order.length-1?lessonURL(order[index+1]):'#course'}"><span class="lesson-direction">${index<order.length-1?'Next lesson →':'Course overview'}</span><strong>${index<order.length-1?escape(lessons[order[index+1]].title):'Choose a lesson'}</strong></a>

@@ -7,14 +7,14 @@ and their behaviour while keeping each course's prerequisites, terminology,
 examples and tools appropriate to its subject.
 
 This is the recommended standard for new courses and revisions. The comparison
-below identifies preferred patterns and remaining adoption work; it does not
-claim that either CUDA course already implements every recommendation.
+below records the starting point and the preferred patterns. Implementation and
+verification are recorded near the end of this guide.
 
 The canonical guide lives in CUDA Python Lab. Other courses should link to this
 document rather than maintain separate copies. Course-specific authoring,
 runtime and offline contracts supply the implementation details.
 
-## Decisions from the CUDA course comparison
+## Comparison that established the standard
 
 | Area | CUDA C++ Lab | CUDA Python Lab | Preferred treatment |
 | --- | --- | --- | --- |
@@ -330,20 +330,19 @@ provide a migration. Restoring the page must not automatically execute code.
 
 ## Adoption and verification
 
-The highest-priority remaining alignment is:
+Both CUDA labs now use the shared course components:
 
-1. Add manual completion, outline ticks and a completion count to C++.
-2. Give Python the shared resource rows and previous/next cards, with completion
-   in its own row.
-3. Align typography, section spacing and phone outline columns.
-4. Apply the common experiment hierarchy and focused overview diagrams where useful.
+- Combined course navigation, section destinations, current-lesson cues and saved progress.
+- Bundled Material Symbols Rounded icons and IBM Plex reading/code fonts.
+- Separate, reversible completion and previous/next cards, with durable state kept
+  outside per-tab experiment snapshots.
+- Lesson-specific topic references, optional resource rows and human-readable video durations.
+- Compact reading layouts, appropriate-width code/results and focused hardware context.
+- Optional saved predictions and clearly separated program execution and teaching models.
 
-The combined course row is implemented in both CUDA labs. The other changes above
-are adoption work, not changes delivered by this guide.
-
-Smaller follow-up work includes direct section destinations for Python's section
-breadcrumbs, human-readable video durations and moving C++ build details into
-App status. Existing saved progress must survive any completion-control redesign.
+The course examples, editors, case controls and specialised models remain appropriate
+for their language and learning goal. The reference mockup illustrates these patterns;
+it does not replace the working course implementations.
 
 For each adoption, review the built course home and representative first, middle
 and final lessons. Include the preceding and following sections around a change.
