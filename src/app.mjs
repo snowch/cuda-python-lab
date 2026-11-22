@@ -437,8 +437,12 @@ function download(name, content, type) {
   const anchor = document.createElement("a");
   anchor.download = name;
   anchor.href = url;
+  anchor.hidden = true;
+  document.body.append(anchor);
   anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  anchor.remove();
+  // Let the browser claim the blob even when compilation or storage work is busy.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 function route(moveFocus = false) {
