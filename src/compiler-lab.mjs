@@ -42,7 +42,7 @@ const markdown=source=>({cell_type:'markdown',metadata:{},source});
 const code=source=>({cell_type:'code',metadata:{},source,execution_count:null,outputs:[]});
 export function compilerNotebook() {
  return {nbformat:4,nbformat_minor:2,metadata:{kernelspec:{display_name:'Python 3',language:'python',name:'python3'},language_info:{name:'python'},accelerator:'GPU'},cells:[
-  markdown('# What happens at the first launch?\n\nOptional lab after Vector add. Use an NVIDIA GPU with compute capability 7.0 or later, Python 3.12 and a CUDA 12-compatible driver. In Colab choose Runtime → Change runtime type → GPU. Run the cells in order. The installation cell prepares the compiler; the program prepares two arrays on the GPU. Predict whether first_launch_ms or warm_median_ms will be larger.'),
+  markdown('# What happens at the first launch?\n\nOptional lab after “One thread, one element”. Use an NVIDIA GPU with compute capability 7.0 or later, Python 3.12 and a CUDA 12-compatible driver. In Colab choose Runtime → Change runtime type → GPU. Run the cells in order. The installation cell prepares the compiler; the program prepares two arrays on the GPU. Predict whether first_launch_ms or warm_median_ms will be larger.'),
   code('%pip install "numba-cuda-mlir[cu12]==0.6.0" "numpy>=1.26,<2.5"'),
   code('from numba_cuda_mlir import cuda\nif not cuda.is_available():\n    raise RuntimeError("Select an NVIDIA GPU runtime and restart the kernel.")'),
   code(compilerProgram),
@@ -57,11 +57,11 @@ export function compilerLabHTML() {
  return `<div class="lesson-page"><p class="breadcrumb"><a href="#course">Course</a> / Optional GPU lab</p>
  <header class="lesson-heading"><h1>What happens at the first launch?</h1><p class="lead">Connect a Python kernel, its compiler and the hardware that executes it.</p></header>
  <section class="reading"><h2>Why can the first launch take longer?</h2>
- <p>After Vector add, use this optional notebook on an NVIDIA GPU. Predict whether the first launch will take longer than repeated launches of the same function.</p>
+ <p>After <strong>One thread, one element</strong>, use this optional notebook on an NVIDIA GPU. Predict whether the first launch will take longer than repeated launches of the same function.</p>
  <figure class="compiler-pipeline"><div><strong>Python kernel</strong><span>Written on the CPU</span></div><span aria-hidden="true">→</span><div><strong>MLIR → PTX</strong><span>Compiled on the CPU</span></div><span aria-hidden="true">→</span><div><strong>GPU machine code</strong><span>Prepared by the driver</span></div><span aria-hidden="true">→</span><div><strong>GPU threads</strong><span>Execute on SMs</span></div><figcaption>MLIR is a compiler representation. An SM (streaming multiprocessor) is hardware inside the GPU that executes groups of threads.</figcaption></figure>
  <p>The notebook prepares arrays on the GPU and supplies a kernel that adds a value to every element. No knowledge of MLIR syntax is required.</p>
  <p><button class="button primary" id="download-compiler-notebook">Download GPU notebook</button></p>
  <p>Open the notebook in Colab or Jupyter and run its cells in order. It requires an NVIDIA GPU with compute capability 7.0 or later. <a href="#gpu">GPU setup instructions</a></p></section>
  <section class="reading"><h2>What to inspect</h2><p>Compare <code>first_launch_ms</code> with <code>warm_median_ms</code>. Both include CPU launch overhead, waiting and GPU execution. The first launch can also include compilation and initialization; the difference does not measure compilation alone.</p><p>The notebook then changes a <code>float32</code> argument while keeping the function and argument types. Compare <code>signatures_before</code> with <code>signatures_after</code>: did changing only the value require another compiled version?</p><p>Use the notebook for these timings. The browser’s Code runner time includes startup, compilation and simulation on this device and cannot measure NVIDIA GPU performance.</p></section>
- <p><a href="#lesson/vector-add">Return to Vector add</a> · <a href="#course">Course outline</a></p></div>`;
+ <p><a href="#lesson/vector-add">Return to One thread, one element</a> · <a href="#course">Course outline</a></p></div>`;
 }

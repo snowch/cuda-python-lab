@@ -14,7 +14,7 @@ A future full browser compiler migration needs an actual WASM MLIR toolchain, pa
 
 ## Optional compiler lab
 
-The course outline, navigation and GPU appendix link an optional GPU notebook after Vector add. It shows Python → MLIR/PTX → GPU machine code → threads executing on SMs. The notebook compares first-launch time with the median of five warm launches, then reuses the same function with different float32 values and compares compiled-signature counts. Allocation/transfers are outside the timed sections. Timings include CPU launch overhead, waiting and GPU execution, with possible first-launch compilation/initialization. They do not isolate compiler time. Redefining a function would invalidate the reuse comparison, so the value experiment keeps the function unchanged. Reading MLIR IR is not required.
+The course outline, navigation and GPU appendix link an optional GPU notebook after “One thread, one element”. It shows Python → MLIR/PTX → GPU machine code → threads executing on SMs. The notebook compares first-launch time with the median of five warm launches, then reuses the same function with different float32 values and compares compiled-signature counts. Allocation/transfers are outside the timed sections. Timings include CPU launch overhead, waiting and GPU execution, with possible first-launch compilation/initialization. They do not isolate compiler time. Redefining a function would invalidate the reuse comparison, so the value experiment keeps the function unchanged. Reading MLIR IR is not required.
 
 ## Validation and limitations
 
