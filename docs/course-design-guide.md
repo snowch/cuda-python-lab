@@ -33,6 +33,28 @@ The lesson-one, memory-access and reduction pages provide the comparison
 examples. These choices concern navigation and presentation, not identical
 lesson lengths, datasets or programming interfaces.
 
+## Reference mockup
+
+Keep one representative mockup with the guide, rather than an archive of every
+iteration. Use it to illustrate component proportions, hierarchy and interaction;
+the written rules remain authoritative. Update it when a shared design decision
+changes, not for every lesson edit.
+
+The [interactive HTML mockup](mockups/course-style.html) can be downloaded and
+opened locally. It uses official Material Symbols Rounded assets and illustrates
+the first C++ lesson with the proposed shared layout. Code execution is simulated;
+its completion and editor state belong to the preview, not the live course.
+
+Desktop lesson ending:
+
+![Desktop mockup showing Material resource icons, a separate completion row and next-lesson cards](mockups/course-style-desktop.png)
+
+Phone lesson ending:
+
+![Phone mockup showing the same resource rows, completion and stacked navigation cards](mockups/course-style-phone.png)
+
+The icon assets use Google's [Apache 2.0 licence](mockups/material-symbols-LICENSE.txt).
+
 ## Page structure
 
 Use this reading order, adjusting the number of experiments to the learning goal:
@@ -146,6 +168,38 @@ A course can retain its subject-specific mark or accent while preserving these
 roles and readable contrast. Use panels for editable work, results, diagrams or
 navigation that benefit from a boundary. Ordinary prose does not need a card.
 Colour must not be the only way to identify an action, state or relevant code.
+
+## Icons
+
+Use **Material Symbols Rounded**, from Material 3, for functional icons across
+courses. Use the outlined appearance (`FILL=0`), weight 400 and grade 0. Keep
+resource icons on a 24px grid and compact chevrons or status marks on a 20px grid.
+Use the corresponding optical size where available. Course logos can retain
+their own identity.
+
+| Purpose | Material Symbol |
+| --- | --- |
+| Video walkthrough | `smart_display` |
+| References | `menu_book` |
+| Further investigation | `science` |
+| Closed resource row | `chevron_right` |
+| Course outline disclosure | `expand_more` |
+| Completed lesson | `check` |
+
+Use one family, weight and visual treatment throughout the interface. Icons
+inherit the text colour; resource icons use the secondary text colour. Do not
+substitute emoji, text characters or improvised drawings for icon assets.
+Retain a visible label for each action, hide decorative icons from assistive
+technology, and provide an accessible name for an icon-only control. A 24px icon
+does not replace the control's 44px touch target.
+
+Bundle the official SVG assets and their Apache 2.0 licence with each course and
+include them in its offline files. Pin the asset revision. Prefer these assets over
+a remotely loaded icon font: missing fonts must never reveal ligature names or unrelated fallback
+glyphs. Use the official geometry rather than redrawing symbols.
+
+References: [Material 3 icons](https://m3.material.io/styles/icons/overview) and
+[Google's Material Symbols assets](https://github.com/google/material-design-icons/tree/master/symbols).
 
 ## Experiments and editors
 
