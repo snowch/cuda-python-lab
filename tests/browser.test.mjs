@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { unzipSync } from "fflate";
-import { lessons } from "../src/course.mjs";
+import { lessons, modules } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
 import { walkthroughs } from "../src/walkthroughs.mjs";
 
@@ -45,6 +45,56 @@ async function downloadFile(page, locator) {
   const [download] = await Promise.all([page.waitForEvent("download"), locator.click({ delay: 200 })]);
   return { name: download.suggestedFilename(), contents: await readFile(await download.path()) };
 }
+
+test("course location shares the outline row across routes, sizes and themes", async (t) => {
+  await runBrowser(t, { width: 1440, height: 900 }, async (page) => {
+    const location = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
+    const trigger = page.locator("#course-nav > summary");
+    const contents = page.locator("#course-contents");
+    for (const module of modules) for (const slug of module.lessons) {
+      await openLesson(page, slug);
+      assert.equal(await location.locator('[aria-current="page"]').textContent(), lessons[slug].title);
+      assert.ok((await location.textContent()).includes(module.title));
+      assert.equal(await page.locator("main .breadcrumb").count(), 0);
+      assert.equal(await contents.isHidden(), true);
+    }
+    for (const width of [390, 820, 1440]) for (const theme of ["light", "dark"]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.evaluate((value) => document.documentElement.dataset.theme = value, theme);
+      // Review the preceding, changed and following lesson introductions.
+      for (const slug of ["transfers", "coalescing", "divergence"]) {
+        await openLesson(page, slug);
+        await trigger.focus(); await page.keyboard.press("Enter");
+        await contents.waitFor({ state: "visible" });
+        assert.equal(await contents.locator(".nav-group").count(), 5);
+        assert.equal(await contents.locator(".lesson-link").count(), 17);
+        const row = await page.locator(".course-row").boundingBox();
+        const panel = await contents.boundingBox();
+        const heading = await page.locator("main h1").boundingBox();
+        assert.ok(panel.y >= row.y + row.height - 1);
+        assert.ok(heading.y >= panel.y + panel.height - 1);
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        if (slug === "coalescing") {
+          await page.locator(".course-navigation").screenshot({ path: `test-results/course-row-${width}-${theme}.png` });
+        }
+        await contents.locator('a[aria-current="page"]').focus();
+        await page.keyboard.press("Escape"); await contents.waitFor({ state: "hidden" });
+        assert.ok(await trigger.evaluate((el) => el === document.activeElement));
+        assert.ok(await trigger.evaluate((el) => el.getBoundingClientRect().top >= document.querySelector(".site-header").getBoundingClientRect().bottom));
+        if (slug === "coalescing") await page.screenshot({ path: `test-results/course-start-${width}-${theme}.png` });
+      }
+    }
+    await trigger.click(); await contents.locator('a[href="#gpu"]').click();
+    await page.locator(".appendix-title").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Appendix A");
+    await trigger.click(); await contents.locator('a[href="#compiler"]').click();
+    await page.locator("#download-compiler-notebook").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Compiler lab");
+    await trigger.click(); await contents.locator('a[href="#course"]').click();
+    await page.locator(".course-modules").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Course outline");
+  });
+});
 
 test("every case exports a CUDA notebook containing its complete program", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {

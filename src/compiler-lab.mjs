@@ -54,7 +54,7 @@ export function compilerNotebook() {
  ]};
 }
 export function compilerLabHTML() {
- return `<div class="lesson-page"><p class="breadcrumb"><a href="#course">Course</a> / Optional GPU lab</p>
+ return `<div class="lesson-page">
  <header class="lesson-heading"><h1>What happens at the first launch?</h1><p class="lead">Connect a Python kernel, its compiler and the hardware that executes it.</p></header>
  <section class="reading"><h2>Why can the first launch take longer?</h2>
  <p>After <strong>One thread, one element</strong>, use this optional notebook on an NVIDIA GPU. Predict whether the first launch will take longer than repeated launches of the same function.</p>
