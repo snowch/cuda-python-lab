@@ -22,6 +22,12 @@ courseNavigation.append(courseContents);
 const syncCourseNav = () => { courseContents.hidden = !courseNav.open; };
 syncCourseNav();
 courseNav.addEventListener("toggle", syncCourseNav);
+courseContents.addEventListener('click',event=>{
+  const link=event.target.closest('a');
+  if(link?.hash!==location.hash)return;
+  event.preventDefault();courseNav.open=false;syncCourseNav();
+  main.focus({preventScroll:true});window.scrollTo(0,0);
+});
 courseNavigation.addEventListener("keydown", (event) => {
   if (event.key !== "Escape" || !courseNav.open) return;
   courseNav.open = false;
