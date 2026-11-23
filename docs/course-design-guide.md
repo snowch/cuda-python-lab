@@ -333,6 +333,31 @@ out of the cards so its state does not compete with navigation.
 Use a quiet site footer for attribution, licences and a problem-report link when
 provided. Keep build identifiers and technical version details in App status.
 
+## Self-hosted course assets
+
+Every lab must serve its required assets from its own GitHub Pages project scope.
+This includes fonts, icons, images, recordings, scripts, styles, workers, WebAssembly,
+Python packages, compiler libraries, models, emulator firmware, kernels and guest
+filesystems. Embedded terminals and optional runnable examples follow the same rule.
+Do not use a CDN or another provider as a runtime fallback. Another lab on the same
+origin is not a substitute for bundling an independently deployable release.
+
+Fetch upstream dependencies during a reproducible build, pin their versions and
+checksums, and publish their licence notices and required corresponding source.
+Verify redistribution rights before bundling a dependency. Build services may use
+package registries; a learner opening or running the published course must not need
+those services. Ordinary links to optional external references may remain, labelled
+as requiring internet access. Do not disguise an essential activity as an optional
+external link to satisfy this rule.
+
+Include every required asset in the complete offline manifest. Test a fresh browser
+profile with requests outside the project scope denied: open a lesson, start the
+runner, execute and edit examples, open optional runnable tools, and use lazy-loaded
+features. Repeat from the verified saved copy with the network disabled, including
+an unvisited next lesson. A homepage-only request scan is an inventory check, not
+proof that a runtime or offline course works. Keep this check in each lab's release
+workflow and record the journeys covered.
+
 ## Runtime status and saved work
 
 Use the shared [code runner design](code-runner-design.md) and
