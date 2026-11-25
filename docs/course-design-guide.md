@@ -422,3 +422,36 @@ verification separately from evidence of learning effectiveness.
 - [Python visual styles](../src/styles.css)
 - [Shared homepage illustration source](../src/home-architecture.mjs) and [styles](../src/home-architecture.css)
 - [Python combined course row](../src/index.html)
+
+
+## Long Foundry courses: location and hierarchy
+
+Use **Course → Part → Chapter → Lesson** consistently. Parts are substantial
+stages containing chapters; chapters contain closely related lessons. Avoid
+calling these stages “labs”, which can suggest a short exercise. Do not add an
+empty level to a small course merely to match the vocabulary.
+
+The course homepage presents numbered part cards, each naming its chapter and
+lesson counts, prerequisites and reading-completion progress. Part overviews
+group lessons under numbered, linked chapter headings. Chapter overviews show
+chapter progress and its lessons. Keep each chapter in exactly one part and
+preserve the teaching sequence.
+
+On a lesson, put **Course contents**, scoped part progress and the breadcrumb
+trail in the same wrapping row: **All parts / Part N: title / Chapter N: title /
+Lesson n of m**. Name the lesson in the page heading. The brand returns to All
+parts and its subtitle may name the current part. Scope every progress number;
+reading marks and practice success are separate.
+
+A contents filter reveals other parts' chapters without navigating or replacing
+the editor. Escape closes the panel and returns focus. Selecting the current
+lesson closes the panel and returns focus to the lesson heading. Previous/Next
+lesson follow the teaching order across chapters within a part. At a part's
+end, **Next part** opens the following part overview; the final part offers All
+parts. Never mark a lesson complete as a side effect of navigation.
+
+Preserve existing lesson and chapter links as bookmarks, including old “lab”
+route aliases. Keep draft, prediction, result and completion storage keys.
+Changing location must not start a runner or discard a shared guest. Test real
+chapter and part boundaries, Back/Forward, filters, saved work, keyboard focus,
+both themes and narrow layouts; retain separate real-runtime and offline tests.
