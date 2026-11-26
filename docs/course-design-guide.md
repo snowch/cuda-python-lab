@@ -18,7 +18,7 @@ runtime and offline contracts supply the implementation details.
 
 | Area | CUDA C++ Lab | CUDA Python Lab | Preferred treatment |
 | --- | --- | --- | --- |
-| Course navigation | Combined course control and breadcrumbs; grouped inline outline | Combined row now added; completion count and lesson ticks | Shared combined row, with Python's progress information |
+| Course navigation | Combined course control and breadcrumbs; grouped inline outline | Combined row now added; completion count and lesson ticks | Contents trigger and progress above breadcrumbs; numbered chapter accordions |
 | Lesson opening | More section spacing and a smaller desktop title | More compact progression, but a larger desktop title | Python's compact progression with C++'s more restrained title scale |
 | Body typography | IBM Plex Sans, 17px body; Plex Mono for code | System font, 16px body | C++'s reading typography, with locally bundled fonts |
 | Predictions | Questions in tasks; saved numeric predictions in some optional models | Consistent saved prediction field before execution | A short, optional saved prediction beside the experiment's question |
@@ -27,7 +27,7 @@ runtime and offline contracts supply the implementation details.
 | Optional resources | Full-width icon, title, description and chevron rows | Smaller video and further-investigation disclosures | C++'s resource rows, with the relevant Python investigation content |
 | Completion | No manual completion control in the current course | Saved completion button, count and outline ticks | Explicit, reversible completion in its own row, plus outline progress |
 | Previous and next | Large cards with direction and lesson title | Inline links alongside completion | C++'s navigation cards, separated from completion |
-| Phone outline | One column for long titles | Two columns | One column on narrow phones; more columns only when titles remain readable |
+| Phone outline | One column for long titles | Two columns | Full-width chapter accordions with wrapping lesson titles |
 
 The lesson-one, memory-access and reduction pages provide the comparison
 examples. These choices concern navigation and presentation, not identical
@@ -132,8 +132,8 @@ The header contains a home-linked course mark and name, a short subject subtitle
 and the shared controls in this order:
 
 - **Code runner**, when the course has a managed execution runtime.
-- The **offline icon**, when the course supports a complete offline copy. It opens App status.
-- The **theme icon**, whose action switches between light and dark.
+- **Offline**, with a cloud-download icon, when the course supports a complete offline copy. It opens App status.
+- **Theme**, with a sun or moon icon, whose action switches between light and dark.
 
 Keep Code runner labelled, with its status subordinate to the label. Do not add controls
 for capabilities the course does not provide. On phones, allow the header to wrap
@@ -141,7 +141,14 @@ without changing its keyboard order or obscuring the focused content.
 
 ### Theme and offline icons
 
-Use bundled official Material 3 Symbols Rounded, 24px inside a 48px touch target.
+Use bundled official Material 3 Symbols Rounded at 24px, followed by a short
+visible label with an 8px gap. Use **Offline** and **Theme**; retain **Calculator**
+and **Reference** where provided. Code runner keeps its visible label and its
+Stopped/Ready/Running status underneath. A status-only course uses **App status**.
+The complete control is at least 48px tall and expands to fit its icon and text.
+Keep labels visible at every width; wrap the header into rows on phones. Do not
+shrink text, clip labels or use an icon-only breakpoint. A tooltip supplements
+the visible label. It does not replace it on touch screens.
 The controls have a quiet, transparent surface, a visible keyboard focus outline,
 and matching alignment and spacing. Preserve subject-specific calculator and
 reference links, and keep Code runner labelled with its status.
@@ -180,29 +187,53 @@ focus, modal backdrops and preference persistence. Each course’s real offline
 save/update tests must also check verified and update badge states. The UI check
 does not itself prove that an offline copy is complete.
 
-The course row reads:
+### Course contents and location
+
+Use C Foundry's inline contents pattern as the preferred course-navigation style.
+Keep the contents trigger, progress and breadcrumbs together in one navigation
+block below the header. A narrow screen may put the breadcrumbs on the next row.
 
 ```text
-Course lessons ▾   3 / 17 complete   /   Section name   /   Current lesson
+Course contents ▾   Part 1 progress: 11 / 26 lessons complete
+All parts / Part 1: Learn the language / Chapter 3: Decisions and repetition / Lesson 1 of 5
 ```
 
-Opening Course lessons expands a full-width outline below the complete row and
-pushes the lesson down. Use plain section headings and direct lesson links, not
-a floating card or another accordion for every section. Section breadcrumbs
-should lead to the actual section in the course outline; the current lesson is
-plain text marked with `aria-current="page"`. Do not repeat a separate breadcrumb bar.
+Opening **Course contents** expands an inline, full-width outline and pushes the
+lesson down. Use a bordered list of numbered chapter or module accordions with
+clear titles, subordinate completion counts and a disclosure chevron. Open the
+current chapter initially. Let the learner browse other chapters without moving
+the current lesson or changing progress. Keep names consistent within a course;
+do not alternate between “chapter” and “module” for the same level.
 
-The outline highlights the current lesson with text weight and a quiet accent
-surface, as well as an accessible current-page state. Use a separate tick for a
-completed lesson. Show actual course order and counts. All lessons remain
-available regardless of completion.
+Within each expanded chapter, show numbered lesson links with generous touch
+spacing. Highlight the current lesson with a quiet accent surface, a leading
+accent rule and stronger text, plus `aria-current="page"`. Show completion with
+a separate tick and an accessible completed label. A current lesson may also be
+complete; preserve both meanings. Chapters and lessons remain available regardless
+of completion.
 
-Use one column on narrow phones, two where titles fit comfortably and up to four
-on wide screens. Avoid fixed heights and internal scrolling for the whole outline.
-Outside interaction leaves an inline outline open. Selecting a destination closes
-it. Escape from within the outline closes it and returns focus to the course
-control below the sticky header. Opening course navigation must not rerun an experiment or change saved lesson
-settings and disclosures.
+Show a **Browse a part** selector only when the course has multiple parts. For a
+single course, omit the part selector and All parts breadcrumb. For a short course
+with no real chapter grouping, show its lesson list directly. Do not invent extra
+levels to reproduce the appearance. Breadcrumb links must open the actual part,
+chapter or module overview; use plain text for the current lesson or “Lesson N of M”
+when its title is already visible in the heading below.
+
+Place practice inside its chapter with a clear **Practice** label and a distinct
+Material icon. A **Chapter overview** link can follow the lesson and practice list.
+Completion counts must name what they count; do not silently mix optional practice
+with lesson totals. Keep part progress visible when the contents panel is closed.
+
+Use one readable hierarchy across viewport sizes, with titles allowed to wrap.
+Avoid a floating overlay, a fixed-height scrolling outline or a second, duplicate
+breadcrumb bar. Selecting a destination closes the panel. Escape from within it
+closes it and restores focus to **Course contents**. Opening or browsing contents
+must preserve code, results, predictions, completion and the running execution
+instance. Do not run code or mark a lesson complete merely because it was opened.
+
+This records the preferred pattern for adoption. Existing course-navigation
+implementations are migrated as scoped work; documenting this rule does not imply
+that every course already uses the accordion layout.
 
 ## Typography and visual defaults
 
@@ -479,7 +510,7 @@ chapter progress and its lessons. Keep each chapter in exactly one part and
 preserve the teaching sequence.
 
 On a lesson, put **Course contents**, scoped part progress and the breadcrumb
-trail in the same wrapping row: **All parts / Part N: title / Chapter N: title /
+trail in the same navigation block (breadcrumbs may wrap beneath the controls): **All parts / Part N: title / Chapter N: title /
 Lesson n of m**. Name the lesson in the page heading. The brand returns to All
 parts and its subtitle may name the current part. Scope every progress number;
 reading marks and practice success are separate.
