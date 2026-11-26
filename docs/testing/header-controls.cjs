@@ -50,6 +50,27 @@ const assert = require("node:assert/strict");
                 box && box.width >= 48 && box.height >= 48,
                 "48px touch target",
               );
+              const caption = control.locator("[data-header-label]");
+              const captionBox = await caption.boundingBox();
+              const iconBox = await control
+                .locator(".lab-header-visual,.header-control-icon")
+                .boundingBox();
+              assert(
+                captionBox &&
+                  iconBox &&
+                  captionBox.x >= iconBox.x + iconBox.width + 7.5,
+                "icon precedes its label with an 8px gap after state changes",
+              );
+              assert(
+                captionBox.x + captionBox.width <= box.x + box.width + 0.5,
+                "label fits inside its control",
+              );
+              assert(
+                await caption.evaluate(
+                  (node) => parseFloat(getComputedStyle(node).fontSize) >= 14,
+                ),
+                "readable label font",
+              );
               await control.focus();
               await page.keyboard.press("Tab");
               await page.keyboard.press("Shift+Tab");
