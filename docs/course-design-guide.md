@@ -132,12 +132,53 @@ The header contains a home-linked course mark and name, a short subject subtitle
 and the shared controls in this order:
 
 - **Code runner**, when the course has a managed execution runtime.
-- **App status**, when the course supports updates or offline access.
-- The theme action, labelled **Dark theme** or **Light theme**.
+- The **offline icon**, when the course supports a complete offline copy. It opens App status.
+- The **theme icon**, whose action switches between light and dark.
 
-Keep status text short and subordinate to the control label. Do not add controls
+Keep Code runner labelled, with its status subordinate to the label. Do not add controls
 for capabilities the course does not provide. On phones, allow the header to wrap
 without changing its keyboard order or obscuring the focused content.
+
+### Theme and offline icons
+
+Use bundled official Material 3 Symbols Rounded, 24px inside a 48px touch target.
+The controls have a quiet, transparent surface, a visible keyboard focus outline,
+and matching alignment and spacing. Preserve subject-specific calculator and
+reference links, and keep Code runner labelled with its status.
+
+The moon is the action **Switch to dark theme**; the sun is **Switch to light
+theme**. The accessible name and tooltip describe the action. Keep the existing
+saved preference, device-theme behaviour and per-window update handoff. Where a
+System preference exists, retain it in an accessible Theme settings disclosure
+inside App status. New theme implementations must cover figures, feedback,
+inputs and dialogs as well as the page background.
+
+The cloud-download icon opens **App status and offline access**. Opening it does
+not download the course. Only the explicit action in that dialog starts a save
+or update. Its check badge means the current complete offline copy has passed
+verification. Its update dot means a newer version is offered or prepared.
+Drive badges from the same native verified state as the dialog; do not infer
+readiness from a version number or the presence of some cached files. Keep the
+full status available to assistive technology and inside the dialog. Hide stale
+ready badges during verification, transfer or removal. Enable the new trigger
+only after its dialog handler is installed.
+
+A course that does not offer a complete offline copy uses a status/info control,
+not a cloud-download icon. Go Foundry currently has this exception. Never add a
+control that implies an unavailable download.
+
+Check first load and slow loading, both themes, keyboard and tooltip labels,
+48px targets at phone/tablet/desktop widths, denied storage, verified save,
+interrupted download, a newer release, restart and removal. Changing these
+controls must preserve learner work and must not start an execution runtime.
+
+The [reusable browser check](testing/header-controls.cjs) accepts one or more
+already-served built course URLs. With this repository’s Playwright dependency
+installed, run `node docs/testing/header-controls.cjs http://localhost:8000/`.
+It checks actual controls, both themes, 320/390/820/1440px layouts, keyboard
+focus, modal backdrops and preference persistence. Each course’s real offline
+save/update tests must also check verified and update badge states. The UI check
+does not itself prove that an offline copy is complete.
 
 The course row reads:
 
