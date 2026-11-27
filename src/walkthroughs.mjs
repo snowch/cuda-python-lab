@@ -11,18 +11,27 @@ export const walkthroughs = {
         narration: "This call copies the zero in CPU memory into a separate GPU array.",
       },
       {
+        title: "Load the compiled kernel",
+        trace: {
+          code: "def kernel(out): …", location: "CPU",
+          device: "out = [0]", arrow: "Load →", activity: "Compiled kernel", focus: "activity",
+        },
+        narration: "CUDA loads the compiled kernel onto the GPU when needed.",
+        speech: "[CUDA](/kˈuːdə/) loads the compiled kernel onto the GPU when needed.",
+      },
+      {
         title: "Launch one GPU thread",
         trace: {
           code: "kernel[1, 1](out)", location: "CPU",
-          device: "out = [0]", arrow: "Launch →", thread: true, focus: "thread",
+          device: "out = [0]", arrow: "Launch →", activity: "One GPU thread", focus: "activity",
         },
-        narration: "The CPU launches the kernel. One GPU thread will run it.",
+        narration: "One GPU thread runs the kernel using the array already in GPU memory.",
       },
       {
         title: "Which array will change?",
         trace: {
           code: "out[0] = 42", location: "GPU",
-          device: "out = [0]", thread: true,
+          device: "out = [0]", activity: "One GPU thread",
         },
         narration: "Both arrays contain zero. Which array will change when this line runs?",
       },
@@ -30,7 +39,7 @@ export const walkthroughs = {
         title: "Write to the GPU array",
         trace: {
           code: "out[0] = 42", location: "GPU",
-          device: "out = [42]", thread: true, focus: "device",
+          device: "out = [42]", activity: "One GPU thread", focus: "device",
         },
         narration: "The GPU thread writes 42 to the GPU array. The CPU array still holds zero.",
       },

@@ -25,7 +25,7 @@ function skill(script, directory, ...args) {
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 function traceSlide(stage) {
-  const { code, location, device, arrow, thread, result, focus } = stage.trace;
+  const { code, location, device, arrow, activity, result, focus } = stage.trace;
   const active = (target) => focus === target ? " active" : "";
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
@@ -40,7 +40,7 @@ function traceSlide(stage) {
     .hardware { display: grid; grid-template-columns: 1fr 140px 1fr; }
     .hardware section { min-height: 142px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
     .value { display: table; padding: 2px 7px; border: 2px solid transparent; border-radius: 5px; }
-    .thread { font-size: 21px; }
+    .activity { font-size: 21px; }
     .active { border-color: #b5ed8d; background: #365340; }
     .arrow { align-self: center; text-align: center; font-weight: 650; color: #b7d9ce; }
   </style><main><div class="trace">
@@ -54,7 +54,7 @@ function traceSlide(stage) {
       <div class="arrow">${escape(arrow ?? "")}</div>
       <section><h2>GPU</h2>
         <code class="value${active("device")}">${escape(device)}</code>
-        ${thread ? `<span class="value thread${active("thread")}">One GPU thread</span>` : ""}
+        ${activity ? `<span class="value activity${active("activity")}">${escape(activity)}</span>` : ""}
       </section>
     </div>
   </div></main></html>`;
