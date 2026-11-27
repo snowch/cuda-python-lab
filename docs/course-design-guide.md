@@ -139,6 +139,8 @@ Keep Code runner labelled, with its status subordinate to the label. Do not add 
 for capabilities the course does not provide. On phones, allow the header to wrap
 without changing its keyboard order or obscuring the focused content.
 
+<a id="theme-and-offline-icons"></a>
+
 ### Header icons and labels
 
 Use bundled official Material 3 Symbols Rounded at 24px, followed by a short
