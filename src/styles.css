@@ -205,7 +205,6 @@ td, th { padding: .3rem .4rem; border-bottom: 1px solid var(--line); white-space
 .hardware-links { align-self: center; display: grid; gap: .5rem; color: var(--accent); font-size: .8rem; }
 .hardware-links .to-device::after { content: " →"; }
 .hardware-links .to-host::before { content: "← "; }
-.hardware-part { border: 1px solid var(--line); padding: .35rem .5rem; margin-top: .35rem; border-radius: 5px; background: var(--paper); }
 
 .native-card { border-block: 1px solid var(--line); margin-top: 1.65rem; }
 .native-card summary, .resource-details summary { min-height: 44px; padding-block: .55rem; color: var(--accent); }

@@ -24,74 +24,44 @@ function skill(script, directory, ...args) {
 }
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-function traceSlide(walkthrough, stage) {
-  const { step, host, device, transfer, block, write, result } = stage.trace;
-  const line = (id, source) => `<code class="${step === id ? "active" : ""}">${escape(source)}</code>`;
+function traceSlide(stage) {
+  const { code, location, device, arrow, thread, result, focus } = stage.trace;
+  const active = (target) => focus === target ? " active" : "";
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
-    body { margin: 0; background: #142326; color: #effaf3; font: 20px system-ui, sans-serif; }
-    main { padding: 16px 34px; }
-    header { color: #b7d9ce; font-weight: 650; }
-    h1 { font-size: 30px; line-height: 1.1; margin: 4px 0 10px; }
-    h2 { font-size: 20px; margin: 0 0 4px; }
-    h3 { font-size: 17px; margin: 0 0 5px; }
-    code { font: 17px/1.17 monospace; }
-    .trace { display: grid; grid-template-columns: 374px 1fr; gap: 20px; }
-    .program, .cpu, .gpu { background: #1c3034; border: 1px solid #527071; padding: 8px; border-radius: 8px; }
-    .program code { display: block; white-space: pre; padding: 0 7px; border-left: 4px solid transparent; }
-    .program .active { background: #365340; border-color: #b5ed8d; }
-    .program h2 + code { margin-top: 2px; }
-    .program .kernel { margin-top: 7px; }
-    .hardware { display: grid; grid-template-columns: 182px 102px 1fr; align-items: stretch; }
-    .arrow { align-self: center; text-align: center; font-size: 17px; font-weight: 700; color: #b5ed8d; }
-    .memory code { display: block; font-size: 16px; white-space: nowrap; }
-    .memory, .sm { border: 1px solid #527071; padding: 7px; background: #142326; border-radius: 5px; }
-    .sm { margin-bottom: 8px; }
-    .thread { display: grid; align-items: center; min-height: 38px; padding: 2px 7px; background: #294248; font-size: 16px; }
-    .hot { border-color: #b5ed8d; background: #365340; }
-    .thread strong { color: #b5ed8d; }
-    .empty { visibility: hidden; }
-  </style><main><header>${escape(walkthrough.title)}</header>
-  <h1>${escape(stage.title)}</h1>
-  <div class="trace">
-    <section class="program">
-      <h2>Host code · main()</h2>
-      ${line("upload", "out = cuda.to_device(out_host)")}
-      ${line("launch", "kernel[1, 1](out)")}
-      ${line("download", "result = out.copy_to_host()")}
-      ${line("print", 'print("out =", result.tolist())')}
-      <h2 class="kernel">GPU kernel</h2>
-      ${line("definition", "def kernel(out):")}
-      ${line("write", "    out[0] = 42")}
-    </section>
+    body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
+    main { padding: 17px 42px; }
+    h1 { margin: 0 0 11px; font-size: 36px; line-height: 1.1; }
+    h2 { margin: 0 0 4px; font-size: 27px; }
+    code { font: 25px/1.3 monospace; }
+    .source { display: flex; align-items: baseline; gap: 16px; margin: 0 0 12px; }
+    .source span { min-width: 56px; font-weight: 750; color: #b7d9ce; }
+    .source code { border-bottom: 1px solid #527071; padding-bottom: 3px; }
+    .hardware { display: grid; grid-template-columns: 1fr 140px 1fr; }
+    .hardware section { min-height: 151px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
+    .value { display: table; padding: 2px 7px; border: 2px solid transparent; border-radius: 5px; }
+    .thread { font-size: 21px; }
+    .active { border-color: #b5ed8d; background: #365340; }
+    .arrow { align-self: center; text-align: center; font-weight: 650; color: #b7d9ce; }
+  </style><main><div class="trace">
+    <h1>${escape(stage.title)}</h1>
+    <p class="source"><span>${escape(location)}</span><code>${escape(code)}</code></p>
     <div class="hardware">
-      <section class="cpu">
-        <h2>CPU</h2>
-        <div class="memory ${result ? "hot" : ""}">
-          <h3>Host memory</h3>
-          <code>${escape(host)}</code>
-          <code class="${result ? "" : "empty"}">${escape(result ?? "result = [42]")}</code>
-        </div>
+      <section><h2>CPU memory</h2>
+        <code class="value">out_host = [0]</code>
+        ${result ? `<code class="value${active("result")}">${escape(result)}</code>` : ""}
       </section>
-      <div class="arrow">${escape(transfer ?? "")}</div>
-      <section class="gpu">
-        <h2>GPU</h2>
-        <div class="sm ${block ? "hot" : ""}">
-          <h3>Compute unit · SM</h3>
-          <div class="thread ${block ? "" : "empty"}">
-            <strong>Block 0</strong><span>Thread 0${write ? " · writes ↓" : ""}</span>
-          </div>
-        </div>
-        <div class="memory ${write || step === "upload" ? "hot" : ""}">
-          <h3>Device memory</h3><code>${escape(device)}</code>
-        </div>
+      <div class="arrow">${escape(arrow ?? "")}</div>
+      <section><h2>GPU</h2>
+        <code class="value${active("device")}">${escape(device)}</code>
+        ${thread ? `<span class="value thread${active("thread")}">One GPU thread</span>` : ""}
       </section>
     </div>
   </div></main></html>`;
 }
 
 function slide(walkthrough, stage) {
-  if (stage.trace) return traceSlide(walkthrough, stage);
+  if (stage.trace) return traceSlide(stage);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }

@@ -1,16 +1,16 @@
 export const diagrams = {
   "first-value": `
     <figure class="concept-diagram">
-      <figcaption>Where does each line of the starter run?</figcaption>
+      <figcaption>Where do the starter’s code and arrays go?</figcaption>
       <div class="hardware-path">
-        <section><h3>CPU · host</h3><p><code>main()</code> launches the kernel and prints the returned array.</p><p>CPU memory holds <code>out_host = [0]</code>.</p></section>
+        <section><h3>CPU · host</h3><p><code>main()</code> launches the kernel.</p><p>Original array <code>out_host = [0]</code></p></section>
         <div class="hardware-links"><span class="to-device">Launch kernel</span><span class="to-host">Copy result back</span></div>
         <section><h3>GPU · device</h3>
-          <div class="hardware-part"><strong>Compute chip</strong><p>One GPU thread executes <code>out[0] = 42</code> on a streaming multiprocessor (SM).</p></div>
-          <div class="hardware-part"><strong>Device memory</strong><p>The device array now holds <code>[42]</code>.</p></div>
+          <p>One GPU thread executes <code>out[0] = 42</code>.</p>
+          <p>Device array <code>out = [42]</code></p>
         </section>
       </div>
-      <p>CUDA loads the compiled kernel onto the GPU when needed. The CPU launches it, and a GPU thread runs it. The GPU can have many SMs. CUDA assigns blocks to the available SMs.</p>
+      <p>CUDA loads the compiled kernel onto the GPU when needed.</p>
     </figure>`,
   "vector-add": `
     <figure class="concept-diagram">
