@@ -80,8 +80,32 @@ function traceSlide(stage, program) {
   </div></main></html>`;
 }
 
+function vectorSlide(stage, kernel) {
+  const highlighted = stage.highlight ?? "";
+  const code = kernel.split("\n").filter(line => line.trim()).map(line =>
+    `<code class="${line.trim() === highlighted ? "current" : ""}">${escape(line)}</code>`
+  ).join("");
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #142326; color: #effaf3; font: 21px system-ui, sans-serif; }
+    main { padding: 26px 38px; }
+    h1 { font-size: 30px; margin: 0 0 18px; line-height: 1.1; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .code { background: #101e21; border-radius: 7px; padding: 14px 0; align-self: start; }
+    code { display: block; white-space: pre; font: 19px/1.55 monospace; color: #b7d9ce; padding: 0 12px; border-left: 3px solid transparent; }
+    .current { color: #effaf3; background: #365340; border-color: #b5ed8d; }
+    .visual { background: #24393b; border-radius: 7px; padding: 16px 20px; }
+    .visual p { margin: 0; padding: 7px 0; line-height: 1.3; }
+    .visual p + p { border-top: 1px solid #527071; }
+  </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout">
+    <div class="code">${code}</div>
+    <div class="visual">${stage.diagram.map(line => `<p>${escape(line)}</p>`).join("")}</div>
+  </div></div></main></html>`;
+}
+
 function slide(walkthrough, stage, program) {
   if (stage.trace) return traceSlide(stage, program);
+  if (stage.highlight) return vectorSlide(stage, program.kernel);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
@@ -153,7 +177,7 @@ if (action === "prepare") {
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
     for (const { slug, directory, walkthrough, scenes } of recordings) {
-      const program = walkthrough.stages.some(stage => stage.trace) ? {
+      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight) ? {
         kernel: await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8"),
         main: hostProgram(lessons[slug].cases[0]).split("\nif __name__")[0],
       } : undefined;
@@ -162,8 +186,8 @@ if (action === "prepare") {
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage, program));
-        const content = await page.locator(stage.trace ? ".trace" : "ol").boundingBox();
-        if (content.y + content.height > (stage.trace ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
+        const content = await page.locator(stage.trace || stage.highlight ? ".trace" : "ol").boundingBox();
+        if (content.y + content.height > (stage.trace || stage.highlight ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
