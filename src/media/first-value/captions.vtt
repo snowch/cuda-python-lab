@@ -1,55 +1,76 @@
 WEBVTT
 
-00:00:00.500 --> 00:00:04.506
-Main runs on the CPU. It starts with a one
+00:00:00.500 --> 00:00:03.691
+The CPU runs main. The call to device
 
-00:00:04.506 --> 00:00:06.909
-element NumPy array containing zero. To
+00:00:03.691 --> 00:00:06.484
+copies the starting zero from CPU memory
 
-00:00:06.909 --> 00:00:09.714
-device copies that value into a separate
+00:00:06.484 --> 00:00:09.675
+into a separate array in GPU memory. The
 
-00:00:09.714 --> 00:00:11.316
-array in GPU memory.
+00:00:09.675 --> 00:00:12.468
+two boxes show where those arrays live.
 
-00:00:12.816 --> 00:00:15.261
-The first one in the square brackets
+00:00:13.968 --> 00:00:16.203
+CUDA loads the compiled kernel when
 
-00:00:15.261 --> 00:00:17.356
-requests one block. The second one
+00:00:16.203 --> 00:00:18.810
+needed. The CPU launch requests one block
 
-00:00:17.356 --> 00:00:19.801
-requests one thread per block. A streaming
+00:00:18.810 --> 00:00:22.162
+with one thread. A block is a group of
 
-00:00:19.801 --> 00:00:22.944
-multiprocessor, or S M, is a part of the
+00:00:22.162 --> 00:00:24.769
+threads. CUDA assigns the block to a
 
-00:00:22.944 --> 00:00:25.040
-GPU chip that executes the thread.
+00:00:24.769 --> 00:00:27.377
+streaming multiprocessor, or S M, on the
 
-00:00:26.540 --> 00:00:29.306
-The thread writes forty-two to the GPU
+00:00:27.377 --> 00:00:27.749
+GPU.
 
-00:00:29.306 --> 00:00:31.676
-array. The original CPU array still
+00:00:29.249 --> 00:00:32.142
+The highlighted statement runs on the GPU
 
-00:00:31.676 --> 00:00:34.442
-contains zero. Which line makes the new
+00:00:32.142 --> 00:00:34.622
+thread. Before it writes, both arrays
 
-00:00:34.442 --> 00:00:36.417
-value available on the CPU?
+00:00:34.622 --> 00:00:37.102
+contain zero. Which array will contain
 
-00:00:39.917 --> 00:00:42.846
-Copy to host waits for the result and
+00:00:37.102 --> 00:00:39.169
+forty-two after the statement runs?
 
-00:00:42.846 --> 00:00:45.775
-returns a CPU array. Main can now print
+00:00:42.669 --> 00:00:45.266
+The thread writes forty-two at index zero
 
-00:00:45.775 --> 00:00:47.605
-forty-two. Change the assignment to
+00:00:45.266 --> 00:00:47.862
+in the device array. The original CPU
 
-00:00:47.605 --> 00:00:49.802
-seventy-three and trace the same steps
+00:00:47.862 --> 00:00:50.459
+array still holds zero. The new value
 
-00:00:49.802 --> 00:00:51.266
-with the new value.
+00:00:50.459 --> 00:00:53.426
+stays in GPU memory until the host copies
+
+00:00:53.426 --> 00:00:54.168
+it back.
+
+00:00:55.668 --> 00:00:58.569
+Copy to host waits for the kernel to
+
+00:00:58.569 --> 00:01:01.108
+finish and returns a CPU array called
+
+00:01:01.108 --> 00:01:03.646
+result. Main prints that array. In the
+
+00:01:03.646 --> 00:01:05.460
+lesson, change forty-two to seventy-three,
+
+00:01:05.460 --> 00:01:08.361
+run the code, and check the value printed
+
+00:01:08.361 --> 00:01:09.449
+in the Console.

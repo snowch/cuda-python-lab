@@ -1,26 +1,32 @@
 export const walkthroughs = {
   "first-value": {
-    title: "Follow one value from the CPU to the GPU and back",
+    title: "Trace one CUDA launch from CPU to GPU",
     stages: [
       {
-        title: "Prepare a separate GPU array",
-        diagram: ["CPU memory · out_host = [0]", "Copy → cuda.to_device(out_host)", "GPU memory · out = [0]"],
-        narration: "Main runs on the CPU. It starts with a one element NumPy array containing zero. To device copies that value into a separate array in GPU memory.",
+        title: "Copy the starting value to GPU memory",
+        trace: { step: "upload", host: "out_host = [0]", device: "out = [0]", transfer: "Copy to GPU →" },
+        narration: "The CPU runs main. The call to device copies the starting zero from CPU memory into a separate array in GPU memory. The two boxes show where those arrays live.",
       },
       {
-        title: "Launch one thread",
-        diagram: ["CPU · kernel[1, 1](out)", "Launch → 1 block × 1 thread", "GPU compute chip · streaming multiprocessor (SM)"],
-        narration: "The first one in the square brackets requests one block. The second one requests one thread per block. A streaming multiprocessor, or S M, is a part of the GPU chip that executes the thread.",
+        title: "Launch one block with one thread",
+        trace: { step: "launch", host: "out_host = [0]", device: "out = [0]", transfer: "Launch kernel →", block: true },
+        narration: "CUDA loads the compiled kernel when needed. The CPU launch requests one block with one thread. A block is a group of threads. CUDA assigns the block to a streaming multiprocessor, or S M, on the GPU.",
+        speech: "[CUDA](/kˈuːdə/) loads the compiled kernel when needed. The CPU launch requests one block with one thread. A block is a group of threads. [CUDA](/kˈuːdə/) assigns the block to a streaming multiprocessor, or S M, on the GPU.",
       },
       {
-        title: "Write to GPU memory",
-        diagram: ["SM · out[0] = 42", "GPU memory · out = [42]", "CPU memory · out_host = [0]"],
-        narration: "The thread writes forty-two to the GPU array. The original CPU array still contains zero. Which line makes the new value available on the CPU?",
+        title: "Which array changes when the thread writes?",
+        trace: { step: "write", host: "out_host = [0]", device: "out = [0]", block: true },
+        narration: "The highlighted statement runs on the GPU thread. Before it writes, both arrays contain zero. Which array will contain forty-two after the statement runs?",
       },
       {
-        title: "Copy back and print",
-        diagram: ["GPU memory · out = [42]", "Copy → out.copy_to_host()", "CPU memory · result = [42]", "print → out = [42.0]"],
-        narration: "Copy to host waits for the result and returns a CPU array. Main can now print forty-two. Change the assignment to seventy-three and trace the same steps with the new value.",
+        title: "The GPU thread writes to device memory",
+        trace: { step: "write", host: "out_host = [0]", device: "out = [42]", block: true, write: true },
+        narration: "The thread writes forty-two at index zero in the device array. The original CPU array still holds zero. The new value stays in GPU memory until the host copies it back.",
+      },
+      {
+        title: "Copy the result back to the CPU",
+        trace: { step: "download", host: "out_host = [0]", device: "out = [42]", transfer: "← Copy result", result: "result = [42]" },
+        narration: "Copy to host waits for the kernel to finish and returns a CPU array called result. Main prints that array. In the lesson, change forty-two to seventy-three, run the code, and check the value printed in the Console.",
       },
     ],
   },
