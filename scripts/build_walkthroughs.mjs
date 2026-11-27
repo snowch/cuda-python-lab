@@ -30,15 +30,15 @@ function traceSlide(stage) {
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
-    main { padding: 17px 42px; }
-    h1 { margin: 0 0 11px; font-size: 36px; line-height: 1.1; }
+    main { padding: 53px 42px 0; }
+    h1 { margin: 0 0 17px; font-size: 36px; line-height: 1.1; }
     h2 { margin: 0 0 4px; font-size: 27px; }
     code { font: 25px/1.3 monospace; }
-    .source { display: flex; align-items: baseline; gap: 16px; margin: 0 0 12px; }
+    .source { display: flex; align-items: baseline; gap: 16px; margin: 0 0 18px; }
     .source span { min-width: 56px; font-weight: 750; color: #b7d9ce; }
     .source code { border-bottom: 1px solid #527071; padding-bottom: 3px; }
     .hardware { display: grid; grid-template-columns: 1fr 140px 1fr; }
-    .hardware section { min-height: 151px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
+    .hardware section { min-height: 142px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
     .value { display: table; padding: 2px 7px; border: 2px solid transparent; border-radius: 5px; }
     .thread { font-size: 21px; }
     .active { border-color: #b5ed8d; background: #365340; }
