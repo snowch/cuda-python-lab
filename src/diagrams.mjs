@@ -3,11 +3,18 @@ export const diagrams = {
     <figure class="concept-diagram">
       <figcaption>Where do the starter’s code and arrays go?</figcaption>
       <div class="hardware-path">
-        <section><h3>CPU · host</h3><p><code>main()</code> launches the kernel.</p><p>Original array <code>out_host = [0]</code></p></section>
+        <section>
+          <h3>CPU · host</h3>
+          <code class="hardware-operation">main()</code>
+          <p>Launches the kernel.</p>
+          <p class="hardware-array"><span>Original array</span><code>out_host = [0]</code></p>
+        </section>
         <div class="hardware-links"><span class="to-device">Launch kernel</span><span class="to-host">Copy result back</span></div>
-        <section><h3>GPU · device</h3>
-          <p>One GPU thread executes <code>out[0] = 42</code>.</p>
-          <p>Device array <code>out = [42]</code></p>
+        <section>
+          <h3>GPU · device</h3>
+          <code class="hardware-operation">out[0] = 42</code>
+          <p>Runs on one GPU thread.</p>
+          <p class="hardware-array"><span>Device array</span><code>out = [42]</code></p>
         </section>
       </div>
       <p>CUDA loads the compiled kernel onto the GPU when needed.</p>
