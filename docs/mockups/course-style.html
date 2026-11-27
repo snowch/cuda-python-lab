@@ -10,6 +10,10 @@
 #course-style-preview .outline-group[open] .chapter-chevron{transform:rotate(180deg)}
 #course-style-preview .outline-group>ol{padding:8px 12px 14px;border-top:1px solid var(--line)}
 #course-style-preview .outline-group .lesson-link{min-height:48px;padding:12px 10px}
+#course-style-preview .runner-menu>summary{display:grid;grid-template-columns:24px auto;grid-template-rows:auto auto;column-gap:8px;row-gap:0;min-height:48px;padding:8px 12px}
+#course-style-preview .runner-menu>summary>svg{grid-column:1;grid-row:1/3;align-self:center;width:24px;height:24px;fill:currentColor}
+#course-style-preview .runner-menu>summary>.header-label{grid-column:2;grid-row:1}
+#course-style-preview .runner-menu>summary>.header-state{grid-column:2;grid-row:2}
 </style></head><body><script>try { window.openai={widgetState:JSON.parse(localStorage.getItem('shared-course-design-preview')||'null'),setWidgetState:async function(value){this.widgetState=value;try{localStorage.setItem('shared-course-design-preview',JSON.stringify(value));}catch{}}}; } catch {}</script><!-- Official Material Symbols Rounded, Apache 2.0; asset revision 10ecc14790612ca8fd164e3f4ffe9c16fc50d5b7. -->
 <style>
 #course-style-preview{--page:light-dark(#f7faf9,#142326);--paper:light-dark(#fff,#1c2e31);--ink:light-dark(#193237,#e4efeb);--quiet:light-dark(#49636b,#a7bfbd);--line:light-dark(#cad9d9,#3b5356);--accent:light-dark(#146653,#a3ddc2);--soft:light-dark(#e5f3ec,#28473e);--code-bg:light-dark(#122824,#10231e);--code-text:#edf8f1;--code-focus:#b2d3ff;--code-target:#ffdfa3;--gap:32px;--sans:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;width:100%;max-width:100%;margin-inline:auto;container:course-preview / inline-size;font:400 17px/1.65 var(--sans);color:var(--ink);text-align:left}
@@ -180,7 +184,7 @@
       </a>
       <nav class="header-actions" aria-label="Course resources">
         <details class="runner-menu">
-          <summary><span class="header-label">Code runner</span><span class="header-state runner-state">Ready</span></summary>
+          <summary><svg aria-hidden="true" focusable="false" data-symbol="terminal" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Zm187-200-76-76q-12-12-11.5-28t12.5-28q12-11 28-11.5t28 11.5l104 104q12 12 12 28t-12 28L328-308q-11 11-27.5 11.5T272-308q-11-11-11-28t11-28l75-76Zm173 160q-17 0-28.5-11.5T480-320q0-17 11.5-28.5T520-360h160q17 0 28.5 11.5T720-320q0 17-11.5 28.5T680-280H520Z"/></svg><span class="header-label">Code runner</span><span class="header-state runner-state">Ready</span></summary>
           <div class="header-panel">
             <p><strong>Ready for another run</strong></p>
             <p>The runner stays ready between lessons and stops after 30 minutes without a run.</p>
