@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
@@ -190,6 +190,28 @@ if (action === "prepare") {
         skill("deck.py", directory, slug, walkthrough.title);
         const video = join(directory, "out", `${slug}-4k-narrated.mp4`);
         const srt = join(directory, "out", `${slug}.srt`);
+        if (slug === "first-value") {
+          const durations = JSON.parse(await readFile(join(directory, "audio", "durations.json"), "utf8")).durations;
+          let start = 0;
+          const movements = [];
+          for (const scene of scenes) {
+            const stage = walkthrough.stages[Number(scene.id.slice(1)) - 1];
+            if (stage.trace.arrow) movements.push({ start, up: stage.trace.arrow.includes("↑") });
+            start += .5 + durations[scene.id] + (scene.hold ?? 1);
+          }
+          const input = join(directory, "out", "before-motion.mp4");
+          await rename(video, input);
+          const filters = movements.map(({ start, up }, index) => {
+            const progress = `min(max((t-${(start + .5).toFixed(3)})/2,0),1)`;
+            const y = up ? `(236-28*${progress})*4` : `(208+28*${progress})*4`;
+            const previous = index ? `[v${index - 1}]` : "[0:v]";
+            return `${previous}[1:v]overlay=x=815*4:y='${y}':enable='between(t,${(start + .5).toFixed(3)},${(start + 2.5).toFixed(3)})'[v${index}]`;
+          });
+          ffmpeg("-i", input, "-f", "lavfi", "-i", "color=c=0xb5ed8d:s=24x24:r=30",
+            "-filter_complex", filters.join(";"), "-map", `[v${movements.length - 1}]`,
+            "-map", "0:a", "-map", "0:s", "-c:v", "libx264", "-preset", "veryfast",
+            "-crf", "18", "-threads", "4", "-c:a", "copy", "-c:s", "copy", "-t", start.toFixed(3), "-movflags", "+faststart", video);
+        }
         const [picture, sound, captions] = inspect(video, "stream=codec_name,width,height,r_frame_rate").streams;
         if (picture.codec_name !== "h264" || picture.width !== 3840 || picture.height !== 2160 ||
             picture.r_frame_rate !== "30/1" || sound?.codec_name !== "aac" || captions?.codec_name !== "mov_text") {

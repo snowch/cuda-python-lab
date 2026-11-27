@@ -4,7 +4,7 @@ export const walkthroughs = {
     stages: [
       {
         title: "Create the CPU array",
-        hold: 2.5,
+        hold: 4,
         trace: {
           code: "out_host = np.zeros(1, dtype=np.float32)",
           focus: "host",
@@ -14,7 +14,7 @@ export const walkthroughs = {
       },
       {
         title: "Copy the array to GPU memory",
-        hold: 2.5,
+        hold: 4,
         trace: {
           code: "out = cuda.to_device(out_host)",
           device: "out = [0]", arrow: "Copy ↓", focus: "device",
@@ -24,7 +24,7 @@ export const walkthroughs = {
       },
       {
         title: "Compile on the CPU, load onto the GPU",
-        hold: 3,
+        hold: 4.5,
         trace: {
           before: "@cuda.jit",
           code: "def kernel(out):",
@@ -35,7 +35,7 @@ export const walkthroughs = {
       },
       {
         title: "Launch one GPU thread",
-        hold: 3,
+        hold: 4.5,
         trace: {
           code: "kernel[1, 1](out)",
           device: "out = [0]", arrow: "Launch ↓", activity: "One GPU thread", focus: "activity",
@@ -44,7 +44,7 @@ export const walkthroughs = {
       },
       {
         title: "Which array will change?",
-        hold: 6,
+        hold: 8,
         trace: {
           code: "out[0] = 42",
           device: "out = [0]", activity: "One GPU thread",
@@ -54,7 +54,7 @@ export const walkthroughs = {
       },
       {
         title: "Write to the GPU array",
-        hold: 2.5,
+        hold: 4,
         trace: {
           code: "out[0] = 42",
           device: "out = [42]", activity: "One GPU thread", focus: "device",
@@ -64,7 +64,7 @@ export const walkthroughs = {
       },
       {
         title: "Copy the result to CPU memory",
-        hold: 3.5,
+        hold: 4.5,
         trace: {
           code: "result = out.copy_to_host()",
           device: "out = [42]", arrow: "Copy ↑", result: "result = [42]", focus: "result",
