@@ -67,12 +67,12 @@ function traceSlide(stage, program) {
       </div>
       <div class="hardware">
         <section><h2>CPU memory</h2>
-          <code class="value">out_host = [0]</code>
+          <code class="value${active("host")}">out_host = [0]</code>
           ${result ? `<code class="value${active("result")}">${escape(result)}</code>` : ""}
         </section>
         <div class="arrow">${escape(arrow ?? "")}</div>
         <section><h2>GPU</h2>
-          <code class="value${active("device")}">${escape(device)}</code>
+          ${device ? `<code class="value${active("device")}">${escape(device)}</code>` : '<span class="value activity">No device array yet</span>'}
           ${activity ? `<span class="value activity${active("activity")}">${escape(activity)}</span>` : ""}
         </section>
       </div>
