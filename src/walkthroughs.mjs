@@ -3,15 +3,24 @@ export const walkthroughs = {
     title: "Follow one value from CPU to GPU and back",
     stages: [
       {
-        title: "Copy zero to GPU memory",
+        title: "Create the CPU array",
         hold: 2.5,
         trace: {
-          before: "out_host = np.zeros(1, dtype=np.float32)",
+          code: "out_host = np.zeros(1, dtype=np.float32)",
+          focus: "host",
+        },
+        narration: "This line creates out_host, a CPU array containing one zero.",
+        speech: "This line creates out host, a CPU array containing one zero.",
+      },
+      {
+        title: "Copy the array to GPU memory",
+        hold: 2.5,
+        trace: {
           code: "out = cuda.to_device(out_host)",
           device: "out = [0]", arrow: "Copy ↓", focus: "device",
         },
-        narration: "The first highlighted line creates a CPU array with one zero. The next line calls cuda.to_device to copy it into GPU memory.",
-        speech: "The first highlighted line creates a CPU array with one zero. [pause 0.55] The next line calls [CUDA](/kˈuːdə/) dot to device to copy it into GPU memory.",
+        narration: "cuda.to_device copies the array into GPU memory. The original stays on the CPU.",
+        speech: "[CUDA](/kˈuːdə/) dot to device copies the array into GPU memory. [pause 0.55] The original stays on the CPU.",
       },
       {
         title: "Compile on the CPU, load onto the GPU",
