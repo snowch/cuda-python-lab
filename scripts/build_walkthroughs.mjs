@@ -83,7 +83,7 @@ const recordings = Object.entries(walkthroughs)
     scenes: walkthrough.stages.map((stage, index) => ({
       id: `s${index + 1}`, slide: index + 1, step: stage.title, text: stage.narration,
       ...(stage.speech ? { say: stage.speech } : {}),
-      ...(stage.narration.endsWith("?") ? { hold: 3 } : {}),
+      ...(stage.hold !== undefined || stage.narration.endsWith("?") ? { hold: stage.hold ?? 3 } : {}),
     })),
   }));
 
