@@ -1,52 +1,49 @@
 WEBVTT
 
-00:00:00.500 --> 00:00:03.632
-The first line creates a CPU array with
+00:00:00.500 --> 00:00:03.282
+The first highlighted line creates a CPU
 
-00:00:03.632 --> 00:00:05.982
-one zero. The next line calls
+00:00:03.282 --> 00:00:06.460
+array with one zero. The next line calls
 
-00:00:05.982 --> 00:00:08.722
-cuda.to_device to copy that array to GPU
+00:00:06.460 --> 00:00:09.242
+cuda.to_device to copy it into GPU memory.
 
-00:00:08.722 --> 00:00:09.114
-memory.
-
-00:00:12.114 --> 00:00:14.974
+00:00:12.242 --> 00:00:15.102
 Numba compiles this Python kernel on the
 
-00:00:14.974 --> 00:00:18.243
+00:00:15.102 --> 00:00:18.371
 CPU. CUDA loads the compiled code onto the
 
-00:00:18.243 --> 00:00:19.469
+00:00:18.371 --> 00:00:19.597
 GPU when needed.
 
-00:00:22.969 --> 00:00:25.707
+00:00:23.097 --> 00:00:25.835
 One GPU thread runs the kernel. Its
 
-00:00:25.707 --> 00:00:28.836
+00:00:25.835 --> 00:00:28.964
 argument, out, is the array we just copied
 
-00:00:28.836 --> 00:00:30.009
+00:00:28.964 --> 00:00:30.137
 into GPU memory.
 
-00:00:33.509 --> 00:00:36.194
+00:00:33.637 --> 00:00:36.322
 Both arrays contain zero. Which array will
 
-00:00:36.194 --> 00:00:38.112
+00:00:36.322 --> 00:00:38.240
 change when this line runs?
 
-00:00:44.612 --> 00:00:48.244
+00:00:44.740 --> 00:00:48.372
 The GPU thread writes 42 to the GPU array.
 
-00:00:48.244 --> 00:00:50.666
+00:00:48.372 --> 00:00:50.794
 The CPU array still holds zero.
 
-00:00:53.666 --> 00:00:56.269
+00:00:53.794 --> 00:00:56.397
 Copy to host waits for the kernel to
 
-00:00:56.269 --> 00:00:59.197
+00:00:56.397 --> 00:00:59.325
 finish. It returns the value in a new CPU
 
-00:00:59.197 --> 00:01:00.173
+00:00:59.325 --> 00:01:00.301
 array called result.

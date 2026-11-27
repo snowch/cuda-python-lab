@@ -5,6 +5,8 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import { walkthroughs } from "../src/walkthroughs.mjs";
+import { lessons } from "../src/course.mjs";
+import { hostProgram } from "../src/host-program.mjs";
 
 const [skillDir, workDir, action, ...selected] = process.argv.slice(2);
 if (!skillDir || !workDir || !["prepare", "narrate", "screen", "export"].includes(action) ||
@@ -24,52 +26,62 @@ function skill(script, directory, ...args) {
 }
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-function traceSlide(stage) {
-  const { before, code, location, device, arrow, activity, result, focus } = stage.trace;
+function traceSlide(stage, program) {
+  const { before, code, device, arrow, activity, result, focus } = stage.trace;
   const active = (target) => focus === target ? " active" : "";
+  const source = (text) => text.split("\n").filter(line => line.trim()).map(line => {
+    const highlighted = line.trim() === code || line.trim() === before;
+    return `<code class="${highlighted ? "current" : ""}">${escape(line)}</code>`;
+  }).join("");
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #142326; color: #effaf3; font: 19px system-ui, sans-serif; }
-    main { padding: 53px 42px 0; }
-    h1 { margin: 0 0 15px; font-size: 28px; line-height: 1.1; }
-    h2 { margin: 0 0 4px; font-size: 21px; }
+    main { padding: 15px 36px 0; }
+    h1 { margin: 0 0 9px; font-size: 28px; line-height: 1.1; }
+    h2 { margin: 0 0 3px; font-size: 21px; }
     code { font: 21px/1.3 monospace; }
-    .source { display: flex; align-items: baseline; gap: 12px; min-height: 58px; margin: 0 0 15px; }
-    .source span { min-width: 46px; font-weight: 750; color: #b7d9ce; }
-    .source code { display: table; }
-    .source .context { color: #b7d9ce; }
-    .source .current { border-bottom: 1px solid #527071; padding-bottom: 3px; }
-    .hardware { display: grid; grid-template-columns: 1fr 140px 1fr; }
-    .hardware section { min-height: 126px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
-    .value { display: table; padding: 2px 7px; border: 2px solid transparent; border-radius: 5px; }
+    .layout { display: grid; grid-template-columns: 1.65fr 1fr; gap: 25px; }
+    .source { min-width: 0; padding: 6px 0; background: #101e21; border-radius: 7px; }
+    .source div + div { margin-top: 4px; }
+    .source code {
+      display: block;
+      padding: 0 10px;
+      border-left: 3px solid transparent;
+      color: #b7d9ce;
+      font: 18px/18px monospace;
+      white-space: pre;
+    }
+    .source .current { border-color: #b5ed8d; background: #365340; color: #effaf3; }
+    .hardware { display: grid; grid-template-rows: 1fr 38px 1fr; }
+    .hardware section { padding: 5px 12px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
+    .value { display: table; padding: 0 6px; border: 2px solid transparent; border-radius: 5px; }
     .activity { font-size: 17px; }
     .active { border-color: #b5ed8d; background: #365340; }
     .arrow { align-self: center; text-align: center; font-weight: 650; color: #b7d9ce; }
   </style><main><div class="trace">
     <h1>${escape(stage.title)}</h1>
-    <div class="source">
-      <span>${escape(location)}</span>
-      <div>
-        ${before ? `<code class="context">${escape(before)}</code>` : ""}
-        <code class="current">${escape(code)}</code>
+    <div class="layout">
+      <div class="source">
+        <div>${source(program.kernel)}</div>
+        <div>${source(program.main)}</div>
       </div>
-    </div>
-    <div class="hardware">
-      <section><h2>CPU memory</h2>
-        <code class="value">out_host = [0]</code>
-        ${result ? `<code class="value${active("result")}">${escape(result)}</code>` : ""}
-      </section>
-      <div class="arrow">${escape(arrow ?? "")}</div>
-      <section><h2>GPU</h2>
-        <code class="value${active("device")}">${escape(device)}</code>
-        ${activity ? `<span class="value activity${active("activity")}">${escape(activity)}</span>` : ""}
-      </section>
+      <div class="hardware">
+        <section><h2>CPU memory</h2>
+          <code class="value">out_host = [0]</code>
+          ${result ? `<code class="value${active("result")}">${escape(result)}</code>` : ""}
+        </section>
+        <div class="arrow">${escape(arrow ?? "")}</div>
+        <section><h2>GPU</h2>
+          <code class="value${active("device")}">${escape(device)}</code>
+          ${activity ? `<span class="value activity${active("activity")}">${escape(activity)}</span>` : ""}
+        </section>
+      </div>
     </div>
   </div></main></html>`;
 }
 
-function slide(walkthrough, stage) {
-  if (stage.trace) return traceSlide(stage);
+function slide(walkthrough, stage, program) {
+  if (stage.trace) return traceSlide(stage, program);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
@@ -140,12 +152,16 @@ if (action === "prepare") {
   const browser = await chromium.launch({ executablePath });
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
-    for (const { directory, walkthrough, scenes } of recordings) {
+    for (const { slug, directory, walkthrough, scenes } of recordings) {
+      const program = walkthrough.stages.some(stage => stage.trace) ? {
+        kernel: await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8"),
+        main: hostProgram(lessons[slug].cases[0]).split("\nif __name__")[0],
+      } : undefined;
       const slides = join(directory, "slides");
       await mkdir(slides, { recursive: true });
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
-        await page.setContent(slide(walkthrough, stage));
+        await page.setContent(slide(walkthrough, stage, program));
         const content = await page.locator(stage.trace ? ".trace" : "ol").boundingBox();
         if (content.y + content.height > (stage.trace ? 308 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
