@@ -6,20 +6,23 @@ export const walkthroughs = {
         title: "Copy zero to GPU memory",
         hold: 2.5,
         trace: {
+          before: "out_host = np.zeros(1, dtype=np.float32)",
           code: "out = cuda.to_device(out_host)", location: "CPU",
           device: "out = [0]", arrow: "Copy →", focus: "device",
         },
-        narration: "This call copies the zero in CPU memory into a separate GPU array.",
+        narration: "The first line creates a CPU array with one zero. The next line calls cuda.to_device to copy that array to GPU memory.",
+        speech: "The first line creates a CPU array with one zero. [pause 0.55] The next line calls [CUDA](/kˈuːdə/) dot to device to copy that array to GPU memory.",
       },
       {
-        title: "Load the compiled kernel",
+        title: "Compile on the CPU, load onto the GPU",
         hold: 3,
         trace: {
+          before: "@cuda.jit",
           code: "def kernel(out): …", location: "CPU",
           device: "out = [0]", arrow: "Load →", activity: "Compiled kernel", focus: "activity",
         },
-        narration: "CUDA loads the compiled kernel onto the GPU when needed.",
-        speech: "[CUDA](/kˈuːdə/) loads the compiled kernel onto the GPU when needed.",
+        narration: "Numba compiles this Python kernel on the CPU. CUDA loads the compiled code onto the GPU when needed.",
+        speech: "[Numba](/nˈʌmbə/) compiles this Python kernel on the CPU. [pause 0.55] [CUDA](/kˈuːdə/) loads the compiled code onto the GPU when needed.",
       },
       {
         title: "Launch one GPU thread",
@@ -28,7 +31,7 @@ export const walkthroughs = {
           code: "kernel[1, 1](out)", location: "CPU",
           device: "out = [0]", arrow: "Launch →", activity: "One GPU thread", focus: "activity",
         },
-        narration: "One GPU thread runs the kernel using the array already in GPU memory.",
+        narration: "One GPU thread runs the kernel. Its argument, out, is the array we just copied into GPU memory.",
       },
       {
         title: "Which array will change?",

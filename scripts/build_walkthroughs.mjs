@@ -25,27 +25,35 @@ function skill(script, directory, ...args) {
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 function traceSlide(stage) {
-  const { code, location, device, arrow, activity, result, focus } = stage.trace;
+  const { before, code, location, device, arrow, activity, result, focus } = stage.trace;
   const active = (target) => focus === target ? " active" : "";
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
-    body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
+    body { margin: 0; background: #142326; color: #effaf3; font: 19px system-ui, sans-serif; }
     main { padding: 53px 42px 0; }
-    h1 { margin: 0 0 17px; font-size: 36px; line-height: 1.1; }
-    h2 { margin: 0 0 4px; font-size: 27px; }
-    code { font: 25px/1.3 monospace; }
-    .source { display: flex; align-items: baseline; gap: 16px; margin: 0 0 18px; }
-    .source span { min-width: 56px; font-weight: 750; color: #b7d9ce; }
-    .source code { border-bottom: 1px solid #527071; padding-bottom: 3px; }
+    h1 { margin: 0 0 15px; font-size: 28px; line-height: 1.1; }
+    h2 { margin: 0 0 4px; font-size: 21px; }
+    code { font: 21px/1.3 monospace; }
+    .source { display: flex; align-items: baseline; gap: 12px; min-height: 58px; margin: 0 0 15px; }
+    .source span { min-width: 46px; font-weight: 750; color: #b7d9ce; }
+    .source code { display: table; }
+    .source .context { color: #b7d9ce; }
+    .source .current { border-bottom: 1px solid #527071; padding-bottom: 3px; }
     .hardware { display: grid; grid-template-columns: 1fr 140px 1fr; }
-    .hardware section { min-height: 142px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
+    .hardware section { min-height: 126px; padding: 9px 13px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
     .value { display: table; padding: 2px 7px; border: 2px solid transparent; border-radius: 5px; }
-    .activity { font-size: 21px; }
+    .activity { font-size: 17px; }
     .active { border-color: #b5ed8d; background: #365340; }
     .arrow { align-self: center; text-align: center; font-weight: 650; color: #b7d9ce; }
   </style><main><div class="trace">
     <h1>${escape(stage.title)}</h1>
-    <p class="source"><span>${escape(location)}</span><code>${escape(code)}</code></p>
+    <div class="source">
+      <span>${escape(location)}</span>
+      <div>
+        ${before ? `<code class="context">${escape(before)}</code>` : ""}
+        <code class="current">${escape(code)}</code>
+      </div>
+    </div>
     <div class="hardware">
       <section><h2>CPU memory</h2>
         <code class="value">out_host = [0]</code>

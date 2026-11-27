@@ -17,7 +17,7 @@ export const diagrams = {
           <p class="hardware-array"><span>Device array</span><code>out = [42]</code></p>
         </section>
       </div>
-      <p>CUDA loads the compiled kernel onto the GPU when needed.</p>
+      <p>Numba-CUDA-MLIR compiles the Python kernel on the CPU. CUDA loads the compiled code onto the GPU when needed.</p>
     </figure>`,
   "vector-add": `
     <figure class="concept-diagram">
