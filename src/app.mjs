@@ -350,7 +350,7 @@ function showLesson(slug) {
     <section class="lesson-resources" aria-label="Optional lesson resources">
       ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details resource-row">
         ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Video, captions and transcript`)}<div class="resource-body">
-        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
+        <video data-walkthrough="${slug}" controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
           <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
           <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
         </video>
