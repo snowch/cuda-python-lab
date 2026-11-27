@@ -24,7 +24,74 @@ function skill(script, directory, ...args) {
 }
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+function traceSlide(walkthrough, stage) {
+  const { step, host, device, transfer, block, write, result } = stage.trace;
+  const line = (id, source) => `<code class="${step === id ? "active" : ""}">${escape(source)}</code>`;
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #142326; color: #effaf3; font: 20px system-ui, sans-serif; }
+    main { padding: 22px 34px; }
+    header { color: #b7d9ce; font-weight: 650; }
+    h1 { font-size: 34px; line-height: 1.1; margin: 8px 0 17px; }
+    h2 { font-size: 22px; margin: 0 0 8px; }
+    h3 { font-size: 19px; margin: 0 0 6px; }
+    code { font: 17px/1.35 monospace; }
+    .trace { display: grid; grid-template-columns: 374px 1fr; gap: 20px; }
+    .program, .cpu, .gpu { background: #1c3034; border: 1px solid #527071; padding: 11px; border-radius: 8px; }
+    .program code { display: block; white-space: pre; padding: 2px 7px; border-left: 4px solid transparent; }
+    .program .active { background: #365340; border-color: #b5ed8d; }
+    .program h2 + code { margin-top: 2px; }
+    .program .kernel { margin-top: 13px; }
+    .hardware { display: grid; grid-template-columns: 182px 102px 1fr; align-items: stretch; }
+    .arrow { align-self: center; text-align: center; font-size: 17px; font-weight: 700; color: #b5ed8d; }
+    .memory code { display: block; font-size: 16px; white-space: nowrap; }
+    .memory, .sm { border: 1px solid #527071; padding: 7px; background: #142326; border-radius: 5px; }
+    .sm { margin-bottom: 8px; }
+    .thread { display: grid; align-items: center; min-height: 41px; padding: 3px 7px; background: #294248; font-size: 16px; }
+    .hot { border-color: #b5ed8d; background: #365340; }
+    .thread strong { color: #b5ed8d; }
+    .empty { visibility: hidden; }
+  </style><main><header>${escape(walkthrough.title)}</header>
+  <h1>${escape(stage.title)}</h1>
+  <div class="trace">
+    <section class="program">
+      <h2>Host code · main()</h2>
+      ${line("upload", "out = cuda.to_device(out_host)")}
+      ${line("launch", "kernel[1, 1](out)")}
+      ${line("download", "result = out.copy_to_host()")}
+      ${line("print", 'print("out =", result.tolist())')}
+      <h2 class="kernel">GPU kernel</h2>
+      ${line("definition", "def kernel(out):")}
+      ${line("write", "    out[0] = 42")}
+    </section>
+    <div class="hardware">
+      <section class="cpu">
+        <h2>CPU</h2>
+        <div class="memory ${result ? "hot" : ""}">
+          <h3>Host memory</h3>
+          <code>${escape(host)}</code>
+          <code class="${result ? "" : "empty"}">${escape(result ?? "result = [42]")}</code>
+        </div>
+      </section>
+      <div class="arrow">${escape(transfer ?? "")}</div>
+      <section class="gpu">
+        <h2>GPU</h2>
+        <div class="sm ${block ? "hot" : ""}">
+          <h3>Compute unit · SM</h3>
+          <div class="thread ${block ? "" : "empty"}">
+            <strong>Block 0</strong><span>Thread 0${write ? " · writes ↓" : ""}</span>
+          </div>
+        </div>
+        <div class="memory ${write || step === "upload" ? "hot" : ""}">
+          <h3>Device memory</h3><code>${escape(device)}</code>
+        </div>
+      </section>
+    </div>
+  </div></main></html>`;
+}
+
 function slide(walkthrough, stage) {
+  if (stage.trace) return traceSlide(walkthrough, stage);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
@@ -101,8 +168,8 @@ if (action === "prepare") {
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage));
-        const content = await page.locator("ol").boundingBox();
-        if (content.y + content.height > 410) throw new Error(`Caption area is obstructed on "${stage.title}".`);
+        const content = await page.locator(stage.trace ? ".trace" : "ol").boundingBox();
+        if (content.y + content.height > 410) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
