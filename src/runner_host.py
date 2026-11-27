@@ -121,7 +121,9 @@ def run_program(source, filename, bridge):
                 return jit
             return Kernel(bridge, function.__name__, kernel_source(ast.parse(source), function.__name__))
 
-        numba = ModuleType("numba")
+        # API bridge for the browser simulator, not the native MLIR compiler.
+        # Keep the old namespace working for existing saved learner programs.
+        numba = ModuleType("numba_cuda_mlir")
         numba.cuda = SimpleNamespace(
             jit=jit,
             to_device=lambda array: DeviceArray(bridge, np.ascontiguousarray(array)),
@@ -132,7 +134,7 @@ def run_program(source, filename, bridge):
             setattr(numba, name, DTYPES[name].type)
 
         def host_import(name, globals=None, locals=None, fromlist=(), level=0):
-            if not level and name == "numba":
+            if not level and name in {"numba", "numba_cuda_mlir", "numba_cuda_mlir.types"}:
                 return numba
             return builtins.__import__(name, globals, locals, fromlist, level)
 

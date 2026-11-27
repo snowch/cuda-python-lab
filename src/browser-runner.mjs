@@ -1,95 +1,43 @@
-const runTimeout = 45000;
+import "./code-runner-host.mjs";
+const manager = window.cudaPythonCodeRunner;
 
-export function attachRunner(root, { getSource, filename }) {
-  const run = root.querySelector("#run");
-  const stop = root.querySelector("#stop");
-  const consoleOutput = root.querySelector("#run-output");
-  const status = root.querySelector("#run-status");
-  const ptx = root.querySelector("#ptx-output");
-  const ptxPanel = root.querySelector("#ptx-panel");
-  let worker;
-  let timer;
-  let busy = false;
-
-  function setStatus(message, failed = false) {
-    status.textContent = message;
-    status.classList.toggle("error", failed);
+// Lesson views own their saved results, while the reading window owns the worker.
+export function attachRunner(root, { getSource, filename, getResult=()=>null, saveResult=()=>{} }) {
+  const run=root.querySelector('#run'), stop=root.querySelector('#stop');
+  const output=root.querySelector('#run-output'), status=root.querySelector('#run-status');
+  const ptx=root.querySelector('#ptx-output'), ptxPanel=root.querySelector('#ptx-panel');
+  const recovery=root.querySelector('#runtime-recovery'),reload=root.querySelector('#reload-runner-files');
+  const client={};let busy=false,result=getResult(),loadFailure;
+  function display() {
+    const saved=getResult();result=loadFailure??saved;
+    const previous=loadFailure?saved:result;
+    output.textContent=previous?.output??'';output.hidden=!output.textContent;
+    ptx.textContent=previous?.ptx??'';ptxPanel.hidden=!ptx.textContent;
+    status.classList.toggle('error',Boolean(result?.error));
+    status.textContent=loadFailure?loadFailure.status:result ? result.source===getSource() ? result.status : 'Previous run shown. Run the edited program to update the result.' : '';
+    recovery.hidden=!loadFailure;run.classList.toggle('primary',!loadFailure);
+    root.querySelector('#runtime-error').textContent=loadFailure?.output??'';
+    root.querySelector('#runtime-previous-note').hidden=!loadFailure||!saved?.output;
   }
-
-  function resetOutput() {
-    consoleOutput.hidden = true;
-    consoleOutput.textContent = "";
-    ptxPanel.hidden = true;
-    ptxPanel.open = false;
-    ptx.textContent = "";
-  }
-
   function setBusy(value) {
-    busy = value;
-    run.disabled = value;
-    stop.hidden = !value;
-    if (!value && document.activeElement === stop) run.focus();
+    busy=value;run.disabled=value;stop.hidden=!value;
+    if (!value&&document.activeElement===stop) run.focus();
   }
-
-  function dispose() {
-    clearTimeout(timer);
-    worker?.terminate();
-    worker = undefined;
-  }
-
-  function cancel(message) {
-    dispose();
-    setBusy(false);
-    if (message) setStatus(message);
-  }
-
   function start() {
-    if (busy) return;
-    resetOutput();
-    setBusy(true);
-    setStatus("Starting…");
-    try {
-      worker ??= new Worker(new URL("./run-worker.mjs", import.meta.url), { type: "module" });
-      const running = worker;
-      running.onmessage = ({ data }) => {
-        if (worker !== running) return;
-        if (data.status) {
-          setStatus(data.status);
-          return;
-        }
-        clearTimeout(timer);
-        setBusy(false);
-        const output = [data.stdout?.trimEnd(), data.error].filter(Boolean).join("\n\n");
-        consoleOutput.textContent = output;
-        consoleOutput.hidden = !output;
-        ptx.textContent = data.ptx ?? "";
-        ptxPanel.hidden = !data.ptx;
-        setStatus(data.error ? "Execution stopped with an error."
-          : data.launched ? "Ran in GPGPU-Sim." : "Python finished without a CUDA launch.", Boolean(data.error));
-      };
-      running.onerror = () => {
-        if (worker !== running) return;
-        cancel();
-        setStatus("Could not start the Python and GPGPU-Sim runtime. Try running again.", true);
-      };
-      timer = setTimeout(() => {
-        cancel();
-        setStatus("The run took too long. Check the launch size and loops, then try again.", true);
-      }, runTimeout);
-      running.postMessage({ source: getSource(), filename });
-    } catch (error) {
-      cancel();
-      setStatus(error.message, true);
-    }
+    if(busy)return;
+    const source=getSource();loadFailure=null;recovery.hidden=true;run.classList.add('primary');setBusy(true);status.classList.remove('error');status.textContent='Starting…';
+    manager.execute(client,'',{source,filename},reply=>{
+      if(reply.stage&&!reply.cancelled){status.textContent=reply.stage;return;}
+      setBusy(false);
+      if(reply.cancelled){display();status.textContent=reply.stage;return;}
+      result={source,output:[reply.stdout?.trimEnd(),reply.error].filter(Boolean).join('\n\n'),ptx:reply.ptx??'',error:Boolean(reply.error),status:reply.runtimeLoad?'Code runner files could not be loaded.':reply.error?'Execution stopped with an error.':reply.launched?'Ran in GPGPU-Sim.':'Python finished without a CUDA launch.'};
+      if(reply.runtimeLoad)loadFailure=result;else saveResult(result);display();
+    });
   }
-
-  function reset() {
-    if (busy) cancel();
-    resetOutput();
-    setStatus("");
-  }
-
-  run.addEventListener("click", start);
-  stop.addEventListener("click", () => cancel("Run stopped. Your program is still in the editor."));
-  return { start, dispose, reset };
+  function reset() { manager.detach(client);display(); }
+  run.addEventListener('click',start);
+  stop.addEventListener('click',()=>manager.detach(client));
+  reload.addEventListener('click',()=>manager.reloadLesson());
+  display();
+  return {start,reset,dispose:()=>manager.detach(client)};
 }

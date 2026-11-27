@@ -1,4 +1,4 @@
-from numba import cuda
+from numba_cuda_mlir import cuda
 
 
 @cuda.jit

@@ -1,3 +1,10 @@
+import {materialSymbol} from "./material-symbols.mjs";
+import {homeArchitecture} from "./home-architecture.mjs";
+import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from "./lesson-resources.mjs";
+import {mediaDurations} from "./media-durations.mjs";
+import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
+import { migrateCudaImports } from "./source-migration.mjs";
+import { registerReadingState, savedReadingState, restoreReadingState } from "./experiment-state.mjs";
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountProgramEditor } from "./editor.mjs";
@@ -9,23 +16,58 @@ import { attachRunner } from "./browser-runner.mjs";
 const order = modules.flatMap((module) => module.lessons);
 const main = document.querySelector("main");
 const courseNav = document.querySelector("#course-nav");
+const courseNavigation = document.querySelector(".course-navigation");
+const courseContents = document.querySelector("#course-contents");
+courseNavigation.append(courseContents);
+const syncCourseNav = () => { courseContents.hidden = !courseNav.open; };
+syncCourseNav();
+courseNav.addEventListener("toggle", syncCourseNav);
+courseContents.addEventListener('click',event=>{
+  const link=event.target.closest('a');
+  if(link?.hash!==location.hash)return;
+  event.preventDefault();courseNav.open=false;syncCourseNav();
+  main.focus({preventScroll:true});window.scrollTo(0,0);
+});
+courseNavigation.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !courseNav.open) return;
+  courseNav.open = false;
+  syncCourseNav();
+  const trigger = courseNav.querySelector("summary");
+  trigger.focus({ preventScroll: true });
+  const bounds = trigger.getBoundingClientRect();
+  const header = document.querySelector(".site-header").getBoundingClientRect().bottom;
+  if (bounds.top < header || bounds.bottom > innerHeight)
+    scrollTo({ top: scrollY + bounds.top - header - 12, behavior: "instant" });
+  event.preventDefault();
+});
 const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
 let activeRunner;
+let activePage;
 let saved;
 
 try {
-  saved = JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
+  saved = savedReadingState()?.work ?? JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
 } catch {
   saved = {};
 }
-const state = { drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
+const state = { results:{}, drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
 
+const completionChanges=new Map();
+try{const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');if(durable.completed)state.completed=durable.completed;}catch{}
+let storageSaved=true;
 function persist() {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    let durable={};try{durable=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch{}
+    state.completed={...(durable.completed??state.completed),...Object.fromEntries(completionChanges)};
+    const encoded=JSON.stringify(state);
+    localStorage.setItem(storageKey,encoded);
+    if(localStorage.getItem(storageKey)!==encoded)throw new Error('Work was not saved');
+    completionChanges.clear();
+    storageSaved=true;
   } catch {
+    storageSaved=false;
     // The workbench still functions when browser storage is unavailable.
   }
 }
@@ -34,7 +76,7 @@ const escape = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<",
   .replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 const number = (slug) => String(order.indexOf(slug) + 1).padStart(2, "0");
 const lessonURL = (slug) => `#lesson/${slug}`;
-const lessonLink = (slug) => `<a href="${lessonURL(slug)}">${escape(lessons[slug].title)}</a>`;
+const lessonLink = (slug) => `<a data-progress-lesson="${slug}" href="${lessonURL(slug)}">${escape(lessons[slug].title)}<span class="lesson-done" role="img" aria-label="Complete" ${state.completed[slug]?'':'hidden'}>${materialSymbol('check')}</span></a>`;
 const themeControl = document.querySelector("#theme");
 const prefersDark = matchMedia("(prefers-color-scheme: dark)");
 let themeChoice;
@@ -49,6 +91,7 @@ function applyTheme() {
   themeControl.textContent = theme === "dark" ? "Light theme" : "Dark theme";
 }
 if (themeChoice !== "light" && themeChoice !== "dark") themeChoice = null;
+document.querySelector("#course-nav > summary").insertAdjacentHTML("beforeend",materialSymbol("expand_more","course-chevron"));
 applyTheme();
 prefersDark.addEventListener("change", applyTheme);
 themeControl.addEventListener("click", () => {
@@ -61,7 +104,14 @@ themeControl.addEventListener("click", () => {
   }
 });
 
+const sectionID=module=>"section-"+modules.indexOf(module);
 function updateNav(page) {
+  const module = modules.find((part) => part.lessons.includes(page));
+  const current = lessons[page]?.title ?? { course: "Course outline", gpu: "Appendix A", compiler: "Compiler lab" }[page];
+  document.querySelector("#course-location").innerHTML = `<ol>
+    ${module ? `<li><span aria-hidden="true">/</span><a href="#course/${sectionID(module)}">${escape(module.title)}</a></li>` : ""}
+    <li><span aria-hidden="true">/</span><span aria-current="page">${escape(current)}</span></li>
+  </ol>`;
   const completed = order.filter((slug) => state.completed[slug]).length;
   document.querySelector("#progress").max = order.length;
   document.querySelector("#progress").value = completed;
@@ -70,6 +120,7 @@ function updateNav(page) {
     if (link.dataset.page === page) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  const focusedHref=document.activeElement?.closest("#lesson-nav a")?.getAttribute("href");
   document.querySelector("#lesson-nav").innerHTML = modules.map((module) => `
     <section class="nav-group">
       <h2>${escape(module.title)}</h2>
@@ -77,25 +128,28 @@ function updateNav(page) {
         <li><a class="lesson-link" href="${lessonURL(slug)}" ${page === slug ? 'aria-current="page"' : ""}>
           <span class="lesson-index">${number(slug)}</span>
           <span>${escape(lessons[slug].title)}</span>
-          ${state.completed[slug] ? '<span class="lesson-done" aria-label="Complete">✓</span>' : ""}
+          ${state.completed[slug] ? '<span class="lesson-done" role="img" aria-label="Complete">'+materialSymbol('check')+'</span>' : ""}
         </a></li>`).join("")}
       </ul>
     </section>`).join("");
+  if(focusedHref)document.querySelector('#lesson-nav a[href="'+focusedHref+'"]')?.focus({preventScroll:true});
+  for(const link of main.querySelectorAll('[data-progress-lesson]'))link.querySelector('.lesson-done').hidden=!state.completed[link.dataset.progressLesson];
 }
 
 function showCourse() {
   main.innerHTML = `<div class="resource-page">
+    <div class="course-home-opening"><div class="course-home-copy">
     <h1>CUDA Python Lab</h1>
     <p class="lead">Learn GPU programming with CUDA Python. Edit complete programs and run them with GPGPU-Sim in the browser or in a notebook on an NVIDIA GPU.</p>
     <section class="reading course-start">
       <h2>Before you start</h2>
-      <p>You’ll need to know how to read Python functions, loops, and array indices. Use a local GPU with Jupyter or a hosted GPU runtime such as Google Colab. Diagrams and recordings show how CUDA maps your code to hardware.</p>
+      <p>You’ll need to know how to read Python functions, loops, and array indices. The browser simulator needs no GPU or installation. For optional hardware experiments, use an NVIDIA GPU with Jupyter or a hosted GPU runtime such as Google Colab. Diagrams and recordings show how CUDA maps your code to hardware.</p>
       <p>Start with twelve core labs, then continue with five follow-up labs on memory access, precision, synchronization, and tuning.</p>
       <p><a href="#gpu">Appendix A</a> covers notebook setup, debugging, and profiling.</p>
       <a class="button primary" href="${lessonURL(order[0])}">Start the first lab</a>
-    </section>
+    </section></div>${homeArchitecture('python')}</div>
     <div class="course-modules">
-      ${modules.map((module) => `<section class="course-module">
+      ${modules.map((module) => `<section class="course-module" id="${sectionID(module)}">
         <h2>${escape(module.title)}</h2>
         <p>${escape(module.description)}</p>
         <ol start="${Number(number(module.lessons[0]))}">
@@ -103,23 +157,24 @@ function showCourse() {
         </ol>
       </section>`).join("")}
     </div>
+    <p class="credit"><a href="#compiler">Optional GPU lab · What happens at the first launch?</a></p>
     <p class="credit">Inspired by the predict, run, and explain activities in <a href="https://snowch.github.io/cuda-cpp-lab/v2/">CUDA C++ Lab</a>.</p>
   </div>`;
 }
 
 function showGpu() {
   main.innerHTML = `<div class="resource-page">
-    <p class="breadcrumb"><a href="#course">Course outline</a></p>
     <h1 class="appendix-title">Appendix A. Run on an NVIDIA GPU</h1>
     <p class="lead">Use an NVIDIA GPU on your computer or through a hosted notebook service. Start with the lab notebook, then use the investigations to measure and debug GPU work.</p>
     <section class="reading">
       <h2>Run with GPGPU-Sim in the browser</h2>
-      <p><strong>Run</strong> executes your full Python program in the browser. Numba and LLVM compile the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
+      <p><strong>Run</strong> executes your full Python program in the browser. The browser’s compatibility compiler translates the kernel to GPU instructions (PTX), then GPGPU-Sim runs them. The downloaded notebook uses Numba-CUDA-MLIR on an NVIDIA GPU. Use <strong>Inspect compiled PTX</strong> to see the instructions.</p>
       <p>Use <code>print()</code> in <code>main()</code> to show values in the Console. Use the GPU notebook for print calls inside kernels and for hardware timing.</p>
-      <p><a href="./runtime/gpgpu-sim-LICENSE.txt">GPGPU-Sim and LLVM licences</a> · <a href="./runtime/pyodide-LICENSE.txt">Pyodide licence</a></p>
+      <p><a href="${new URL("./runtime/gpgpu-sim-LICENSE.txt",import.meta.url).href}">GPGPU-Sim and LLVM licences</a> · <a href="${new URL("./runtime/pyodide-LICENSE.txt",import.meta.url).href}">Pyodide licence</a></p>
     </section>
     <section class="reading">
       <h2>Open and run a lab notebook</h2>
+      <p>The notebooks use Numba-CUDA-MLIR, NVIDIA’s successor to Numba-CUDA. This course teaches its CUDA API; you do not need a separate Numba course. <a href="#compiler">Explore first-launch compilation in an optional GPU lab.</a></p>
       <ol>
         <li>In a lesson, choose <strong>Download notebook</strong>. It contains the complete program in your editor and the expected result for the selected starter case.</li>
         <li>Open the file in Jupyter on a machine with an NVIDIA GPU, or upload it to <a href="https://colab.research.google.com/">Google Colab</a>. In Colab, choose <strong>Runtime → Change runtime type</strong>, select a GPU, and save.</li>
@@ -129,15 +184,15 @@ function showGpu() {
     </section>
     <section class="reading">
       <h2>Set up Python locally</h2>
-      <p>Use Python 3.12 and an NVIDIA driver compatible with CUDA 12. Download <a href="./gpu/requirements.txt" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
+      <p>Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later, and a driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
       <pre><code>python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt</code></pre>
-      <p><a href="https://nvidia.github.io/numba-cuda/user/installation.html">Numba CUDA installation guide</a></p>
+      <p><a href="https://nvidia.github.io/numba-cuda-mlir/">Numba-CUDA-MLIR documentation</a></p>
     </section>
     <section class="reading">
       <h2>Profile larger workloads on hardware</h2>
-      <p><a href="./gpu/cuda-python-investigations.zip" download>Download the native investigations</a>, extract the archive, and open a terminal in the extracted directory. The included INVESTIGATIONS.md explains what to compare for each workload. For the softmax investigation, install a CUDA-enabled build of PyTorch for your GPU.</p>
+      <p><a href="${new URL("./gpu/cuda-python-investigations.zip",import.meta.url).href}" download>Download the native investigations</a>, extract the archive, and open a terminal in the extracted directory. The included INVESTIGATIONS.md explains what to compare for each workload. For the softmax investigation, install a CUDA-enabled build of PyTorch for your GPU.</p>
       <pre><code>python profile_workloads.py affine --sizes 4096 1048576
 python profile_workloads.py transpose --rows 2049 --cols 4093
 python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
@@ -223,11 +278,9 @@ function showLesson(slug) {
   const lesson = lessons[slug];
   const index = order.indexOf(slug);
   const walkthrough = walkthroughs[slug];
-  const module = modules.find((part) => part.lessons.includes(slug));
   const defaultProgram = standaloneProgram(starters[slug], lesson.cases[0]);
   main.innerHTML = `<article>
     <header class="lesson-heading">
-      <p class="breadcrumb"><a href="#course">Course</a><span aria-hidden="true">/</span><span>${escape(module.title)}</span></p>
       <h1>${escape(lesson.title)}</h1>
       <p class="lead">${escape(lesson.summary)}</p>
       <div class="reading lesson-context">
@@ -257,6 +310,7 @@ function showLesson(slug) {
               <button class="button" id="show-main" type="button">Show main()</button>
               <button class="button" id="restore" type="button">Restore starter</button>
               <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
+              <button class="button" id="update-imports" type="button" hidden>Update CUDA imports</button>
               <button class="button" id="download-source" type="button">Export .py</button>
             </div>
             <p class="editor-note" id="target-note" role="status" hidden></p>
@@ -280,7 +334,9 @@ function showLesson(slug) {
       <section class="workbench-card run-console" aria-labelledby="console-title">
         <h2 id="console-title">Console <span>GPGPU-Sim</span></h2>
         <p class="editor-note" id="run-status" role="status"></p>
+        <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
+        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error"></pre></details></div>
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
       </section>
     </section>
@@ -289,28 +345,32 @@ function showLesson(slug) {
       <h2>Explain the result</h2>
       <p>${escape(lesson.explain)}</p>
       ${diagrams[slug] ?? ""}
-      ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details">
-        <summary>Video · ${escape(walkthrough.title)}</summary>
-        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="./media/${slug}/poster.webp">
-          <source src="./media/${slug}/walkthrough.mp4" type="video/mp4">
-          <track src="./media/${slug}/captions.vtt" kind="captions" srclang="en" label="English" default>
-        </video>
-        <details class="walkthrough-transcript"><summary>Read the transcript</summary>
-          ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
-        </details>
-      </details>` : ""}
+      ${hardwareLocation(slug)}
     </section>
+    <section class="lesson-resources" aria-label="Optional lesson resources">
+      ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details resource-row">
+        ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Video, captions and transcript`)}<div class="resource-body">
+        <video controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
+          <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
+          <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
+        </video>
+        <details id="walkthrough-transcript" class="walkthrough-transcript"><summary>Read the transcript</summary>
+          ${walkthrough.stages.map(({ title, narration }) => `<h3>${escape(title)}</h3><p>${escape(narration)}</p>`).join("")}
+        </details></div>
+      </details>` : ""}
+      ${lessonReferences(slug)}
 
-    <details class="native-card">
-      <summary>Further GPU investigation</summary>
+    <details id="native-investigation" class="native-card resource-row">
+      ${resourceSummary("science","Further GPU investigation","Run or measure this example on an NVIDIA GPU")}<div class="resource-body">
       <p>${escape(lesson.native)}</p>
       <p><a href="#gpu">Appendix A · GPU setup and tools</a></p>
-    </details>
-    <footer class="lesson-footer">
-      ${index > 0 ? `<span>Previous · ${lessonLink(order[index - 1])}</span>` : ""}
-      <button type="button" id="complete" class="button complete">${state.completed[slug] ? "Completed ✓" : "Mark complete"}</button>
-      ${index < order.length - 1 ? `<span>Next · ${lessonLink(order[index + 1])}</span>` : '<span><a href="#course">Course outline</a></span>'}
-    </footer>
+    </div></details>
+    </section>
+    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note" role="status">Saved in this browser.</p></section>
+    <nav class="lesson-footer" aria-label="Lesson sequence">
+      <a class="lesson-card" href="${index>0?lessonURL(order[index-1]):'#course'}"><span class="lesson-direction">${index>0?'← Previous lesson':'Course overview'}</span><strong>${index>0?escape(lessons[order[index-1]].title):'Choose a lesson'}</strong></a>
+      <a class="lesson-card lesson-next" href="${index<order.length-1?lessonURL(order[index+1]):'#course'}"><span class="lesson-direction">${index<order.length-1?'Next lesson →':'Course overview'}</span><strong>${index<order.length-1?escape(lessons[order[index+1]].title):'Choose a lesson'}</strong></a>
+    </nav>
   </article>`;
   const find = (id) => main.querySelector(`#${id}`);
   find("walkthrough")?.addEventListener("toggle", ({ currentTarget }) => {
@@ -341,6 +401,9 @@ function showLesson(slug) {
 
   function updateRestore(message = "") {
     const isStarter = editor.source === starter;
+    const legacy=migrateCudaImports(editor.source)!==editor.source;
+    find('update-imports').hidden=!legacy;
+    if(legacy)message='This saved program uses an older CUDA import. In Editor tools, choose Update CUDA imports to adapt it. Your other edits are kept.';
     find("restore").disabled = isStarter;
     find("undo-restore").hidden = !isStarter || restoredSource() === undefined;
     draftNote.textContent = message;
@@ -362,6 +425,8 @@ function showLesson(slug) {
   const runner = attachRunner(main, {
     getSource: () => editor.source,
     filename: `${slug}.py`,
+    getResult: () => state.results[slug]?.[caseIndex],
+    saveResult: result => { (state.results[slug]??={})[caseIndex]=result;persist(); },
   });
   activeRunner = runner;
   activeEditor = editor;
@@ -384,6 +449,10 @@ function showLesson(slug) {
 
   find("show-target").addEventListener("click", () => showLine(lesson.sourceTarget));
   find("show-main").addEventListener("click", () => showLine("def main(", { align: "start" }));
+  find('update-imports').addEventListener('click',()=>{
+    editor.replace(migrateCudaImports(editor.source));find('editor-tools').open=false;
+    updateRestore('CUDA imports updated. Your other edits are kept. Ctrl/⌘ + Z restores the previous code.');
+  });
   find("restore").addEventListener("click", () => {
     restoredPrograms[caseIndex] = editor.source;
     find("editor-tools").open = false;
@@ -416,12 +485,13 @@ function showLesson(slug) {
     download(`${slug}.ipynb`, JSON.stringify(notebook, null, 2), "application/json");
   });
   find("download-source").addEventListener("click", () => {
-    download(`${slug}.py`, editor.source, "text/x-python");
+    download(`${slug}.py`, migrateCudaImports(editor.source), "text/x-python");
   });
-  find("complete").addEventListener("click", () => {
-    state.completed[slug] = !state.completed[slug];
-    find("complete").textContent = state.completed[slug] ? "Completed ✓" : "Mark complete";
+  find("complete").addEventListener("change", () => {
+    state.completed[slug] = find("complete").checked;
+    completionChanges.set(slug,state.completed[slug]);
     persist();
+    find("completion-note").textContent=storageSaved?"Saved in this browser.":"This mark is kept in this tab. Browser storage is unavailable.";
     updateNav(slug);
   });
 }
@@ -431,29 +501,43 @@ function download(name, content, type) {
   const anchor = document.createElement("a");
   anchor.download = name;
   anchor.href = url;
+  anchor.hidden = true;
+  document.body.append(anchor);
   anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  anchor.remove();
+  // Let the browser claim the blob even when compilation or storage work is busy.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 function route(moveFocus = false) {
   if (location.hash === "#main") return;
   const requested = location.hash.slice(1);
   const slug = requested.startsWith("lesson/") ? requested.slice(7) : requested;
-  const page = slug === "course" || slug === "gpu" || order.includes(slug) ? slug : order[0];
+  const section = requested.startsWith("course/") ? requested.slice(7) : null;
+  const page = section!==null || requested==='' ? "course" : slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
+  for (const video of main.querySelectorAll("video")) video.pause();
+  dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
   activeEditor?.destroy();
   activeEditor = null;
   activeRunner?.dispose();
   activeRunner = null;
+  activePage=page;
   updateNav(page);
   if (page === "course") showCourse();
   else if (page === "gpu") showGpu();
+  else if (page === "compiler") {
+    main.innerHTML=compilerLabHTML();
+    document.querySelector("#download-compiler-notebook").addEventListener("click",()=>download("first-launch-mlir.ipynb",JSON.stringify(compilerNotebook(),null,2),"application/json"));
+  }
   else showLesson(page);
-  document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? "Appendix A"} · CUDA Python Lab`;
+  document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? (page === "compiler" ? "First-launch compiler lab" : "Appendix A")} · CUDA Python Lab`;
   if (moveFocus) {
     courseNav.open = false;
+    syncCourseNav();
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }
+  if(section)requestAnimationFrame(()=>document.getElementById(section)?.scrollIntoView({block:"start"}));
 }
 
 document.querySelector(".skip-link").addEventListener("click", (event) => {
@@ -462,11 +546,25 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
 });
 
 try {
-  const response = await fetch("./starters.json");
+  const response = await fetch(new URL("./starters.json",import.meta.url));
   if (!response.ok) throw new Error("Could not load the starter kernels.");
   starters = await response.json();
   route();
+  registerReadingState({save:()=>state});
+  restoreReadingState();
   window.addEventListener("hashchange", () => route(true));
 } catch (error) {
   main.textContent = error.message;
 }
+
+addEventListener('cuda-python-lab:before-restart',event=>{
+  persist();
+  if(!storageSaved) event.detail.reason='This window could not save its work. Allow browser storage before restarting.';
+});
+
+addEventListener('storage',event=>{
+ if(event.key!==storageKey)return;
+ try{const durable=JSON.parse(event.newValue||'{}');state.completed={...(durable.completed??{}),...Object.fromEntries(completionChanges)};if(activePage)updateNav(activePage);const mark=main.querySelector('#complete');if(mark)mark.checked=Boolean(state.completed[activePage]);}catch{}
+});
+const header=document.querySelector('.site-header');
+new ResizeObserver(()=>document.documentElement.style.setProperty('--course-header-height',header.getBoundingClientRect().height+'px')).observe(header);

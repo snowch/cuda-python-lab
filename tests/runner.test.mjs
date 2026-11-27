@@ -5,7 +5,7 @@ import { lessons } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
 import { launchChromium, serveBuild } from "./browser-support.mjs";
 
-const displayedRun = /Ran in GPGPU-Sim|Execution stopped|too long|Could not|without a CUDA launch/;
+const displayedRun = /Ran in GPGPU-Sim|Execution stopped|Code runner files|too long|Could not|without a CUDA launch/;
 
 async function runProgram(page) {
   await page.getByRole("button", { name: "Run", exact: true }).click();
@@ -26,6 +26,7 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
   const browser = await launchChromium(t);
   const page = await browser.newPage({ viewport: { width: 390, height: 850 } });
   await page.emulateMedia({ colorScheme: "dark" });
+  await page.addInitScript(() => localStorage.setItem("cuda-python-lab:code-runner-intro:3","1"));
   const unexpectedRequests = [];
   await page.context().route("**/*", (route) => {
     const request = route.request();
@@ -37,7 +38,8 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
   });
 
   for (const [slug, lesson] of Object.entries(lessons)) {
-    await page.goto(`${url}#lesson/${slug}`);
+    if(page.url().startsWith(url))await page.evaluate(slug => {location.hash=`lesson/${slug}`;},slug);
+    else await page.goto(`${url}#lesson/${slug}`);
     await page.getByRole("heading", { name: lesson.title, exact: true }).waitFor();
     for (const [index, fixture] of lesson.cases.entries()) {
       if (index) await page.getByRole("combobox", { name: "Case" }).selectOption(String(index));

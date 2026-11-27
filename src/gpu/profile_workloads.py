@@ -5,7 +5,8 @@ from statistics import median
 from time import perf_counter
 
 import numpy as np
-from numba import cuda, float32
+from numba_cuda_mlir import cuda
+from numba_cuda_mlir.types import float32
 
 from kernels.coalescing import kernel as direct_transpose
 from kernels.fusion import kernel as fused_kernel
@@ -191,7 +192,7 @@ def profile_softmax(args):
     torch.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-6)
     torch.testing.assert_close(actual.sum(dim=1), torch.ones(rows, device="cuda"))
     print(f"Input {rows:,} × {cols:,} float32")
-    print(f"Numba kernel:  {gpu_time_ms(launch, args.repeats, stream):.4f} ms")
+    print(f"MLIR kernel:  {gpu_time_ms(launch, args.repeats, stream):.4f} ms")
     print(f"torch.softmax: {gpu_time_ms(baseline, args.repeats, stream):.4f} ms")
 
 
@@ -255,7 +256,7 @@ def main():
     transpose.add_argument("--rows", type=positive_int, default=2049)
     transpose.add_argument("--cols", type=positive_int, default=4093)
     transpose.set_defaults(run=profile_transpose)
-    softmax = subparsers.add_parser("softmax", help="Compare a Numba kernel with torch.softmax.")
+    softmax = subparsers.add_parser("softmax", help="Compare a Numba-CUDA-MLIR kernel with torch.softmax.")
     softmax.add_argument("--rows", type=positive_int, default=4096)
     softmax.add_argument("--cols", type=positive_int, default=129)
     softmax.set_defaults(run=profile_softmax)
@@ -267,7 +268,7 @@ def main():
         command.add_argument("--repeats", type=positive_int, default=30)
     args = parser.parse_args()
 
-    if cuda.config.ENABLE_CUDASIM or not cuda.is_available():
+    if getattr(cuda.config, "ENABLE_CUDASIM", False) or not cuda.is_available():
         parser.exit(1, "An NVIDIA GPU and a compatible CUDA 12 driver are required for these timings.\n")
     print(f"GPU: {cuda.get_current_device().name}")
     args.run(args)

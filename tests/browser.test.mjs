@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { unzipSync } from "fflate";
-import { lessons } from "../src/course.mjs";
+import { lessons, modules } from "../src/course.mjs";
 import { standaloneProgram } from "../src/host-program.mjs";
 import { walkthroughs } from "../src/walkthroughs.mjs";
 
@@ -14,7 +14,7 @@ async function runBrowser(t, viewport, exercise) {
   const page = await browser.newPage({ viewport, acceptDownloads: true, permissions: ["clipboard-read", "clipboard-write"] });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(url);
+  await page.goto(url+'#lesson/first-value');
   await exercise(page);
   assert.deepEqual(errors, []);
 }
@@ -40,9 +40,61 @@ async function replaceSource(page, editor, program) {
 }
 
 async function downloadFile(page, locator) {
-  const [download] = await Promise.all([page.waitForEvent("download"), locator.click()]);
+  // Keep bulk case coverage below Chrome’s per-second download limit.
+  // A fast CI runner can otherwise click dozens of exports in one second.
+  const [download] = await Promise.all([page.waitForEvent("download"), locator.click({ delay: 200 })]);
   return { name: download.suggestedFilename(), contents: await readFile(await download.path()) };
 }
+
+test("course location shares the outline row across routes, sizes and themes", async (t) => {
+  await runBrowser(t, { width: 1440, height: 900 }, async (page) => {
+    const location = page.getByRole("navigation", { name: "Breadcrumb", exact: true });
+    const trigger = page.locator("#course-nav > summary");
+    const contents = page.locator("#course-contents");
+    for (const module of modules) for (const slug of module.lessons) {
+      await openLesson(page, slug);
+      assert.equal(await location.locator('[aria-current="page"]').textContent(), lessons[slug].title);
+      assert.ok((await location.textContent()).includes(module.title));
+      assert.equal(await page.locator("main .breadcrumb").count(), 0);
+      assert.equal(await contents.isHidden(), true);
+    }
+    for (const width of [390, 820, 1440]) for (const theme of ["light", "dark"]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.evaluate((value) => document.documentElement.dataset.theme = value, theme);
+      // Review the preceding, changed and following lesson introductions.
+      for (const slug of ["transfers", "coalescing", "divergence"]) {
+        await openLesson(page, slug);
+        await trigger.focus(); await page.keyboard.press("Enter");
+        await contents.waitFor({ state: "visible" });
+        assert.equal(await contents.locator(".nav-group").count(), 5);
+        assert.equal(await contents.locator(".lesson-link").count(), 17);
+        const row = await page.locator(".course-row").boundingBox();
+        const panel = await contents.boundingBox();
+        const heading = await page.locator("main h1").boundingBox();
+        assert.ok(panel.y >= row.y + row.height - 1);
+        assert.ok(heading.y >= panel.y + panel.height - 1);
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        if (slug === "coalescing") {
+          await page.locator(".course-navigation").screenshot({ path: `test-results/course-row-${width}-${theme}.png` });
+        }
+        await contents.locator('a[aria-current="page"]').focus();
+        await page.keyboard.press("Escape"); await contents.waitFor({ state: "hidden" });
+        assert.ok(await trigger.evaluate((el) => el === document.activeElement));
+        assert.ok(await trigger.evaluate((el) => el.getBoundingClientRect().top >= document.querySelector(".site-header").getBoundingClientRect().bottom));
+        if (slug === "coalescing") await page.screenshot({ path: `test-results/course-start-${width}-${theme}.png` });
+      }
+    }
+    await trigger.click(); await contents.locator('a[href="#gpu"]').click();
+    await page.locator(".appendix-title").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Appendix A");
+    await trigger.click(); await contents.locator('a[href="#compiler"]').click();
+    await page.locator("#download-compiler-notebook").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Compiler lab");
+    await trigger.click(); await contents.locator('a[href="#course"]').click();
+    await page.locator(".course-modules").waitFor();
+    assert.equal(await location.locator('[aria-current="page"]').textContent(), "Course outline");
+  });
+});
 
 test("every case exports a CUDA notebook containing its complete program", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
@@ -122,7 +174,7 @@ test("case changes preserve the shared kernel and the host draft for each case",
     assert.match(final, /kernel\[3, 16\]\(a, b, out, 33\)/);
 
     await page.getByRole("textbox", { name: "Predict before you run" }).fill("Block 2, Thread 0");
-    await page.getByRole("button", { name: "Mark complete" }).click();
+    await page.getByRole("checkbox", { name: "Mark lesson complete" }).check();
     await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
     assert.equal(await readSource(editor), first);
@@ -132,14 +184,17 @@ test("case changes preserve the shared kernel and the host draft for each case",
     assert.equal(await readSource(editor), final);
     assert.equal(await input.inputValue(), "0");
     assert.equal(await page.getByRole("textbox", { name: "Predict before you run" }).inputValue(), "Block 2, Thread 0");
-    await page.getByRole("button", { name: "Completed" }).waitFor();
+    assert.equal(await page.getByRole("checkbox", { name: "Mark lesson complete" }).isChecked(),true);
   });
 });
 
 test("kernel-only drafts reopen with main and can still be restored", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
     const oldDraft = "from numba import cuda\n\n@cuda.jit\ndef kernel(out):\n    out[0] = 21\n";
-    await page.evaluate((source) => {
+    // Seed the historical installation before the app boots. A live tab now
+    // owns its own reading snapshot, so mutating storage under it is not setup.
+    await page.addInitScript((source) => {
+      sessionStorage.clear();
       localStorage.setItem("cuda-python-lab-v1", JSON.stringify({ drafts: { "first-value": source } }));
     }, oldDraft);
     await page.reload();
@@ -153,6 +208,11 @@ test("kernel-only drafts reopen with main and can still be restored", async (t) 
     await editorTools(page).click();
     await page.getByRole("button", { name: "Undo restore" }).click();
     assert.equal(await readSource(editor), source);
+    const notebook=await downloadFile(page,page.getByRole("button",{name:"Download notebook"}));
+    const program=JSON.parse(notebook.contents).cells.find(cell=>cell.cell_type==='code'&&cell.source.includes('def main():')).source;
+    assert.match(program,/from numba_cuda_mlir import cuda/);
+    assert.doesNotMatch(program,/from numba import cuda/);
+    assert.equal(await readSource(editor),source,'Export must preserve the saved legacy source');
   });
 });
 
@@ -167,7 +227,12 @@ test("architecture walkthroughs play with captions and expose transcripts by key
       assert.equal(await video.getAttribute("aria-label"), walkthrough.title);
       await video.evaluate(async (player) => {
         player.muted = true;
-        await player.play();
+        let timer;
+        try {
+          await Promise.race([player.play(),new Promise((_,reject)=>{
+            timer=setTimeout(()=>reject(new Error(`Video did not start: ${player.error?.message??'no media error'}; readyState=${player.readyState}`)),10000);
+          })]);
+        } finally { clearTimeout(timer); }
       });
       await page.waitForFunction(() => {
         const player = document.querySelector(".walkthrough video");
@@ -199,5 +264,21 @@ test("the GPU appendix gives notebook setup, investigations and the occupancy wo
     assert.match(await page.locator("#resource-result").textContent(), /8 resident blocks · 16 of 64 warps · 25%/);
     await page.getByLabel("Threads per block", { exact: true }).selectOption("256");
     assert.match(await page.locator("#resource-result").textContent(), /6 resident blocks · 48 of 64 warps · 75%/);
+  });
+});
+
+
+test("optional compiler lab exports an MLIR notebook and names the quantities to compare",async t=>{
+  await runBrowser(t,{width:390,height:850},async page=>{
+    await page.evaluate(()=>location.hash='compiler');
+    await page.getByRole('heading',{name:'What happens at the first launch?',exact:true}).waitFor();
+    assert.match(await page.locator('main').textContent(),/first_launch_ms/);
+    assert.match(await page.locator('main').textContent(),/signatures_after/);
+    const download=await downloadFile(page,page.locator('#download-compiler-notebook'));
+    const notebook=JSON.parse(download.contents);
+    assert.ok(notebook.cells.some(cell=>cell.source.includes('numba-cuda-mlir[cu12]==0.6.0')));
+    assert.ok(notebook.cells.some(cell=>cell.cell_type==='code'&&cell.source.includes('first_launch_ms =')));
+    assert.ok(notebook.cells.some(cell=>cell.source.includes('does not isolate compiler time')));
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   });
 });

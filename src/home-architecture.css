@@ -1,0 +1,15 @@
+/* Shared homepage overview: an illustration beside the purpose and start link. */
+.course-home-opening{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:32px;align-items:center}
+.course-home-opening>*{min-width:0}.course-home-copy h1{margin-top:0}
+.home-architecture{--home-map-surface:var(--paper,var(--panel,#fff));margin:0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--home-map-surface);color:var(--ink)}
+.home-architecture svg{display:block;width:100%;height:auto;overflow:visible;font-family:'IBM Plex Sans',system-ui,sans-serif}
+.home-map-boundary{fill:var(--home-map-surface);stroke:var(--line);stroke-width:1.5}.home-map-surface{fill:var(--soft,var(--accent-soft,#edf4f1));stroke:var(--line)}
+.home-map-chip,.home-map-result{fill:var(--soft,var(--accent-soft,#edf4f1));stroke:var(--accent);stroke-width:1.5}
+.home-map-title{fill:var(--ink);font-size:23px;font-weight:600}.home-map-label{fill:var(--ink);font-size:20px;font-weight:500}
+.home-map-small{fill:var(--muted);font-size:20px}.home-map-code{fill:var(--muted);font-size:20px;font-family:'IBM Plex Mono',monospace}.home-map-value{fill:var(--accent);font-size:28px;font-weight:600}
+.home-map-threads rect{fill:var(--accent)}.home-map-memory rect{fill:var(--muted);opacity:.55}
+.home-map-flow{fill:none;stroke:var(--accent);stroke-width:2}.home-map-arrowhead{fill:var(--accent)}.home-map-action{fill:var(--accent);font-size:18px;font-weight:500}
+.home-architecture-launch{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:4px 2px 12px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.home-architecture-launch code{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);overflow-wrap:anywhere}
+.home-architecture figcaption{margin:0 2px 4px;color:var(--muted);font-size:14px;line-height:1.55;font-weight:400}
+@media(max-width:860px){.course-home-opening{grid-template-columns:minmax(0,1fr);gap:24px}.home-architecture{width:min(100%,440px);justify-self:center}}

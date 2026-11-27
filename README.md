@@ -4,11 +4,12 @@ Learn GPU programming through seventeen hands-on labs for Python developers. Edi
 
 ## Take the course
 
-1. Pick a lesson and, where available, a case. The editor shows the data, launch dimensions, kernel, and result copy for that case.
-2. Select **Download notebook**. Open the file in Jupyter on a machine with an NVIDIA GPU, or upload it to [Google Colab](https://colab.research.google.com/) and select a GPU under **Runtime → Change runtime type**.
-3. Run the notebook cells in order, including the dependency installation. Continue the experiment by editing and rerunning the program cell. Use **Check the output** to compare with the selected starter case.
+1. Pick a lesson and, where available, a case. The editor shows the complete prepared program. Enter an optional prediction.
+2. Choose **Run** to execute it in the browser simulator. Inspect the named values in Console, make the suggested edit and run again. No GPU or installation is needed for this path.
+3. For an optional NVIDIA GPU experiment, choose **Download notebook**. Open it in Jupyter or Google Colab with a GPU runtime, then run the cells in order, including dependency installation. **Check the output** compares with the selected starter case.
 
-Choose **Export .py** in **Editor tools** to run the complete program directly with Python. Use Python 3.12, an NVIDIA driver compatible with CUDA 12, and the dependencies in [requirements.txt](src/gpu/requirements.txt).
+
+Choose **Export .py** in **Editor tools** to run the complete program directly with Python. Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later and a CUDA 12-compatible driver, and the dependencies in [requirements.txt](src/gpu/requirements.txt).
 
 | Module | Labs |
 | --- | --- |
@@ -22,13 +23,17 @@ Diagrams and captioned walkthroughs show how the programs use threads, blocks, w
 
 ## Run in the browser
 
-Open a lesson and choose **Run**. Python and NumPy execute the edited `main()`. Numba lowers the CUDA kernel to LLVM IR, LLVM generates PTX, and GPGPU-Sim runs it. The entire run takes place in the browser. The Console shows what `main()` prints, and **Inspect compiled PTX** shows the generated instructions.
+Open a lesson and choose **Run**. Python and NumPy execute the edited `main()`. The browser compatibility compiler uses a bundled Numba frontend to lower the CUDA kernel to LLVM IR, LLVM generates PTX, and GPGPU-Sim runs it. The entire run takes place in the browser. The Console shows what `main()` prints, and **Inspect compiled PTX** shows the generated instructions.
 
 The first run loads the WebAssembly toolchain. The browser runner supports the kernels, numeric arrays, and small launches used in the course. Use the GPU notebook for kernel-side `print()`, hardware timing, and NVIDIA library functions. Browser softmax uses the GPU's approximate single-precision exponential.
 
 The build pins Pyodide 0.27.7, Numba 0.68.1, llvmlite IR 0.50.0, and the [CUDA C++ Lab V2 LLVM backend and simulator](https://github.com/snowch/cuda-cpp-lab/tree/88237c7df5df7a71318f23f73f813c12435a837a/assets/cuda-workbench). See [browser toolchain sources and build instructions](vendor/README.md).
 
 ## Develop and verify
+
+Use the [shared course design guide](docs/course-design-guide.md) for preferred
+layout and interaction patterns across courses. It compares the CUDA C++ and
+Python treatments and records remaining adoption work.
 
 Use Node.js 22 or later.
 
@@ -49,15 +54,16 @@ npm test
 # Run the end-to-end cases against a static site with Chromium.
 npm run test:runner
 
-# Check exports with Numba's development simulator and compile PTX.
+# Cross-compile the migrated kernels with the actual MLIR compiler (no GPU execution).
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r src/gpu/requirements.txt
+python scripts/check_native.py --ptx --cpu-only
+# On an NVIDIA GPU, also execute every notebook and program export.
 python scripts/check_native.py
-python scripts/check_native.py --ptx
 ```
 
-The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
+The browser checks cover the editor, saved drafts, exports, walkthroughs, and CUDA execution with a static server. Use the Playwright-pinned full Chromium build for media support; bulk export clicks are paced below Chrome’s download-rate limit while still checking every case. The native checks exercise the exported programs and compile their kernels with NVIDIA’s compiler. Hardware timing and behavior such as races require an NVIDIA GPU.
 
 ## Record walkthroughs
 
@@ -71,3 +77,17 @@ node scripts/build_walkthroughs.mjs /path/to/record-demo /path/to/work export
 ```
 
 Append lesson slugs such as `vector-add` to each command to rebuild just those walkthroughs. Review the speech output and slides before export. The work directory retains the WAVs, screening reports, silent masters, and shot lists. The export updates the browser MP4, WebVTT captions, and poster for each walkthrough. See [the contributor rules](AGENTS.md#record-walkthroughs).
+
+## Browser code runner and offline access
+
+The header offers **Code runner**, **App status**, and the theme switch on every view. The Python/Numba compiler stays ready between lessons in the same tab. Each run gets a fresh program namespace and simulator device. Header **Start code runner** prepares the tools without executing the editor. **Free memory** and **Stop run** terminate the worker while preserving saved code, predictions, case selections, completion and previous results. The default idle timeout is 30 minutes; choose 5, 15, 30 or 60 minutes in Code runner.
+
+App status checks for published versions automatically. Normal online reloads use the live course. **Save offline copy** explicitly saves every required file, including recordings, Pyodide, NumPy, Numba and the CUDA compiler. **Update offline copy** stages a newer verified version and offers **Restart to update**. Wait for **Downloaded and ready to use offline** before disconnecting. External links and native GPU tools still need their own connectivity/installations.
+
+See [runner design](docs/code-runner-design.md) and [offline/update design](docs/offline-update-design.md) for ownership, resource reporting, preservation and verification details.
+
+## Numba-CUDA-MLIR
+
+Kernels and GPU notebooks use `from numba_cuda_mlir import cuda` and Numba-CUDA-MLIR 0.6.0. The lessons teach the necessary CUDA API; previous Numba knowledge is not required. The optional **What happens at the first launch?** GPU lab connects compilation to GPU execution, compares first/warm launch times and investigates compiled-function reuse.
+
+The browser uses a documented compatibility compiler, not a native MLIR/WASM build. Saved legacy imports still run; exports adapt recognized CUDA imports without changing stored code. See [migration scope and limitations](docs/numba-cuda-mlir-migration.md). Check actual MLIR PTX compilation without a GPU using `python scripts/check_native.py --ptx --cpu-only` after installing `src/gpu/requirements.txt`; use the script without flags on an NVIDIA GPU to execute the native notebooks.
