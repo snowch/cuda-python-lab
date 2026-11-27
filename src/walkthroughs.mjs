@@ -4,6 +4,7 @@ export const walkthroughs = {
     stages: [
       {
         title: "Copy zero to GPU memory",
+        hold: 2.5,
         trace: {
           code: "out = cuda.to_device(out_host)", location: "CPU",
           device: "out = [0]", arrow: "Copy →", focus: "device",
@@ -12,6 +13,7 @@ export const walkthroughs = {
       },
       {
         title: "Load the compiled kernel",
+        hold: 3,
         trace: {
           code: "def kernel(out): …", location: "CPU",
           device: "out = [0]", arrow: "Load →", activity: "Compiled kernel", focus: "activity",
@@ -21,6 +23,7 @@ export const walkthroughs = {
       },
       {
         title: "Launch one GPU thread",
+        hold: 3,
         trace: {
           code: "kernel[1, 1](out)", location: "CPU",
           device: "out = [0]", arrow: "Launch →", activity: "One GPU thread", focus: "activity",
@@ -29,22 +32,27 @@ export const walkthroughs = {
       },
       {
         title: "Which array will change?",
+        hold: 6,
         trace: {
           code: "out[0] = 42", location: "GPU",
           device: "out = [0]", activity: "One GPU thread",
         },
         narration: "Both arrays contain zero. Which array will change when this line runs?",
+        speech: "Both arrays contain zero. [pause 0.55] Which array will change when this line runs?",
       },
       {
         title: "Write to the GPU array",
+        hold: 2.5,
         trace: {
           code: "out[0] = 42", location: "GPU",
           device: "out = [42]", activity: "One GPU thread", focus: "device",
         },
         narration: "The GPU thread writes 42 to the GPU array. The CPU array still holds zero.",
+        speech: "The GPU thread writes 42 to the GPU array. [pause 0.55] The CPU array still holds zero.",
       },
       {
         title: "Copy the result to CPU memory",
+        hold: 3.5,
         trace: {
           code: "result = out.copy_to_host()", location: "CPU",
           device: "out = [42]", arrow: "← Copy", result: "result = [42]", focus: "result",
