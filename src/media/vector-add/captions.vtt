@@ -1,61 +1,43 @@
 WEBVTT
 
-00:00:00.500 --> 00:00:02.296
-With thirty-three elements and thirty-two
+00:00:00.500 --> 00:00:03.134
+The host launches two blocks of thirty-two
 
-00:00:02.296 --> 00:00:04.450
-threads per block, main launches two
+00:00:03.134 --> 00:00:05.391
+GPU threads. The arrays have thirty-three
 
-00:00:04.450 --> 00:00:06.964
-blocks. Each thread needs to work out
+00:00:05.391 --> 00:00:08.025
+elements, so some threads have no element
 
-00:00:06.964 --> 00:00:09.119
-which array index belongs to it.
+00:00:08.025 --> 00:00:08.777
+to write.
 
-00:00:10.619 --> 00:00:13.553
-CUDA grid of one returns the index across
+00:00:13.277 --> 00:00:15.787
+Each thread calculates its global index.
 
-00:00:13.553 --> 00:00:16.121
-all blocks. Multiply the block number by
+00:00:15.787 --> 00:00:18.716
+In block one, thread zero gets thirty-two.
 
-00:00:16.121 --> 00:00:19.056
-the threads per block and add the thread
+00:00:18.716 --> 00:00:20.808
+The next thread gets thirty-three.
 
-00:00:19.056 --> 00:00:21.623
-number. Block one, thread zero gets index
+00:00:25.308 --> 00:00:27.636
+The bounds check compares each index with
 
-00:00:21.623 --> 00:00:21.990
-thirty-two.
+00:00:27.636 --> 00:00:29.631
+thirty-three. Which of these two threads
 
-00:00:23.490 --> 00:00:25.579
-Index thirty-two is the last valid
+00:00:29.631 --> 00:00:30.961
+enters the if block?
 
-00:00:25.579 --> 00:00:27.321
-position. The next thread gets
+00:00:39.461 --> 00:00:42.115
+Thread zero writes ninety-nine at index
 
-00:00:27.321 --> 00:00:29.410
-thirty-three and skips the reads and
+00:00:42.115 --> 00:00:44.327
+thirty-two. Thread one skips the
 
-00:00:29.410 --> 00:00:31.848
-write. Put both indices into the kernel's
+00:00:44.327 --> 00:00:46.539
+assignment because index thirty-three is
 
-00:00:31.848 --> 00:00:34.285
-bounds check to see which thread enters
-
-00:00:34.285 --> 00:00:35.330
-the if block.
-
-00:00:36.830 --> 00:00:39.776
-In main, change the launch to three blocks
-
-00:00:39.776 --> 00:00:42.354
-of sixteen threads each. Block two, thread
-
-00:00:42.354 --> 00:00:44.932
-zero writes the same array position. The
-
-00:00:44.932 --> 00:00:47.142
-diagnostic print in the notebook shows
-
-00:00:47.142 --> 00:00:49.352
-that thread's block and thread numbers.
+00:00:46.539 --> 00:00:47.866
+outside the arrays.
