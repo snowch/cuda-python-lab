@@ -151,7 +151,7 @@ export const lessons = {
       { label: "Define the kernel", from: "@cuda.jit", through: "out[0] = 42" },
       "@cuda.jit tells the compiler to compile this function as a GPU kernel. The thread running it stores 42 in the first element of out on the GPU.",
       { label: "Launch from main()", from: "kernel[1, 1](out)", through: "result = out.copy_to_host()" },
-      "The CPU program is the host and the GPU is the device. From the host, the first 1 requests one block, a group of threads, and the second 1 requests one thread in that block. The host passes the device array out and copies its contents back after the launch.",
+      "The CPU program is the host and the GPU is the device. This launch runs the kernel on one GPU thread and passes it the device array out. The host then copies the result back.",
     ],
     predict: "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
     exercise: [
@@ -168,7 +168,7 @@ export const lessons = {
     title: "One thread, one element",
     summary: "Map threads to array indices and skip threads beyond the end of the input.",
     intro: [
-      "A launch can start several blocks. In main(), the launch starts enough whole blocks to cover the arrays.",
+      "A block is a group of GPU threads. In main(), the launch starts enough whole blocks to cover the arrays.",
       { label: "Map a thread to an array element", from: "i = cuda.grid(1)", through: "out[i] = a[i] + b[i]" },
       "cuda.grid(1) returns the thread’s global index in a one-dimensional launch. Multiply the block number by the number of threads per block, then add the thread’s number within the block. All indices start at zero. The guard i < n lets only threads with a valid index read and write the arrays.",
     ],

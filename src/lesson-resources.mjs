@@ -5,6 +5,7 @@ const kernels=docs+'user/kernels.html#';
 const memory=docs+'user/memory.html#';
 const topics={
  kernel:['Kernel definition','@cuda.jit','Declares a function that runs on the GPU.',kernels+'kernel-declaration'],
+ firstLaunch:['Launch syntax','kernel[1, 1](out)','Starts one GPU thread and passes the device array.',kernels+'kernel-invocation'],
  launch:['Launch syntax','kernel[blocks, threads](...)','Requests blocks and threads; arguments supply the arrays and values.',kernels+'kernel-invocation'],
  index:['Thread coordinates','i = cuda.grid(1)','Finds this thread’s global position. Check the input length before indexing.',api+'grid'],
  stride:['Grid-stride loops','for i in range(cuda.grid(1), n, cuda.gridsize(1))','Advances by the total thread count to visit additional inputs.',api+'gridsize'],
@@ -19,7 +20,7 @@ const topics={
  precision:['Floating-point precision','float32','Each operation can round; changing the order of a sum can change its result.','https://docs.nvidia.com/cuda/floating-point/index.html'],
 };
 export const lessonTopics={
- 'first-value':['kernel','launch','transfer'],'vector-add':['index','launch'],'grid-stride':['index','stride'],transfers:['arrays','transfer'],coalescing:['index','coalescing'],divergence:['index','branches'],reduction:['shared','barrier'],histogram:['atomics','index'],scan:['shared','barrier'],'tiled-transpose':['shared','coalescing'],matmul:['shared','barrier'],softmax:['math','shared','barrier'],gather:['index','arrays'],stencil:['shared','barrier'],precision:['precision','index'],'sync-debug':['index','barrier'],fusion:['index','arrays'],
+ 'first-value':['kernel','firstLaunch','transfer'],'vector-add':['index','launch'],'grid-stride':['index','stride'],transfers:['arrays','transfer'],coalescing:['index','coalescing'],divergence:['index','branches'],reduction:['shared','barrier'],histogram:['atomics','index'],scan:['shared','barrier'],'tiled-transpose':['shared','coalescing'],matmul:['shared','barrier'],softmax:['math','shared','barrier'],gather:['index','arrays'],stencil:['shared','barrier'],precision:['precision','index'],'sync-debug':['index','barrier'],fusion:['index','arrays'],
 };
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export function resourceSummary(icon,title,description){return `<summary>${materialSymbol(icon,'resource-icon')}<span class="resource-copy"><strong>${esc(title)}</strong><span>${esc(description)}</span></span>${materialSymbol('chevron_right','resource-chevron')}</summary>`;}

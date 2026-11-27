@@ -1,32 +1,46 @@
 export const walkthroughs = {
   "first-value": {
-    title: "Trace one CUDA launch from CPU to GPU",
+    title: "Follow one value from CPU to GPU and back",
     stages: [
       {
-        title: "Copy the starting value to GPU memory",
-        trace: { step: "upload", host: "out_host = [0]", device: "out = [0]", transfer: "Copy to GPU →" },
-        narration: "The CPU runs main. The call to device copies the starting zero from CPU memory into a separate array in GPU memory. The two boxes show where those arrays live.",
+        title: "Copy zero to GPU memory",
+        trace: {
+          code: "out = cuda.to_device(out_host)", location: "CPU",
+          device: "out = [0]", arrow: "Copy →", focus: "device",
+        },
+        narration: "This call copies the zero in CPU memory into a separate GPU array.",
       },
       {
-        title: "Launch one block with one thread",
-        trace: { step: "launch", host: "out_host = [0]", device: "out = [0]", transfer: "Launch kernel →", block: true },
-        narration: "CUDA loads the compiled kernel when needed. The CPU launch requests one block with one thread. A block is a group of threads. CUDA assigns the block to a streaming multiprocessor, or S M, on the GPU.",
-        speech: "[CUDA](/kˈuːdə/) loads the compiled kernel when needed. The CPU launch requests one block with one thread. A block is a group of threads. [CUDA](/kˈuːdə/) assigns the block to a streaming multiprocessor, or S M, on the GPU.",
+        title: "Launch one GPU thread",
+        trace: {
+          code: "kernel[1, 1](out)", location: "CPU",
+          device: "out = [0]", arrow: "Launch →", thread: true, focus: "thread",
+        },
+        narration: "The CPU launches the kernel. One GPU thread will run it.",
       },
       {
-        title: "Which array changes when the thread writes?",
-        trace: { step: "write", host: "out_host = [0]", device: "out = [0]", block: true },
-        narration: "The highlighted statement runs on the GPU thread. Before it writes, both arrays contain zero. Which array will contain forty-two after the statement runs?",
+        title: "Which array will change?",
+        trace: {
+          code: "out[0] = 42", location: "GPU",
+          device: "out = [0]", thread: true,
+        },
+        narration: "Both arrays contain zero. Which array will change when this line runs?",
       },
       {
-        title: "The GPU thread writes to device memory",
-        trace: { step: "write", host: "out_host = [0]", device: "out = [42]", block: true, write: true },
-        narration: "The thread writes forty-two at index zero in the device array. The original CPU array still holds zero. The new value stays in GPU memory until the host copies it back.",
+        title: "Write to the GPU array",
+        trace: {
+          code: "out[0] = 42", location: "GPU",
+          device: "out = [42]", thread: true, focus: "device",
+        },
+        narration: "The GPU thread writes 42 to the GPU array. The CPU array still holds zero.",
       },
       {
-        title: "Copy the result back to the CPU",
-        trace: { step: "download", host: "out_host = [0]", device: "out = [42]", transfer: "← Copy result", result: "result = [42]" },
-        narration: "Copy to host waits for the kernel to finish and returns a CPU array called result. Main prints that array. In the lesson, change forty-two to seventy-three, run the code, and check the value printed in the Console.",
+        title: "Copy the result to CPU memory",
+        trace: {
+          code: "result = out.copy_to_host()", location: "CPU",
+          device: "out = [42]", arrow: "← Copy", result: "result = [42]", focus: "result",
+        },
+        narration: "Copy to host waits for the kernel to finish. It returns the value in a new CPU array called result.",
       },
     ],
   },
