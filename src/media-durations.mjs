@@ -1,7 +1,8 @@
 // Measured from the published MP4 files with ffprobe.
 export const mediaDurations={
-  "vector-add": 52.44644,
-  "first-value": 48.40644,
+  "vector-add": 51.9,
+  "grid-stride": 51.973,
+  "first-value": 79.366667,
   "reduction": 52.64644,
   "coalescing": 50.48644
 };

@@ -1,0 +1,40 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.000
+The host launches sixteen threads for
+
+00:00:03.000 --> 00:00:05.083
+thirty-five elements. Block zero, thread
+
+00:00:05.083 --> 00:00:07.583
+three starts at global index three.
+
+00:00:12.083 --> 00:00:14.464
+The stride equals the total number of
+
+00:00:14.464 --> 00:00:16.506
+threads. Here, two blocks times eight
+
+00:00:16.506 --> 00:00:18.547
+threads gives a stride of sixteen.
+
+00:00:23.047 --> 00:00:25.793
+Starting at three, add sixteen for each
+
+00:00:25.793 --> 00:00:28.147
+visit. Which indices will this thread
+
+00:00:28.147 --> 00:00:30.108
+process before it reaches thirty-five?
+
+00:00:38.608 --> 00:00:40.769
+The thread visits indices three and
+
+00:00:40.769 --> 00:00:42.930
+nineteen. Thirty-five is outside the loop,
+
+00:00:42.930 --> 00:00:45.812
+so it stops. At each visit, the thread
+
+00:00:45.812 --> 00:00:47.973
+doubles the input into the output.

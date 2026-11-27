@@ -106,6 +106,39 @@ export const walkthroughs = {
       },
     ],
   },
+  "grid-stride": {
+    title: "Follow one thread through a grid-stride loop",
+    stages: [
+      {
+        title: "Start with a global index",
+        highlight: "first = cuda.grid(1)",
+        diagram: ["35 elements · n = 35", "2 blocks × 8 threads = 16 threads", "Block 0, thread 3 → first = 3"],
+        narration: "The host launches sixteen threads for thirty-five elements. Block zero, thread three starts at global index three.",
+        hold: 4,
+      },
+      {
+        title: "Calculate the stride",
+        highlight: "stride = cuda.gridDim.x * cuda.blockDim.x",
+        diagram: ["2 blocks × 8 threads = 16", "stride = 16", "Next index = current index + 16"],
+        narration: "The stride equals the total number of threads. Here, two blocks times eight threads gives a stride of sixteen.",
+        hold: 4,
+      },
+      {
+        title: "Predict this thread’s indices",
+        highlight: "for i in range(first, n, stride):",
+        diagram: ["first = 3 · n = 35 · stride = 16", "3 → 19 → ?", "The loop stops before 35."],
+        narration: "Starting at three, add sixteen for each visit. Which indices will this thread process before it reaches thirty-five?",
+        hold: 8,
+      },
+      {
+        title: "Visit two array elements",
+        highlight: "out[i] = values[i] * 2",
+        diagram: ["3 → 19 → 35 stops", "Thread 3 writes out[3] and out[19]", "Each output is twice its input."],
+        narration: "The thread visits indices three and nineteen. Thirty-five is outside the loop, so it stops. At each visit, the thread doubles the input into the output.",
+        hold: 4,
+      },
+    ],
+  },
   coalescing: {
     title: "See how a warp groups memory addresses",
     stages: [
