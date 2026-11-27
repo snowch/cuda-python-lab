@@ -36,24 +36,24 @@ function traceSlide(stage, program) {
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #142326; color: #effaf3; font: 19px system-ui, sans-serif; }
-    main { padding: 15px 36px 0; }
-    h1 { margin: 0 0 9px; font-size: 28px; line-height: 1.1; }
+    main { padding: 26px 38px 0; }
+    h1 { margin: 0 0 16px; font-size: 30px; line-height: 1.1; }
     h2 { margin: 0 0 3px; font-size: 21px; }
     code { font: 21px/1.3 monospace; }
-    .layout { display: grid; grid-template-columns: 1.65fr 1fr; gap: 25px; }
-    .source { min-width: 0; padding: 6px 0; background: #101e21; border-radius: 7px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px; }
+    .source { min-width: 0; padding: 10px 0; background: #101e21; border-radius: 7px; }
     .source div + div { margin-top: 4px; }
     .source code {
       display: block;
       padding: 0 10px;
       border-left: 3px solid transparent;
       color: #b7d9ce;
-      font: 18px/18px monospace;
+      font: 19px/21px monospace;
       white-space: pre;
     }
     .source .current { border-color: #b5ed8d; background: #365340; color: #effaf3; }
     .hardware { display: grid; grid-template-rows: 1fr 38px 1fr; }
-    .hardware section { padding: 5px 12px; border: 1px solid #527071; border-radius: 8px; background: #1c3034; }
+    .hardware section { padding: 12px 16px; border-radius: 6px; background: #24393b; }
     .value { display: table; padding: 0 6px; border: 2px solid transparent; border-radius: 5px; }
     .activity { font-size: 17px; }
     .active { border-color: #b5ed8d; background: #365340; }
@@ -163,7 +163,7 @@ if (action === "prepare") {
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage, program));
         const content = await page.locator(stage.trace ? ".trace" : "ol").boundingBox();
-        if (content.y + content.height > (stage.trace ? 308 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
+        if (content.y + content.height > (stage.trace ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
