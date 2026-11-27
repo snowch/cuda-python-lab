@@ -1,46 +1,58 @@
 WEBVTT
 
-00:00:00.180 --> 00:00:06.865
+00:00:00.500 --> 00:00:02.928
 For sixteen values and eight threads per
-block, each thread in block zero copies one
 
-00:00:06.865 --> 00:00:08.202
-value into scratch.
+00:00:02.928 --> 00:00:05.356
+block, each thread in block zero copies
 
-00:00:08.382 --> 00:00:13.085
-Scratch is shared memory that the threads
-in the same block can access.
+00:00:05.356 --> 00:00:07.784
+one value into scratch. Scratch is shared
 
-00:00:13.780 --> 00:00:17.263
+00:00:07.784 --> 00:00:10.558
+memory that the threads in the same block
+
+00:00:10.558 --> 00:00:11.252
+can access.
+
+00:00:12.752 --> 00:00:15.286
 Thread one stores two, while thread five
-stores six.
 
-00:00:17.443 --> 00:00:21.228
-Each must reach the block barrier before
-any thread continues.
+00:00:15.286 --> 00:00:17.820
+stores six. Each must reach the block
 
-00:00:21.408 --> 00:00:25.669
-The barrier lets thread one read the value
+00:00:17.820 --> 00:00:19.991
+barrier before any thread continues. The
+
+00:00:19.991 --> 00:00:22.525
+barrier lets thread one read the value
+
+00:00:22.525 --> 00:00:23.973
 written by thread five.
 
-00:00:26.340 --> 00:00:32.656
+00:00:25.473 --> 00:00:28.121
 At a distance of four, thread one reads
+
+00:00:28.121 --> 00:00:31.101
 scratch at index five and adds six to its
 
-00:00:32.656 --> 00:00:33.027
-two.
+00:00:31.101 --> 00:00:33.087
+two. The notebook experiment prints those
 
-00:00:33.207 --> 00:00:37.190
-The notebook experiment prints those two
-inputs from inside the kernel.
+00:00:33.087 --> 00:00:35.073
+two inputs from inside the kernel.
 
-00:00:37.860 --> 00:00:44.454
+00:00:36.573 --> 00:00:39.318
 In the nineteen value case, the last block
+
+00:00:39.318 --> 00:00:41.721
 starts with three inputs and five zeros.
 
-00:00:44.634 --> 00:00:46.713
+00:00:41.721 --> 00:00:43.780
 All eight threads reach the barrier.
 
-00:00:46.893 --> 00:00:52.094
+00:00:43.780 --> 00:00:46.525
 Compare the sum of those three inputs with
+
+00:00:46.525 --> 00:00:48.584
 the last output printed by main.

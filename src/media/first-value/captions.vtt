@@ -1,49 +1,55 @@
 WEBVTT
 
-00:00:00.180 --> 00:00:01.991
-Main runs on the CPU.
+00:00:00.500 --> 00:00:04.506
+Main runs on the CPU. It starts with a one
 
-00:00:02.171 --> 00:00:06.235
-It starts with a one element NumPy array
-containing zero.
+00:00:04.506 --> 00:00:06.909
+element NumPy array containing zero. To
 
-00:00:06.415 --> 00:00:11.256
-To device copies that value into a separate
+00:00:06.909 --> 00:00:09.714
+device copies that value into a separate
+
+00:00:09.714 --> 00:00:11.316
 array in GPU memory.
 
-00:00:11.940 --> 00:00:15.400
+00:00:12.816 --> 00:00:15.261
 The first one in the square brackets
-requests one block.
 
-00:00:15.580 --> 00:00:18.401
-The second one requests one thread per
-block.
+00:00:15.261 --> 00:00:17.356
+requests one block. The second one
 
-00:00:18.581 --> 00:00:24.536
-A streaming multiprocessor, or S M, is a
-part of the GPU chip that executes the
+00:00:17.356 --> 00:00:19.801
+requests one thread per block. A streaming
 
-00:00:24.536 --> 00:00:24.908
-thread.
+00:00:19.801 --> 00:00:22.944
+multiprocessor, or S M, is a part of the
 
-00:00:25.580 --> 00:00:28.622
+00:00:22.944 --> 00:00:25.040
+GPU chip that executes the thread.
+
+00:00:26.540 --> 00:00:29.306
 The thread writes forty-two to the GPU
-array.
 
-00:00:28.802 --> 00:00:31.995
-The original CPU array still contains zero.
+00:00:29.306 --> 00:00:31.676
+array. The original CPU array still
 
-00:00:32.175 --> 00:00:35.541
-Which line makes the new value available on
-the CPU?
+00:00:31.676 --> 00:00:34.442
+contains zero. Which line makes the new
 
-00:00:36.220 --> 00:00:40.144
+00:00:34.442 --> 00:00:36.417
+value available on the CPU?
+
+00:00:39.917 --> 00:00:42.846
 Copy to host waits for the result and
-returns a CPU array.
 
-00:00:40.324 --> 00:00:42.298
-Main can now print forty-two.
+00:00:42.846 --> 00:00:45.775
+returns a CPU array. Main can now print
 
-00:00:42.478 --> 00:00:47.842
-Change the assignment to seventy-three and
-trace the same steps with the new value.
+00:00:45.775 --> 00:00:47.605
+forty-two. Change the assignment to
+
+00:00:47.605 --> 00:00:49.802
+seventy-three and trace the same steps
+
+00:00:49.802 --> 00:00:51.266
+with the new value.

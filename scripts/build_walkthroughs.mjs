@@ -1,132 +1,155 @@
-// Usage: node scripts/build_walkthroughs.mjs /path/to/piper-voice.onnx
-// Requires uv, FFmpeg, Chromium and the .onnx.json file beside the voice model.
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import { walkthroughs } from "../src/walkthroughs.mjs";
 
-const voice = process.argv[2];
-if (!voice) throw new Error("Pass the path to a Piper voice model.");
+const [skillDir, workDir, action, ...selected] = process.argv.slice(2);
+if (!skillDir || !workDir || !["prepare", "narrate", "screen", "export"].includes(action) ||
+    selected.some((slug) => !Object.hasOwn(walkthroughs, slug))) {
+  throw new Error("Usage: node scripts/build_walkthroughs.mjs RECORD_DEMO_DIR WORK_DIR prepare|narrate|screen|export [LESSON ...]");
+}
+
 const assets = fileURLToPath(new URL("../src/media/", import.meta.url));
-const temporary = await mkdtemp(join(tmpdir(), "cuda-python-recordings-"));
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
   ?? ["/usr/bin/chromium", "/usr/bin/google-chrome"].find(existsSync);
-let browser;
 
-const synthesize = String.raw`
-import io
-import json
-import math
-from pathlib import Path
-import re
-import sys
-import textwrap
-import wave
-
-from piper import PiperVoice
-from piper.config import SynthesisConfig
-
-voice = PiperVoice.load(sys.argv[1])
-folder = Path(sys.argv[2])
-sample_rate = voice.config.sample_rate
-silence = b"\0\0" * round(0.18 * sample_rate)
-durations = {}
-
-for slug, recordings in json.load(sys.stdin).items():
-    seconds_elapsed = 0
-    cues = []
-    durations[slug] = []
-
-    for index, stage in enumerate(recordings["stages"]):
-        samples = bytearray(silence)
-        for sentence in re.split(r"(?<=[.!?]) ", stage["narration"]):
-            start = seconds_elapsed + len(samples) / (2 * sample_rate)
-            audio = io.BytesIO()
-            with wave.open(audio, "wb") as writer:
-                voice.synthesize_wav(sentence, writer, SynthesisConfig(length_scale=1.04))
-            audio.seek(0)
-            with wave.open(audio, "rb") as reader:
-                samples.extend(reader.readframes(reader.getnframes()))
-            end = seconds_elapsed + len(samples) / (2 * sample_rate)
-
-            lines = textwrap.wrap(sentence, 43, break_long_words=False, break_on_hyphens=False)
-            chunks = ["\n".join(lines[i:i+2]) for i in range(0, len(lines), 2)]
-            time = start
-            for chunk in chunks:
-                next_time = time + (end - start) * len(chunk.split()) / len(sentence.split())
-                cues.append((time, next_time, chunk))
-                time = next_time
-            samples.extend(silence)
-
-        # Align the narration and image to whole video frames.
-        duration = math.ceil((len(samples) / (2 * sample_rate) + 0.30) * 25) / 25
-        durations[slug].append(duration)
-        samples.extend(b"\0\0" * (round(duration * sample_rate) - len(samples) // 2))
-        with wave.open(str(folder / f"{slug}-{index}.wav"), "wb") as writer:
-            writer.setparams((1, 2, sample_rate, 0, "NONE", "not compressed"))
-            writer.writeframes(samples)
-        seconds_elapsed += duration
-
-    def timestamp(seconds):
-        stamp = round(seconds * 1000)
-        return f"{stamp // 3600000:02}:{stamp // 60000 % 60:02}:{stamp // 1000 % 60:02}.{stamp % 1000:03}"
-
-    vtt = "\n\n".join(f"{timestamp(a)} --> {timestamp(b)}\n{text}" for a, b, text in cues)
-    (folder / f"{slug}.vtt").write_text(f"WEBVTT\n\n{vtt}\n", encoding="utf-8")
-
-print(json.dumps(durations))
-`;
+function skill(script, directory, ...args) {
+  execFileSync("uv", ["run", "--python", "3.12", resolve(skillDir, "scripts", script), directory, ...args], {
+    stdio: "inherit",
+    env: { ...process.env, DEMO_TTS_BACKEND: "onnx", DEMO_FFMPEG_PRESET: process.env.DEMO_FFMPEG_PRESET ?? "veryfast" },
+  });
+}
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 function slide(walkthrough, stage) {
-  return `<!doctype html><meta charset="utf-8"><style>
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
     * { box-sizing: border-box }
     body { margin: 0; background: #142326; color: #effaf3; font: 24px system-ui, sans-serif; }
-    main { padding: 35px 55px; }
-    header { color: #b7d9ce; font-weight: 650; font-size: 21px; padding-bottom: 14px; border-bottom: 1px solid #49615c; }
-    h1 { font-size: 41px; line-height: 1.13; margin: 23px 0; letter-spacing: -.02em; }
+    main { padding: 26px 52px; }
+    header { color: #b7d9ce; font-weight: 650; font-size: 21px; padding-bottom: 12px; border-bottom: 1px solid #49615c; }
+    h1 { font-size: 38px; line-height: 1.15; margin: 19px 0; letter-spacing: -.02em; }
     ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-    li { padding: 10px 16px; background: #24393b; border-left: 3px solid #729c93; border-radius: 4px; }
+    li { padding: 8px 16px; background: #24393b; border-left: 3px solid #729c93; border-radius: 4px; }
     li:last-child { background: #28473e; border-color: #a3ddc2; }
   </style><main><header>${escape(walkthrough.title)}</header>
   <h1>${escape(stage.title)}</h1>
-  <ol>${stage.diagram.map((line) => `<li>${escape(line)}</li>`).join("")}</ol></main>`;
+  <ol>${stage.diagram.map((line) => `<li>${escape(line)}</li>`).join("")}</ol></main></html>`;
 }
 
-const ffmpeg = (args) => execFileSync("ffmpeg", ["-hide_banner", "-loglevel", "error", "-y", ...args]);
-try {
-  const durations = JSON.parse(execFileSync("uv", ["run", "--with", "piper-tts", "python", "-c", synthesize, resolve(voice), temporary], {
-    input: JSON.stringify(walkthroughs),
+const recordings = Object.entries(walkthroughs)
+  .filter(([slug]) => selected.length === 0 || selected.includes(slug))
+  .map(([slug, walkthrough]) => ({
+    slug, walkthrough, directory: resolve(workDir, slug),
+    scenes: walkthrough.stages.map((stage, index) => ({
+      id: `s${index + 1}`, slide: index + 1, step: stage.title, text: stage.narration,
+      ...(stage.speech ? { say: stage.speech } : {}),
+      ...(stage.narration.endsWith("?") ? { hold: 3 } : {}),
+    })),
+  }));
+
+function ffmpeg(...args) {
+  execFileSync("ffmpeg", ["-hide_banner", "-loglevel", "error", "-y", ...args], { stdio: "inherit" });
+}
+
+function inspect(path, entries) {
+  return JSON.parse(execFileSync("ffprobe", ["-v", "error", "-show_entries", entries, "-of", "json", path], {
     encoding: "utf8",
   }));
-  browser = await chromium.launch({ executablePath });
-  const page = await browser.newPage({ viewport: { width: 960, height: 540 } });
-  for (const [slug, walkthrough] of Object.entries(walkthroughs)) {
-    const destination = join(assets, slug);
-    await mkdir(destination, { recursive: true });
-    const clips = [];
-    for (const [index, stage] of walkthrough.stages.entries()) {
-      const basename = join(temporary, `${slug}-${index}`);
-      await page.setContent(slide(walkthrough, stage));
-      await page.screenshot({ path: `${basename}.png` });
-      if (index === 0) ffmpeg(["-i", `${basename}.png`, "-frames:v", "1", join(destination, "poster.webp")]);
-      ffmpeg(["-loop", "1", "-framerate", "25", "-i", `${basename}.png`, "-i", `${basename}.wav`,
-        "-c:v", "libx264", "-tune", "stillimage", "-pix_fmt", "yuv420p", "-crf", "22",
-        "-c:a", "aac", "-b:a", "64k", "-t", String(durations[slug][index]), `${basename}.mp4`]);
-      clips.push(`file '${basename}.mp4'`);
+}
+
+const formatScenes = (scenes) => JSON.stringify(scenes, null, 2) + "\n";
+
+function browserCaptions(srt) {
+  const milliseconds = (clock) => clock.split(/[:,]/).map(Number)
+    .reduce((total, part, index) => total * (index === 3 ? 1000 : 60) + part, 0);
+  const clock = (stamp) => new Date(Math.round(stamp)).toISOString().slice(11, 23);
+  const cues = srt.trim().split(/\r?\n\r?\n/).flatMap((block) => {
+    const [, timing, ...text] = block.split(/\r?\n/);
+    const [start, end] = timing.split(" --> ").map(milliseconds);
+    const words = text.join(" ").split(/\s+/);
+    const groups = [];
+    let line = "";
+    for (const word of words) {
+      if (line && line.length + word.length + 1 > 42) {
+        groups.push(line);
+        line = "";
+      }
+      line += line ? " " + word : word;
     }
-    const playlist = join(temporary, `${slug}.txt`);
-    await writeFile(playlist, clips.join("\n") + "\n");
-    ffmpeg(["-f", "concat", "-safe", "0", "-i", playlist, "-c", "copy", "-movflags", "+faststart",
-      join(destination, "walkthrough.mp4")]);
-    await copyFile(join(temporary, `${slug}.vtt`), join(destination, "captions.vtt"));
-    console.log(`Built ${slug} walkthrough.`);
+    groups.push(line);
+    let elapsed = start;
+    return groups.map((group) => {
+      const next = elapsed + (end - start) * group.split(" ").length / words.length;
+      const cue = `${clock(elapsed)} --> ${clock(next)}\n${escape(group)}`;
+      elapsed = next;
+      return cue;
+    });
+  });
+  return `WEBVTT\n\n${cues.join("\n\n")}\n`;
+}
+
+if (action === "prepare") {
+  const browser = await chromium.launch({ executablePath });
+  try {
+    const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
+    for (const { directory, walkthrough, scenes } of recordings) {
+      const slides = join(directory, "slides");
+      await mkdir(slides, { recursive: true });
+      await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
+      for (const [index, stage] of walkthrough.stages.entries()) {
+        await page.setContent(slide(walkthrough, stage));
+        const content = await page.locator("ol").boundingBox();
+        if (content.y + content.height > 410) throw new Error(`Caption area is obstructed on "${stage.title}".`);
+        const image = join(slides, `s-${index + 1}.png`);
+        await page.screenshot({ path: image });
+        const [frame] = inspect(image, "stream=width,height").streams;
+        if (frame.width !== 3840 || frame.height !== 2160) throw new Error(`Expected native 4K slide: ${image}`);
+      }
+    }
+  } finally {
+    await browser.close();
   }
-} finally {
-  await browser?.close();
-  await rm(temporary, { recursive: true, force: true });
+} else {
+  for (const { slug, directory, scenes, walkthrough } of recordings) {
+    if (await readFile(join(directory, "scenes.json"), "utf8") !== formatScenes(scenes)) {
+      throw new Error(`Run prepare to refresh the script for ${slug}.`);
+    }
+    switch (action) {
+      case "narrate":
+        skill("tts.py", directory, "af_heart", "1.0");
+        break;
+      case "screen":
+        skill("phonemes.py", directory, "--all");
+        skill("asr.py", directory, "small.en");
+        break;
+      case "export": {
+        skill("deck.py", directory, slug, walkthrough.title);
+        const video = join(directory, "out", `${slug}-4k-narrated.mp4`);
+        const srt = join(directory, "out", `${slug}.srt`);
+        const [picture, sound, captions] = inspect(video, "stream=codec_name,width,height,r_frame_rate").streams;
+        if (picture.codec_name !== "h264" || picture.width !== 3840 || picture.height !== 2160 ||
+            picture.r_frame_rate !== "30/1" || sound?.codec_name !== "aac" || captions?.codec_name !== "mov_text") {
+          throw new Error(`Unexpected export streams: ${video}`);
+        }
+        ffmpeg("-xerror", "-threads", "2", "-i", video, "-map", "0:v", "-map", "0:a", "-f", "null", "-");
+        await writeFile(join(directory, "out", "captions.vtt"), browserCaptions(await readFile(srt, "utf8")));
+        ffmpeg("-i", join(directory, "slides", "s-1.png"), "-vf", "scale=960:540", "-frames:v", "1",
+          join(directory, "out", "poster.webp"));
+        break;
+      }
+    }
+  }
+  if (action === "export") {
+    for (const { slug, directory } of recordings) {
+      const out = join(directory, "out");
+      const destination = join(assets, slug);
+      await mkdir(destination, { recursive: true });
+      await copyFile(join(out, `${slug}-4k-narrated.mp4`), join(destination, "walkthrough.mp4"));
+      await copyFile(join(out, "captions.vtt"), join(destination, "captions.vtt"));
+      await copyFile(join(out, "poster.webp"), join(destination, "poster.webp"));
+    }
+  }
 }

@@ -36,6 +36,7 @@ export const walkthroughs = {
         title: "Compute the global index",
         diagram: ["i = cuda.grid(1)", "i = block number × threads per block + thread number", "Block 1, Thread 0 → 1 × 32 + 0 = 32"],
         narration: "CUDA grid of one returns the index across all blocks. Multiply the block number by the threads per block and add the thread number. Block one, thread zero gets index thirty-two.",
+        speech: "[CUDA](/kˈuːdə/) grid of one returns the index across all blocks. Multiply the block number by the threads per block and add the thread number. Block one, thread zero gets index thirty-two.",
       },
       {
         title: "Skip indices outside the array",
