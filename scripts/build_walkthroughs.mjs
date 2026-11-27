@@ -210,7 +210,7 @@ if (action === "prepare") {
           ffmpeg("-i", input, "-f", "lavfi", "-i", "color=c=0xb5ed8d:s=24x24:r=30",
             "-filter_complex", filters.join(";"), "-map", `[v${movements.length - 1}]`,
             "-map", "0:a", "-map", "0:s", "-c:v", "libx264", "-preset", "veryfast",
-            "-crf", "18", "-threads", "4", "-c:a", "copy", "-c:s", "copy", "-shortest", "-movflags", "+faststart", video);
+            "-crf", "18", "-threads", "4", "-c:a", "copy", "-c:s", "copy", "-t", start.toFixed(3), "-movflags", "+faststart", video);
         }
         const [picture, sound, captions] = inspect(video, "stream=codec_name,width,height,r_frame_rate").streams;
         if (picture.codec_name !== "h264" || picture.width !== 3840 || picture.height !== 2160 ||
