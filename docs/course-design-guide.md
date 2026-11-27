@@ -131,7 +131,7 @@ learner's stated prerequisites.
 The header contains a home-linked course mark and name, a short subject subtitle,
 and the shared controls in this order:
 
-- **Code runner**, when the course has a managed execution runtime.
+- **Code runner**, with a terminal icon, when the course has a managed execution runtime.
 - **Offline**, with a cloud-download icon, when the course supports a complete offline copy. It opens App status.
 - **Theme**, with a sun or moon icon, whose action switches between light and dark.
 
@@ -139,12 +139,15 @@ Keep Code runner labelled, with its status subordinate to the label. Do not add 
 for capabilities the course does not provide. On phones, allow the header to wrap
 without changing its keyboard order or obscuring the focused content.
 
-### Theme and offline icons
+### Header icons and labels
 
 Use bundled official Material 3 Symbols Rounded at 24px, followed by a short
 visible label with an 8px gap. Use **Offline** and **Theme**; retain **Calculator**
 and **Reference** where provided. Code runner keeps its visible label and its
-Stopped/Ready/Running status underneath. A status-only course uses **App status**.
+Stopped/Starting/Ready/Running status underneath. Use the **terminal** symbol for
+Code runner, centred beside the two lines of text. Keep that icon constant as
+the status changes; opening the control shows runner settings and does not start
+the runtime. The status text describes runtime state. A status-only course uses **App status**.
 The complete control is at least 48px tall and expands to fit its icon and text.
 Keep labels visible at every width; wrap the header into rows on phones. Do not
 shrink text, clip labels or use an icon-only breakpoint. A tooltip supplements
@@ -183,7 +186,9 @@ The [reusable browser check](testing/header-controls.cjs) accepts one or more
 already-served built course URLs. With this repository’s Playwright dependency
 installed, run `node docs/testing/header-controls.cjs http://localhost:8000/`.
 It checks actual controls, both themes, 320/390/820/1440px layouts, keyboard
-focus, modal backdrops and preference persistence. Each course’s real offline
+focus, modal backdrops, preference persistence and the terminal/label/status
+layout for existing runner controls. Opening and closing runner settings must
+preserve the runtime state. Each course’s real offline
 save/update tests must also check verified and update badge states. The UI check
 does not itself prove that an offline copy is complete.
 

@@ -86,6 +86,50 @@ const assert = require("node:assert/strict");
                 "bundled visible SVG icon",
               );
             }
+            const runner = page.locator(
+              "header #code-runner-open,header #runner-open",
+            );
+            if (await runner.count()) {
+              const label = runner.locator(".lab-runner-label");
+              const state = runner.locator(
+                "#runner-summary,#code-runner-summary,#runner-state",
+              );
+              await expect(label).toHaveText("Code runner");
+              await expect(label).toBeVisible();
+              await expect(state).toBeVisible();
+              await expect(
+                runner.locator('[data-symbol="terminal"]'),
+              ).toHaveCount(1);
+              const box = await runner.boundingBox();
+              const lb = await label.boundingBox(),
+                sb = await state.boundingBox();
+              const ib = await runner.locator(".lab-runner-icon").boundingBox();
+              assert(
+                box.width >= 48 && box.height >= 48,
+                "runner touch target",
+              );
+              assert(ib.width === 24 && ib.height === 24, "24px terminal icon");
+              assert(
+                lb.x >= ib.x + ib.width + 7.5,
+                "runner icon and label gap",
+              );
+              assert(
+                Math.abs(lb.x - sb.x) < 1 && sb.y >= lb.y + lb.height - 1,
+                "status beneath runner label",
+              );
+              assert(
+                sb.x + sb.width <= box.x + box.width + 0.5,
+                "runner status fits",
+              );
+              const before = await state.textContent();
+              await runner.click();
+              const panel = page.locator("#code-runner-dialog,#runner-dialog");
+              await expect(panel).toBeVisible();
+              await page.keyboard.press("Escape");
+              await expect(panel).toBeHidden();
+              await expect(runner).toBeFocused();
+              await expect(state).toHaveText(before);
+            }
             assert(
               await page.evaluate(
                 () => document.documentElement.scrollWidth <= innerWidth,

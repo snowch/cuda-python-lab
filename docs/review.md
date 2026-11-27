@@ -17,3 +17,27 @@ The shared [course design guide](https://github.com/snowch/cuda-python-lab/blob/
 records this rule. Validation covers the built header at 320, 390, 820 and 1440px
 in both themes, keyboard focus, modal opening/Escape, persistence and project-local
 asset requests. Functional checks do not establish learning effectiveness.
+
+
+## Shared terminal icon in the header (2026-11-27)
+
+Use the canonical guide's bundled Material Symbols Rounded terminal icon for
+Code runner, beside its label and subordinate native status. The icon is
+constant across runtime states. Opening settings continues to preserve runtime
+state; native handlers, status node references and saved work are unchanged.
+
+The UX and learning-design reviews found no new prerequisite or lesson action:
+the visible name identifies the control without icon knowledge, and the state
+stays on the second line. Homepage introduction and course contents remain in
+reading order. The 14 existing managed-runner courses passed the built UI matrix
+at 320/390/820/1440px in both themes: 24px icon, 8px gap, visible label/status,
+48px target, keyboard/settings/focus return, no runtime start when inspecting
+settings, no page overflow and no external asset requests. xv6's original
+three-column phone header failed the first pass; allowing its controls to wrap
+passed the focused final rerun. Other courses without managed runners retain
+their existing controls.
+
+The interactive style mockup and reusable header browser check include this
+layout. The focused CUDA Python runner and shared-style tests passed; runner
+logic and examples were not changed. Functional and author reviews do not
+establish learning effectiveness.
