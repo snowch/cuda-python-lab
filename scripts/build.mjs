@@ -77,6 +77,13 @@ await Promise.all([
   cp(new URL("pyodide-LICENSE.txt", vendor), new URL("pyodide-LICENSE.txt", runtime)),
   cp(new URL("gpgpu-sim-LICENSE.txt", vendor), new URL("gpgpu-sim-LICENSE.txt", runtime)),
 ]);
+// Pyodide 0.27 retries missing local packages on a CDN by default. The pinned
+// loader must keep recovery inside the same immutable local runtime directory.
+const pyodideLoaderURL = new URL("pyodide.mjs", runtime);
+const pyodideLoader = await readFile(pyodideLoaderURL, "utf8");
+const externalFallback = 'n.setCdnUrl(`https://cdn.jsdelivr.net/pyodide/v${d.version}/full/`)';
+if (pyodideLoader.split(externalFallback).length !== 2) throw new Error("Review changed Pyodide fallback before publishing.");
+await writeFile(pyodideLoaderURL, pyodideLoader.replace(externalFallback, "n.setCdnUrl(r.indexURL)"));
 const editorBuild = await build({
   absWorkingDir: fileURLToPath(root),
   entryPoints: [fileURLToPath(new URL("editor.mjs", src))],
