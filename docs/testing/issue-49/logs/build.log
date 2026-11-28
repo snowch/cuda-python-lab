@@ -2,4 +2,4 @@
 > cuda-python-lab@0.1.0 build
 > node scripts/build.mjs
 
-Built 17 lessons in /tmp/49/final-app/dist/
+Built 17 lessons in /workspace/cuda-49/dist/

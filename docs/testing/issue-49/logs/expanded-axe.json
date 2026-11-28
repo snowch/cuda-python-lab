@@ -16,17 +16,17 @@
   {
     "theme": "light",
     "region": "Local Python setup commands",
-    "keyboardScroll": 4
+    "keyboardScroll": 5
   },
   {
     "theme": "light",
     "region": "Hardware profiling commands",
-    "keyboardScroll": 11
+    "keyboardScroll": 18
   },
   {
     "theme": "light",
     "region": "Fusion profiling command",
-    "keyboardScroll": 5
+    "keyboardScroll": 3
   },
   {
     "route": "gpu",
@@ -59,17 +59,17 @@
   {
     "theme": "dark",
     "region": "Local Python setup commands",
-    "keyboardScroll": 3
+    "keyboardScroll": 24
   },
   {
     "theme": "dark",
     "region": "Hardware profiling commands",
-    "keyboardScroll": 7
+    "keyboardScroll": 12
   },
   {
     "theme": "dark",
     "region": "Fusion profiling command",
-    "keyboardScroll": 22
+    "keyboardScroll": 10
   },
   {
     "route": "gpu",

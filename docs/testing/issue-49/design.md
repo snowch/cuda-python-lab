@@ -1,6 +1,6 @@
 # Instruction and interaction review
 
-The task has four observable parts. Locate a named expression, predict the effect of changing it, run the edited program, and explain the returned evidence. The workbench keeps the exact edit and evidence cue between Run and Console. The action also stays where the learner chooses a task. Both views read the same selected task. There is one editable source and one prediction field.
+The task has four observable parts. Locate a named expression, predict the effect of changing it, run the edited program, and explain the returned evidence. The workbench keeps the exact edit and evidence cue between Run and Console. The action also stays where the learner chooses a task. Both views read the same selected task. There is one editable source and one prediction field. Following independent review, first-value shows its three-array question, print scope and case notes directly below the Console output. [Revised prediction design](review/README.md)
 
 | Learner-facing surface | Copy and interaction decision |
 | --- | --- |

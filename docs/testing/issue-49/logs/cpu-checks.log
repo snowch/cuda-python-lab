@@ -8,7 +8,7 @@ test_prerequisite_outputs_and_starting_race (__main__.NotebookTests.test_prerequ
 test_wrong_dimensions_dtype_values_and_custom_source (__main__.NotebookTests.test_wrong_dimensions_dtype_values_and_custom_source) ... ok
 
 ----------------------------------------------------------------------
-Ran 8 tests in 2.346s
+Ran 8 tests in 5.275s
 
 OK
 38/38 exports validated with nbformat; each exact selected program and every authored start compiled as Python.

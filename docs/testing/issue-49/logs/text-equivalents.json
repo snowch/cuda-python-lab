@@ -1,7 +1,7 @@
 [
   {
     "step": 1,
-    "narrative": "Host · before main() · After the store and copy back, what will the original host array, device array and returned result each contain? Record your prediction before stepping.",
+    "narrative": "Host · before main() · The host starts at 0 and the kernel stores 42. After copy-back, what will the original host (out_host), device (out) and copied host (result) arrays each contain?",
     "source": "Show line 10 · def main():",
     "values": [
       "Not created",

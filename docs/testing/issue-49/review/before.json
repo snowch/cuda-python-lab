@@ -1,0 +1,30 @@
+[
+  {
+    "label": "starter before execution",
+    "host": 0,
+    "store": 42,
+    "prints": false,
+    "question": "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
+    "note": "Earlier case answer: I predicted the original would stay unchanged."
+  },
+  {
+    "label": "unapplied preview",
+    "host": 0,
+    "store": 42,
+    "prints": false,
+    "question": "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
+    "note": "Earlier case answer: I predicted the original would stay unchanged."
+  },
+  {
+    "label": "applied edit before execution",
+    "host": 5,
+    "store": 73,
+    "prints": true,
+    "question": "The host array starts with [0.0]. The kernel writes 42 to out[0] on the GPU. What does main() print after copying the value back? What will it print if you change 42 to 73?",
+    "note": "Earlier case answer: I predicted the original would stay unchanged."
+  },
+  {
+    "traceQuestion": "Host · before main() · After the store and copy back, what will the original host array, device array and returned result each contain? Record your prediction before stepping.",
+    "identity": "Open code · One element · host 5 · store 73"
+  }
+]

@@ -16,10 +16,10 @@
   "theme": "light",
   "overflow": 0,
   "action": 1026,
-  "editor": 1700,
-  "run": 2166,
-  "console": 2586,
-  "brief": 2255
+  "editor": 2054,
+  "run": 2520,
+  "console": 2941,
+  "brief": 2610
  },
  {
   "slug": "vector-add",
@@ -236,10 +236,10 @@
   "theme": "dark",
   "overflow": 0,
   "action": 1026,
-  "editor": 1700,
-  "run": 2166,
-  "console": 2586,
-  "brief": 2255
+  "editor": 2054,
+  "run": 2520,
+  "console": 2941,
+  "brief": 2610
  },
  {
   "slug": "vector-add",
@@ -457,10 +457,10 @@
   "theme": "light",
   "overflow": 0,
   "action": 912,
-  "editor": 1530,
-  "run": 1996,
-  "console": 2344,
-  "brief": 2085,
+  "editor": 1828,
+  "run": 2294,
+  "console": 2642,
+  "brief": 2383,
   "violations": []
  },
  {
@@ -697,10 +697,10 @@
   "theme": "dark",
   "overflow": 0,
   "action": 912,
-  "editor": 1530,
-  "run": 1996,
-  "console": 2344,
-  "brief": 2085,
+  "editor": 1828,
+  "run": 2294,
+  "console": 2642,
+  "brief": 2383,
   "violations": []
  },
  {

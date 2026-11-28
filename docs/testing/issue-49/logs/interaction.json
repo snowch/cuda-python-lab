@@ -11,7 +11,7 @@
   {
     "offlineRecording": {
       "duration": 79.366667,
-      "currentTime": 60.010679,
+      "currentTime": 60.006696,
       "readyState": 4,
       "activeCaption": "The GPU thread writes 42 to the GPU array."
     }
