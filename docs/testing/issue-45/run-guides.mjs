@@ -82,6 +82,7 @@ try{
      if(l.cases.length>1)await page.locator('#case').selectOption(String(i));
      const prompt=await page.locator('#prediction-prompt').innerText();
      if(slug==='first-value') assert.match(prompt,/host starts at 0.*kernel stores 42.*out_host.*out.*result/);
+     else if(slug==='vector-add') assert.ok(prompt.includes(fixture.scalars.n+' elements, '+fixture.blocks[0]+' '+(fixture.blocks[0]===1?'block':'blocks')+' × '+fixture.threads[0]+' threads'));
      else assert.equal(prompt,caseQuestion(slug,l,fixture));
      const starter=standaloneProgram(kernel,fixture);
      const r=await run(starter,fixture,slug,'pristine');
@@ -118,6 +119,10 @@ try{
        if(slug==='first-value'){
          const match=intended.match(/out\[0\] = (\d+)/);
          assert.ok(prompt.includes('host starts at 0 and the kernel stores '+match[1]));
+         assert.equal(await page.locator('#comparison-question').innerText(),prompt);
+       } else if(slug==='vector-add'){
+         const [,blocks,width]=intended.match(/kernel\[(\d+), (\d+)\]/);
+         assert.ok(prompt.includes(blocks+' '+(blocks==='1'?'block':'blocks')+' × '+width+' threads'));
          assert.equal(await page.locator('#comparison-question').innerText(),prompt);
        } else assert.ok(notebook.cells[0].source.includes(prompt));
      }

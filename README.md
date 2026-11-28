@@ -19,7 +19,7 @@ Choose **Export .py** in **Editor tools** to run the complete program directly w
 | Reusing data and computing probabilities | Tiled transpose, tiled matrix multiplication, stable softmax |
 | Design, debug, and tune kernels | Gather, shared-memory stencil, float32 rounding, synchronization debugging, fusion |
 
-Diagrams and captioned walkthroughs show how the programs use threads, blocks, warps, and GPU memory. Appendix A includes an occupancy worksheet and [GPU investigations](src/gpu/INVESTIGATIONS.md) with Compute Sanitizer, profiling, and a fusion capstone.
+The first lesson has a self-paced host/device trace and text walkthrough. In vector addition, select a thread or element, edit the launch and use a sentinel to identify a missing write. Diagrams and the remaining captioned walkthroughs show how the programs use threads, blocks, warps, and GPU memory. Appendix A includes an occupancy worksheet and [GPU investigations](src/gpu/INVESTIGATIONS.md) with Compute Sanitizer, profiling, and a fusion capstone.
 
 ## Run in the browser
 

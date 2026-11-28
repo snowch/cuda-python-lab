@@ -19,17 +19,6 @@ export const diagrams = {
       </div>
       <p>Numba-CUDA-MLIR compiles the Python kernel on the CPU. CUDA loads the compiled code onto the GPU when needed.</p>
     </figure>`,
-  "vector-add": `
-    <figure class="concept-diagram">
-      <figcaption>Who writes to the array when n is 33?</figcaption>
-      <div class="block-coverage">
-        <div><strong>Block 0</strong><span>Indices 0–31 · All 32 threads write</span></div>
-        <div class="coverage-lanes all-write" aria-hidden="true"></div>
-        <div><strong>Block 1</strong><span>Index 32 writes · Indices 33–63 skip</span></div>
-        <div class="coverage-lanes one-writes" aria-hidden="true"></div>
-      </div>
-      <p>Each slot represents one thread. Thread 0 in Block 1 gets the last valid index, 32.</p>
-    </figure>`,
   divergence: `
     <figure class="concept-diagram">
       <figcaption>Which warps contain both paths?</figcaption>

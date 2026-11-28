@@ -29,7 +29,7 @@ export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-
 </section>`;
 
 export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reveal,predict,consoleFocus,onPredictionContext}) {
-  const programs=firstValuePrograms(starter), el=id=>root.querySelector('#'+id);
+  const programs=firstValuePrograms(starter()), el=id=>root.querySelector('#'+id);
   let current, observedSource, step, inspected=0;
   const buffers = [...root.querySelectorAll('[data-buffer]')];
   const descriptions = [
@@ -80,7 +80,7 @@ export function mountFirstValueTrace({root,starter,source,fixture,runState,canAp
   function update() {
     const text=source(), state=runState(), r=state?.result;
     if(text!==observedSource){
-      observedSource=text;current=fixture()==='one'?programs.get(text):undefined;
+      observedSource=text;current=fixture().id==='one'?programs.get(text):undefined;
       if(current){el('trace-identity').textContent='Open code · One element · host '+current.host+' · store '+current.store;host.value=String(current.host);store.value=String(current.store);printed.value=current.printed?'both':'result';}
       onPredictionContext(firstValuePrediction(current));
       controller.reset();
@@ -88,7 +88,7 @@ export function mountFirstValueTrace({root,starter,source,fixture,runState,canAp
     el('trace-stages').hidden=!current; el('trace-unavailable').hidden=Boolean(current);
     preview();
     const evidence=state?.busy?'Run in progress.':state?.failure?'Runner files could not load. See Console for recovery.':
-      !r?'Run the open program to collect its printed output.':r.source!==text || r.caseId!==fixture()?'The saved output is from an earlier program or case. Run again for current evidence.':
+      !r?'Run the open program to collect its printed output.':r.source!==text || r.caseId!==fixture().id?'The saved output is from an earlier program or case. Run again for current evidence.':
       r.error?'This execution failed. Inspect the diagnostic in the Console.':
       r.status!=='Ran in GPGPU-Sim.'?'This run has no completed simulator launch. See Console.':
       !current?'The Console shows the saved output for this custom program. Its intermediate values are outside the model.':

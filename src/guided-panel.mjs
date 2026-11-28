@@ -129,12 +129,17 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     }
     find('setup-status').textContent = note.trim();
   }
-  async function exchange(undo, proposed) {
+  async function exchange(undo, proposed, hostOnly = false) {
     const before = snapshot(), selected = select.value;
     const path = ['preparations',slug,before.fixture.id];
     const previous = work.confirmed.preparations?.[slug]?.[before.fixture.id];
     if (checking || work.dirty || work.saving || work.error) return;
     const target = undo ? undoTarget(before,previous) : proposed !== undefined ? replacement(before,proposed) : task && replacement(before,start);
+    if (hostOnly && target) {
+      const open = splitProgram(before.source), next = splitProgram(target.program);
+      if (!open || !next || open.kernel !== next.kernel) return;
+      target.sharedKernel = before.sharedKernel;
+    }
     if (!target || matches(before,target)) return;
     checking = true; update();
     try {
@@ -177,6 +182,6 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     find('console-title').focus();
   };
   forCase(readingTask);
-  return {update,forCase, applyProgram:program=>exchange(false,program),
+  return {update,forCase, applyProgram:(program,hostOnly)=>exchange(false,program,hostOnly),
     canApply:()=>!checking && !work.dirty && !work.saving && !work.error && snapshot().source===snapshot().saved};
 }
