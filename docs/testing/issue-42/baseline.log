@@ -1,0 +1,6 @@
+Durable predictions after both inputs: { stencil: 'Boundary reads the halo' }
+Vector prediction in fresh third tab: ""
+Fresh third tab shows code marker: false
+After another tab edits a different lesson, original vector prediction: "Index 32 belongs to block 1"
+Quota injection, visible save error: [ 'Up to date online. Not saved for offline use.' ]
+Prediction after reload with denied write: ""

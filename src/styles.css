@@ -317,3 +317,14 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 
 @media(max-width:1000px){#lesson-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:500px){#lesson-nav{grid-template-columns:minmax(0,1fr)}}
+
+.work-save { margin-block: .6rem; font-size: .9rem; }
+.work-save p { margin: .35rem 0; }
+.work-save.needs-attention { border-inline-start: 3px solid currentColor; padding-inline-start: .75rem; }
+.work-save button { margin: .25rem .3rem .25rem 0; }
+.work-save details, .work-save label { display: block; margin-block: .5rem; }
+.work-save [hidden] { display: none; }
+.work-save select, .work-save textarea { display: block; width: 100%; max-width: 100%; }
+.work-save select { min-height: 44px; font: inherit; color: var(--ink); background: var(--paper); }
+#latest-version [data-program] { font-family: var(--mono); font-weight: 400; white-space: pre; }
+.work-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

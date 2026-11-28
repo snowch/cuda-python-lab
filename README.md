@@ -84,6 +84,10 @@ The header offers **Code runner**, **App status**, and the theme switch on every
 
 App status checks for published versions automatically. Normal online reloads use the live course. **Save offline copy** explicitly saves every required file, including recordings, Pyodide, NumPy, Numba and the CUDA compiler. **Update offline copy** stages a newer verified version and offers **Restart to update**. Wait for **Downloaded and ready to use offline** before disconnecting. External links and native GPU tools still need their own connectivity/installations.
 
+**If you have an older course tab open**, pause editing before switching releases. An edit made in the older tab during a save in the new release can be lost. Download the visible code and copy your prediction from each older tab. Then close those tabs or finish **Restart to update**. Reopen the lesson in the updated course and check your work before continuing.
+
+When the open editor or prediction differs from the saved version, choose **Review saved version** to inspect what would reopen. **Export learner work** keeps a copy of the open text. Choose **Load reviewed version** when you want to use the saved text in this tab.
+
 See [runner design](docs/code-runner-design.md) and [offline/update design](docs/offline-update-design.md) for ownership, resource reporting, preservation and verification details.
 
 ## Numba-CUDA-MLIR

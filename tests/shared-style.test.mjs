@@ -32,6 +32,8 @@ test('all lesson topic references and shared ending components are present',asyn
   await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
   await page.goto(base+'#lesson/coalescing');await page.reload();await editor(page).waitFor();
   await page.locator('#course-nav > summary').click();
+  // The native details toggle reveals the detached course contents on its next event.
+  await page.locator('#lesson-nav').waitFor({state:'visible'});
   const columns=await page.locator('#lesson-nav').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length);
   assert.equal(columns,{390:1,820:2,1440:4}[width]);
   await page.locator('#course-nav > summary').click();
