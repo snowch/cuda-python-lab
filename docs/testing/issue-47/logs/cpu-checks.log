@@ -1,0 +1,12 @@
+test_all_exports_and_complete_starting_sources (__main__.NotebookTests.test_all_exports_and_complete_starting_sources) ... ok
+test_all_task_contracts_against_archived_simulator_observations (__main__.NotebookTests.test_all_task_contracts_against_archived_simulator_observations) ... ok
+test_isolation_failure_case_switch_and_reset (__main__.NotebookTests.test_isolation_failure_case_switch_and_reset) ... ok
+test_numerical_policies (__main__.NotebookTests.test_numerical_policies) ... ok
+test_wrong_dimensions_dtype_values_and_custom_source (__main__.NotebookTests.test_wrong_dimensions_dtype_values_and_custom_source) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.097s
+
+OK
+38/38 exports validated with nbformat; each exact selected program and every authored start compiled as Python.
+CPU checker consumed 38 pristine and 46 authored target results from the archived GPGPU-Sim ledger; 12 tasks are source reasoning.

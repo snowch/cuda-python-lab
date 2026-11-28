@@ -40,6 +40,10 @@ try {
     assert.ok(await page.locator('#backup-work').isVisible());
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     await page.screenshot({path:join(out,`export-${width}-${theme}.png`)});
+    await page.locator('#backup-work').focus();
+    await page.locator('#backup-work').evaluate(el=>el.scrollIntoView({block:'center'}));
+    assert.ok(await page.locator('#backup-work').evaluate(el=>el===document.activeElement));
+    await page.screenshot({path:join(out,`backup-${width}-${theme}.png`)});
     await page.goto(base+'#gpu');
     await page.getByRole('heading',{name:'Open and run a lab notebook'}).evaluate(el=>el.scrollIntoView({block:'center'}));
     await page.screenshot({path:join(out,`setup-${width}-${theme}.png`)});

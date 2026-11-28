@@ -1,0 +1,14 @@
+Python 3.12.14 · Linux-6.18.57-x86_64-with-glibc2.41 · /tmp/47/jupyter/bin/python
+numba-cuda-mlir: 0.6.0
+numpy: 2.4.6
+cuda-bindings: 12.9.11
+cuda-toolkit: 12.9.2.0
+nvidia-cuda-nvcc-cu12: 12.9.86
+CUDA runtime API: 12090 (<cudaError_t.cudaSuccess: 0>)
+Native execution unavailable: DynamicLibNotFoundError: "cuda" is an NVIDIA driver library and can only be found via system search. Ensure the NVIDIA display driver is installed.
+Check GPU allocation, driver and kernel environment. On Jetson, check JetPack and the ARM64 package plan.
+softmax / wide-37 / exported · source SHA-256 prefix d062e1a5215a9f77
+RuntimeError: Native preflight did not pass. Review setup and rerun it. No result was checked.
+CPU-only isolation check
+Observed CPU array: (1,) int32 [42]
+No previous actual survived failure and rerun.
