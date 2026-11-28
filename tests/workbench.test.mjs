@@ -119,6 +119,9 @@ test('portrait lessons present one task and prediction before the full-width edi
     assert.ok(flow.codeWidth>=flow.lessonWidth*.95);
     await page.locator('#compare-prediction').press('Enter');
     assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
+    const notes=page.locator('#prediction');
+    await notes.fill('For the original inputs I expect the two largest probabilities to tie. After changing the exponentials I expect the finiteness check to fail. I will compare both rows and their sums.');
+    assert.ok(await notes.evaluate(e=>e.scrollHeight<=e.clientHeight+1),'A short paragraph should remain readable in the answer field.');
     assert.equal(await page.locator('#program-options').evaluate(el=>el.open),false);
   }
 });

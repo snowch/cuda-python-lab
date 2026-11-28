@@ -400,7 +400,7 @@ function showLesson(slug) {
       <label for="prediction" id="prediction-label">Predict before you run</label>
       <p id="prediction-prompt"></p>
       ${modeled ? '<p id="prediction-evidence"></p><p id="notes-scope">Notes stay with this case and may include earlier runs.</p>' : ''}
-      <textarea id="prediction" rows="${modeled ? 3 : 1}" aria-describedby="prediction-prompt${modeled ? ' prediction-evidence notes-scope' : ''}"></textarea>
+      <textarea id="prediction" rows="3" aria-describedby="prediction-prompt${modeled ? ' prediction-evidence notes-scope' : ''}"></textarea>
       <details id="earlier-prediction" hidden><summary>Earlier lesson prediction</summary>
         <p>This answer was saved for the whole lesson. Copy any part you want to use for this case.</p>
         <label>Earlier answer<textarea id="legacy-answer" readonly rows="2"></textarea></label>
