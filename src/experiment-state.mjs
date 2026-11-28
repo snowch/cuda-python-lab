@@ -21,8 +21,8 @@ function snapshot() {
   const guard={reason:''};dispatchEvent(new CustomEvent('cuda-python-lab:before-restart',{detail:guard}));
   if(guard.reason)throw new Error(guard.reason);
   const value={schema:1,hash:location.hash,scroll:[scrollX,scrollY],
-    details:[...document.querySelectorAll('main details')].map(el=>[el.id,el.open]),
-    controls:[...document.querySelectorAll('main input:not(#complete),main select:not(#work-version),main textarea:not(#prediction):not(#work-copy-text)')].map(el=>[el.id,el.value])};
+    details:[...document.querySelectorAll('main details:not(#latest-version)')].map(el=>[el.id,el.open]),
+    controls:[...document.querySelectorAll('main input:not(#complete),main select:not(#work-version),main textarea:not(#prediction):not([readonly])')].map(el=>[el.id,el.value])};
   const encoded=JSON.stringify(value);sessionStorage.setItem(key,encoded);
   if(sessionStorage.getItem(key)!==encoded)throw new Error('This window could not save its work. Allow browser storage and retry.');
 }

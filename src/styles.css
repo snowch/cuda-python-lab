@@ -326,4 +326,5 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 .work-save [hidden] { display: none; }
 .work-save select, .work-save textarea { display: block; width: 100%; max-width: 100%; }
 .work-save select { min-height: 44px; font: inherit; color: var(--ink); background: var(--paper); }
+#latest-version [data-program] { font-family: var(--mono); font-weight: 400; white-space: pre; }
 .work-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

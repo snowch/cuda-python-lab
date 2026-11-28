@@ -4,6 +4,7 @@ import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from ".
 import {mediaDurations} from "./media-durations.mjs";
 import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
 import { migrateCudaImports } from "./source-migration.mjs";
+import {mountSavedReview} from "./saved-version.mjs";
 import {openLearnerWork, workKey} from "./learner-work.mjs";
 import { registerReadingState, savedReadingState, legacyReadingWork, clearLegacyReadingWork, restoreReadingState } from "./experiment-state.mjs";
 import { lessons, modules } from "./course.mjs";
@@ -45,6 +46,7 @@ let starters;
 let activeEditor;
 let activeRunner;
 let activePage;
+let lessonView;
 const work = openLearnerWork(updateSaveStatus);
 const state = work.state;
 const workPanel = document.createElement('section');
@@ -61,6 +63,7 @@ workPanel.innerHTML = `<p id="work-status" tabindex="-1"></p>
   <span class="work-announcement" role="status"></span>`;
 const control = id => workPanel.querySelector('#'+id);
 const versions = control('work-version');
+const latestReview = mountSavedReview(workPanel, work, () => lessonView);
 function versionLabel(copy) {
   const [field, slug, index] = copy.path;
   const kind = {legacy:'Saved collection', drafts:'Kernel', programs:'Program', predictions:'Prediction', restoredPrograms:'Undo restore', restoredDrafts:'Undo kernel restore', results:'Run result'};
@@ -90,22 +93,23 @@ function warnUnload(event) { event.preventDefault(); event.returnValue = ''; }
 function updateSaveStatus() {
   const failed = Boolean(work.error);
   const conflict = work.copies.length > 0;
+  const focused = document.activeElement;
+  const stale = latestReview.update();
   const failure = work.error.startsWith('Recovery copies are full') ? work.error
     : 'Learner work could not be saved. ' + work.error + ' Keep this tab open. Export your work or retry.';
   const message = failed ? failure : work.saving ? 'Saving learner work…'
-    : conflict ? 'Learner work saved. Recovery copies are available for overlapping edits.'
-    : work.saved ? 'Learner work saved in this browser.' : 'Your edits will save in this browser.';
+    : stale ? stale : conflict ? 'Learner work saved. Recovery copies are available for overlapping edits.'
+    : work.saved ? 'Learner work saved in this browser.' : 'No edits to save yet.';
   control('work-status').textContent = message;
-  const announcement = workPanel.querySelector('[role=status]');
-  const warning = failed ? failure : conflict ? 'Recovery copies are available.' : '';
+  const announcement = workPanel.querySelector('.work-announcement');
+  const warning = failed ? failure : stale || (conflict ? 'Recovery copies are available.' : '');
   if (warning && announcement.textContent !== warning) announcement.textContent = warning;
   else if (!warning && announcement.textContent && announcement.textContent !== 'Learner work saved.' && !work.saving) announcement.textContent = 'Learner work saved.';
-  const focused = document.activeElement;
-  control('work-actions').hidden = !failed && !conflict;
+  control('work-actions').hidden = !failed && !conflict && !stale;
   control('retry-save').hidden = !failed;
   control('work-copies').hidden = !conflict;
   if (workPanel.contains(focused) && focused.closest('[hidden]')) control('work-status').focus({preventScroll:true});
-  workPanel.classList.toggle('needs-attention',failed || conflict);
+  workPanel.classList.toggle('needs-attention',failed || conflict || Boolean(stale));
   if (versions.dataset.ids !== work.copies.map(c=>c.id).join()) {
     const selected = versions.value;
     versions.replaceChildren(...work.copies.map(c=>new Option(versionLabel(c),c.id)));
@@ -114,13 +118,27 @@ function updateSaveStatus() {
     displayCopy();
   }
   const completion = document.getElementById('completion-note');
-  if (completion) completion.textContent = failed ? 'Work is only in this tab until saving succeeds.' : 'Progress is stored in this browser.';
+  if (completion) {
+    document.getElementById('complete').checked = Boolean(state.completed[activePage]);
+    if (work.isPending(['completed', activePage])) {
+      completion.textContent = failed ? 'Save unavailable. Keep this tab open and retry or export learner work.' : 'Saving progress…';
+    } else {
+      completion.textContent = Object.hasOwn(work.confirmed.completed, activePage) ? 'Progress saved in this browser.' : '';
+    }
+  }
   if (work.dirty) addEventListener('beforeunload',warnUnload);
   else removeEventListener('beforeunload',warnUnload);
 }
 versions.addEventListener('change',displayCopy);
 control('retry-save').onclick = () => work.flush();
-control('export-work').onclick = () => download('cuda-python-learner-work.json',JSON.stringify(work.backup(),null,2),'application/json');
+control('export-work').onclick = () => {
+  const backup = work.backup();
+  if (lessonView) {
+    const {slug, index, program, answer} = lessonView.snapshot();
+    backup.openLesson = {slug, caseIndex:index, program, prediction:answer};
+  }
+  download('cuda-python-learner-work.json',JSON.stringify(backup,null,2),'application/json');
+};
 control('remove-copy').onclick = () => {
   if (confirm('Remove the selected recovery copy from this browser? Export learner work first to keep a file.')) work.removeCopy(versions.value);
 };
@@ -372,6 +390,7 @@ function showLesson(slug) {
           </details>
         </div>
         <div id="source" class="codebox"></div>
+        <button type="button" class="button" id="editor-review" hidden>Review saved program</button>
         <p class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</p>
         <div class="workbench-controls">
           <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
@@ -442,11 +461,11 @@ function showLesson(slug) {
   let fixture = lesson.cases[caseIndex];
   let starter = standaloneProgram(starters[slug], fixture);
 
-  function caseSource() {
-    const kernel = state.drafts[slug] ?? starters[slug];
-    const previous = state.programs[slug]?.[caseIndex];
+  function caseSource(record = state) {
+    const kernel = record.drafts[slug] ?? starters[slug];
+    const previous = record.programs[slug]?.[caseIndex];
     if (previous === undefined) return standaloneProgram(kernel, fixture);
-    if (state.drafts[slug] === undefined) return previous;
+    if (record.drafts[slug] === undefined) return previous;
     const parts = splitProgram(previous);
     return parts && parts.kernel.trimEnd() !== kernel.trimEnd() ? joinProgram(kernel, parts.host) : previous;
   }
@@ -496,6 +515,30 @@ function showLesson(slug) {
     work.change(["predictions",slug],event.target.value);
   });
 
+  const prediction = find("prediction");
+  lessonView = {
+    editorNotice: find("editor-review"),
+    snapshot: () => ({
+      slug, index: caseIndex, context: lesson.title + ' · ' + fixture.label,
+      program: editor.source, savedProgram: caseSource(work.confirmed),
+      answer: prediction.value, savedAnswer: work.confirmed.predictions[slug] ?? '',
+    }),
+    apply(version) {
+      work.refresh(['drafts','programs','predictions','restoredDrafts','restoredPrograms','results']);
+      if (work.dirty || work.saving || work.error) return;
+      if (version.answer !== version.savedAnswer) prediction.value = version.savedAnswer;
+      if (version.program !== version.savedProgram) {
+        shownSource = version.savedProgram;
+        editor.reset(shownSource);
+        updateRestore('The reviewed program is open.');
+        runner.reset();
+      } else prediction.focus();
+      latestReview.reset();
+      updateSaveStatus();
+    },
+  };
+  lessonView.editorNotice.onclick = latestReview.open;
+
   function showLine(text, options) {
     if (editor.reveal(text, options)) {
       find("editor-tools").open = false;
@@ -527,6 +570,7 @@ function showLesson(slug) {
   });
 
   input.addEventListener("change", () => {
+    latestReview.reset();
     caseIndex = Number(input.value);
     work.refresh(['drafts','programs','restoredDrafts','restoredPrograms','results']);
     fixture = lesson.cases[caseIndex];
@@ -534,6 +578,7 @@ function showLesson(slug) {
     work.change(['cases',slug],caseIndex);
     shownSource = caseSource();
     editor.reset(shownSource, { focus: false });
+    updateSaveStatus();
     updateRestore(editor.source === starter ? "" : "A saved edit is open.");
     runner.reset();
   });
@@ -573,6 +618,8 @@ function route(moveFocus = false) {
   const page = section!==null || requested==='' ? "course" : slug === "course" || slug === "gpu" || slug === "compiler" || order.includes(slug) ? slug : order[0];
   for (const video of main.querySelectorAll("video")) video.pause();
   dispatchEvent(new Event("cuda-python-lab:lesson-changed"));
+  latestReview.reset();
+  lessonView = undefined;
   activeEditor?.destroy();
   activeEditor = null;
   activeRunner?.dispose();
@@ -623,8 +670,6 @@ addEventListener('storage',async event=>{
   if (event.key !== workKey && event.key !== null) return;
   await work.observe();
   if (activePage) updateNav(activePage);
-  const mark=main.querySelector('#complete');
-  if(mark)mark.checked=Boolean(state.completed[activePage]);
 });
 const header=document.querySelector('.site-header');
 new ResizeObserver(()=>document.documentElement.style.setProperty('--course-header-height',header.getBoundingClientRect().height+'px')).observe(header);

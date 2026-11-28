@@ -75,7 +75,7 @@ export function openLearnerWork(onChange) {
   const state = empty();
   const pending = new Map();
   let copies = [], error = '', saving = null, saved = false, legacy;
-  let database, checkpoint;
+  let database, checkpoint, legacyBaseline = empty();
 
   function connect() {
     if (!database) database = new Promise((resolve, reject) => {
@@ -107,7 +107,8 @@ export function openLearnerWork(onChange) {
       failed(cause);
       old = {data:{}, exists:false};
     }
-    const latest = checkpoint ? structuredClone(checkpoint) : old.data;
+    if (!checkpoint) legacyBaseline = {...empty(), ...old.data};
+    const latest = structuredClone(checkpoint ?? legacyBaseline);
     const record = {...empty(), recoveryCopies:[], ...latest};
     saved = Boolean(checkpoint || (old.exists && !old.transactional));
     copies = record.recoveryCopies;
@@ -228,7 +229,8 @@ export function openLearnerWork(onChange) {
     pending.set(key, {path, value, base:previous ? previous.base : before ?? options.displayed,
       hostChanged:previous?.hostChanged || options.hostChanged});
     put(state, path, value);
-    flush();
+    if (saving) onChange();
+    else flush();
   }
 
   async function removeCopy(id) {
@@ -247,6 +249,8 @@ export function openLearnerWork(onChange) {
       onChange();
     },
     migrate(work, done) { if (work) { legacy = {work, done}; refresh(); flush(); } },
+    isPending(path) { return pending.has(JSON.stringify(path)); },
+    get confirmed() { return checkpoint ?? legacyBaseline; },
     get copies() { return copies; },
     get error() { return error; },
     get saved() { return saved; },
