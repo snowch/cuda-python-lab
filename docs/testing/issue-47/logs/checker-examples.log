@@ -1,0 +1,63 @@
+CPU checker probes. Arrays are explicit test inputs. These are not GPU executions.
+
+first-value / one / starter
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: int32; expected float32 · different
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Objective · starter
+Numerical objective: fail. Explain the source or measurements requested in the task.
+Observed verdict: fail
+
+first-value / one / exported
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Objective unassessed: this custom program has no matching authored reference.
+Observed verdict: unassessed
+
+precision / near / regroup
+Starter comparison
+  Shape: (2,); expected (2,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 2/2 finite; expected NaNs 0 · match
+  Values: 1/2 match (rtol=0, atol=0).
+  First difference at (0,): observed 1.0, expected 0.0.
+Objective · regroup
+  Shape: (2,); expected (2,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 2/2 finite; expected NaNs 0 · match
+  Values: 2/2 match (rtol=0, atol=0).
+  Absolute error versus the mathematical sum: starter [1 0] this run [0. 0.]
+Numerical objective: pass. Explain the source or measurements requested in the task.
+Observed verdict: pass
+
+softmax / extreme / overflow
+Starter comparison
+  Shape: (2, 5); expected (2, 5) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/10 finite; expected NaNs 0 · different
+  Values: 1/10 match (rtol=1e-05, atol=1e-07).
+  First difference at (0, 0): observed nan, expected 0.4136219620704651.
+Objective · overflow
+  Shape: (2, 5); expected (2, 5) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/10 finite; expected NaNs 9 · match
+  Values: 10/10 match (rtol=1e-05, atol=1e-07).
+  The unshifted exponential overflows or underflows on these inputs. Compare the NaN locations above.
+  Additional host output matches the requested observation.
+Numerical objective: pass. Explain the source or measurements requested in the task.
+Observed verdict: pass
+
+histogram / hot / race
+Starter comparison
+  Shape: (4,); expected (4,) · match
+  Dtype: int32; expected int32 · match
+  Finiteness: 4/4 finite; expected NaNs 0 · match
+  Values: 4/4 match (rtol=0, atol=0).
+Objective · race
+Observed counters: [0, 0, 32, 0]. Repeat and record bin 2. Even an exact starter match cannot establish atomicity or race safety.
+Observed verdict: observation

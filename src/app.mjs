@@ -13,6 +13,7 @@ import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountProgramEditor } from "./editor.mjs";
 import { joinProgram, programExcerpt, splitProgram, standaloneProgram } from "./host-program.mjs";
+import notebookRuntime from "./notebook-support.mjs";
 import { makeNotebook } from "./notebook.mjs";
 import { walkthroughs } from "./walkthroughs.mjs";
 import { attachRunner } from "./browser-runner.mjs";
@@ -137,14 +138,15 @@ function updateSaveStatus() {
 }
 versions.addEventListener('change',displayCopy);
 control('retry-save').onclick = () => work.flush();
-control('export-work').onclick = () => {
+function exportLearnerWork() {
   const backup = work.backup();
   if (lessonView) {
     const {slug, index, caseId, program, answer} = lessonView.snapshot();
     backup.openLesson = {slug, caseIndex:index, caseId, program, prediction:answer};
   }
   download('cuda-python-learner-work.json',JSON.stringify(backup,null,2),'application/json');
-};
+}
+control('export-work').onclick = exportLearnerWork;
 control('remove-copy').onclick = () => {
   if (confirm('Remove the selected recovery copy from this browser? Export learner work first to keep a file.')) work.removeCopy(versions.value);
 };
@@ -255,15 +257,15 @@ function showGpu() {
       <h2>Open and run a lab notebook</h2>
       <p>The notebooks use Numba-CUDA-MLIR, NVIDIA’s successor to Numba-CUDA. This course teaches its CUDA API; you do not need a separate Numba course. <a href="#compiler">Explore first-launch compilation in an optional GPU lab.</a></p>
       <ol>
-        <li>In a lesson, choose <strong>Download notebook</strong>. It contains the complete program in your editor and the expected result for the selected starter case.</li>
+        <li>In a lesson, choose <strong>Download notebook</strong>. It includes your open program, every starter case in this lesson and a separate cell for each runnable task.</li>
         <li>Open the file in Jupyter on a machine with an NVIDIA GPU, or upload it to <a href="https://colab.research.google.com/">Google Colab</a>. In Colab, choose <strong>Runtime → Change runtime type</strong>, select a GPU, and save.</li>
-        <li>Run the cells from top to bottom. The first cell installs the Python dependencies. If the notebook asks for a Python restart, restart the session, then continue with the cell after the installation command.</li>
-        <li>Read the output under <strong>Run the program</strong>. <strong>Check the output</strong> compares the returned array with the selected starter case. Make the next edit in the program cell and rerun it.</li>
+        <li>Run <strong>Set up this notebook</strong> to see your Python environment, backend and GPU. Follow its installation guidance if needed, then restart the kernel and rerun setup.</li>
+        <li>Run <strong>Your exported program</strong> or a numbered experiment with Shift+Enter. Read the starter comparison and task feedback under the same cell. Switch cases by running another cell in the notebook.</li>
       </ol>
     </section>
     <section class="reading">
       <h2>Set up Python locally</h2>
-      <p>Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later, and a driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands on a Linux machine with an NVIDIA GPU. Select the environment in Jupyter, or use it to run the scripts below.</p>
+      <p>Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later, and a driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands in a compatible Linux environment. On Jetson, check your JetPack release, Python version and ARM64 wheel plan first. Select the environment in Jupyter after installation.</p>
       <pre><code>python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt</code></pre>
@@ -397,6 +399,7 @@ function showLesson(slug) {
               <button class="button" id="undo-restore" type="button" hidden>Undo restore</button>
               <button class="button" id="update-imports" type="button" hidden>Update CUDA imports</button>
               <button class="button" id="download-source" type="button">Export .py</button>
+              <button class="button" id="backup-work" type="button">Export all learner work</button>
             </div>
             <p class="editor-note" id="target-note" role="status" hidden></p>
           </details>
@@ -628,9 +631,10 @@ function showLesson(slug) {
 
   find("download-notebook").addEventListener("click", () => {
     const source = editor.source;
-    const notebook = makeNotebook(lesson, source, fixture, caseQuestion(slug,lesson,fixture));
+    const notebook = makeNotebook({slug, lesson, kernel:starters[slug], source, fixture, selectedTask:find("guided-task").value, runtime:notebookRuntime});
     download(`${slug}.ipynb`, JSON.stringify(notebook, null, 2), "application/json");
   });
+  find("backup-work").onclick = exportLearnerWork;
   find("download-source").addEventListener("click", () => {
     download(`${slug}.py`, migrateCudaImports(editor.source), "text/x-python");
   });

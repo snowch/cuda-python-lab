@@ -12,32 +12,80 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def validate_notebook(case):
-    import numpy as np
+def validate_notebook(case, check_tasks):
+    from IPython.core.interactiveshell import InteractiveShell
+    from IPython.utils.capture import capture_output
 
-    cells = [cell["source"] for cell in case["notebook"]["cells"] if cell["cell_type"] == "code"]
-    namespace = {"__name__": "__main__"}
-    with contextlib.redirect_stdout(io.StringIO()) as console:
-        for cell in cells[1:]:
-            exec(cell, namespace)
-    np.testing.assert_allclose(
-        namespace["actual"].ravel(), case["fixture"]["expected"], rtol=1e-5, atol=1e-6,
-    )
-    size = namespace["actual"].size
-    assert f"{size} of {size} values match the starter reference." in console.getvalue()
+    shell = InteractiveShell.instance()
+
+    def run(source):
+        with capture_output() as output:
+            result = shell.run_cell(source, store_history=False)
+        result.raise_error()
+        return output.stdout
+
+    cells = case["notebook"]["cells"]
+    setup = next(c for c in cells if "setup" in c["metadata"].get("tags", []))
+    run(setup["source"])
+    if not shell.user_ns["NATIVE_READY"]:
+        raise RuntimeError("Native preflight did not pass.")
+    verify_program_cells(cells, shell.user_ns, run, check_tasks)
+
+
+def verify_program_cells(cells, namespace, run, check_tasks):
+    # Capture the checker’s verdict from this execution. Learner stdout cannot
+    # certify a pass, and an execution that produced no verdict cannot reuse one.
+    assessor = namespace["assess"]
+    verdicts = []
+
+    def record_verdict(*args):
+        verdict = assessor(*args)
+        verdicts.append(verdict)
+        return verdict
+
+    def verify(source, expected):
+        verdicts.clear()
+        transcript = run(source)
+        if verdicts != [expected]:
+            raise AssertionError(f"{source.splitlines()[0]}: expected {expected}, received {verdicts}\n{transcript}")
+
+    namespace["assess"] = record_verdict
+    try:
+        for cell in cells:
+            binding = cell["metadata"].get("cuda_lab")
+            if not binding or (binding["task"] != "exported" and not check_tasks):
+                continue
+            case_id, task_id = binding["case"], binding["task"]
+            source = cell["source"]
+            if task_id in ("starter", "exported"):
+                verify(source, "pass")
+                continue
+            task = namespace["LAB"]["tasks"][task_id]
+            target = namespace["_target"](case_id, task_id)
+            header, body = source.split("\n", 1)
+            if body != target:
+                race_start = task["startingObjective"]["policy"] == "race"
+                verify(source, "starting-observation" if race_start else "starting-point")
+                source = header + "\n" + target
+            verify(source, "observation" if task["objective"]["policy"] == "race" else "pass")
+    finally:
+        namespace["assess"] = assessor
 
 
 def validate_program(case):
     import numpy as np
 
+    scope = {"__name__": "__main__"}
     with contextlib.redirect_stdout(io.StringIO()) as console:
-        exec(case["program"], {"__name__": "__main__"})
-    label, result = console.getvalue().strip().split(" = ", 1)
+        exec(case["program"], scope)
+    label, values = console.getvalue().strip().split(" = ", 1)
     fixture = case["fixture"]
     assert label == fixture["output"]
-    actual = np.asarray(ast.literal_eval(result))
+    actual = scope["actual"]
+    assert actual.dtype == np.dtype(fixture["buffers"][label]["dtype"])
     assert actual.shape == tuple(fixture["buffers"][label]["shape"])
-    np.testing.assert_allclose(actual.ravel(), fixture["expected"], rtol=1e-5, atol=1e-6)
+    np.testing.assert_array_equal(actual, ast.literal_eval(values))
+    np.testing.assert_allclose(actual.ravel(), fixture["expected"], rtol=1e-5, atol=1e-7)
 
 
 def compile_kernel(source, fixture):
@@ -128,7 +176,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ptx", action="store_true", help="compile for SM 8.0 using the installed CUDA toolkit")
     parser.add_argument("--cpu-only", action="store_true", help="test-only SM 8.0 target fixture for cross-compilation without a CUDA driver")
+    parser.add_argument("--preflight", action="store_true", help="print the notebook environment report without executing a GPU program")
     args = parser.parse_args()
+    if args.preflight:
+        import runpy
+        ready = runpy.run_path(str(ROOT / "src/notebook-runtime.py"))["lab_preflight"]()
+        raise SystemExit(0 if ready else 1)
     if args.cpu_only:
         if not args.ptx:
             parser.error("--cpu-only requires --ptx; it never executes GPU code")
@@ -150,8 +203,8 @@ def main():
             compile_kernel(lesson["source"], lesson["cases"][0]["fixture"])
             checked += 1
         else:
-            for case in lesson["cases"]:
-                validate_notebook(case)
+            for index, case in enumerate(lesson["cases"]):
+                validate_notebook(case, check_tasks=index == 0)
                 validate_program(case)
                 checked += 1
     validate_investigations(compile_only=args.ptx)

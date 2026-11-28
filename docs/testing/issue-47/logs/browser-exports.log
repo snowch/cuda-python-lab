@@ -1,0 +1,18 @@
+Browser: 156.0.8078.79
+Downloaded first-value.ipynb one
+Downloaded vector-add.ipynb partial-32, partial-16, exact-32
+Downloaded grid-stride.ipynb stride-16, stride-8, short-7
+Downloaded transfers.ipynb affine-33, affine-8
+Downloaded coalescing.ipynb wide, narrow
+Downloaded divergence.ipynb alternating, grouped
+Downloaded reduction.ipynb full-16, tail-19, wide-39
+Downloaded histogram.ipynb balanced, hot
+Downloaded scan.ipynb flags, weights
+Downloaded tiled-transpose.ipynb square, edges
+Downloaded matmul.ipynb rectangular, square
+Downloaded softmax.ipynb wide-37, extreme
+Downloaded gather.ipynb consecutive, spaced
+Downloaded stencil.ipynb direct, shared, tail
+Downloaded precision.ipynb near, small
+Downloaded sync-debug.ipynb partial, full
+Downloaded fusion.ipynb temporary, local, tail

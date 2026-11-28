@@ -1,0 +1,9 @@
+CPU cross-compilation, explicit target SM 8.7, MLIR 0.6.0
+First-value export: replaced only the host launch footer with compiler inspection.
+JIT source from notebook namespace:
+@cuda.jit
+def kernel(out):
+    out[0] = 42
+.target sm_87
+.visible .entry _Z6kernel5ArrayIfLi1E1C7mutable7alignedE(
+Virtual source recovered and PTX entry emitted. No NVIDIA device or kernel launch used.

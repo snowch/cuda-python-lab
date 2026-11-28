@@ -110,7 +110,7 @@ try{
          record.runs.push(await run(intended,fixture,slug,task.id,n));
        }
        const notebook=JSON.parse(await download('#download-notebook'));
-       assert.ok(notebook.cells.some(c=>c.cell_type==='code' && c.source===intended));
+       assert.ok(notebook.cells.some(c=>c.metadata.cuda_lab?.task==='exported' && c.source===`%%experiment ${slug} ${fixture.id} exported\n`+intended));
        assert.ok(notebook.cells[0].source.includes(await page.locator('#prediction-prompt').innerText()));
      }
      checks.push(record); console.log(slug,task.step,task.id,record.reasoning??record.runs.map(r=>r.auditRow).join(','));

@@ -119,8 +119,12 @@ test("every case exports a CUDA notebook containing its complete program", async
         assert.equal(file.name, `${slug}.ipynb`);
         assert.equal(notebook.metadata.accelerator, "GPU");
         assert.ok(notebook.cells[0].source.includes(fixture.label), slug);
-        const program = notebook.cells.find((cell) => cell.cell_type === "code" && cell.source.includes("def main():"));
-        assert.equal(program.source, standaloneProgram(kernel, fixture), slug);
+        const program = notebook.cells.find(cell => cell.metadata.cuda_lab?.task === "exported");
+        assert.equal(program.source, `%%experiment ${slug} ${fixture.id} exported\n` + standaloneProgram(kernel, fixture), slug);
+        for (const other of lesson.cases) {
+          assert.ok(notebook.cells.some(cell => cell.metadata.cuda_lab?.case === other.id &&
+            cell.metadata.cuda_lab.task !== "exported" && cell.source.slice(cell.source.indexOf("\n")+1) === standaloneProgram(kernel,other)), other.id);
+        }
       }
     }
   });
@@ -143,12 +147,39 @@ test("the full first program is keyboard accessible and edits reach both exports
     await page.keyboard.press("Tab");
     assert.equal(await page.locator("#run").evaluate((button) => button === document.activeElement), true);
     const file = await downloadFile(page, page.getByRole("button", { name: "Download notebook" }));
-    assert.ok(JSON.parse(file.contents).cells.some((cell) => cell.source === edited));
+    assert.ok(JSON.parse(file.contents).cells.some((cell) => cell.source === "%%experiment first-value one exported\n" + edited));
     await editorTools(page).click();
     const script = await downloadFile(page, page.getByRole("button", { name: "Export .py" }));
     assert.equal(script.name, "first-value.py");
     assert.equal(script.contents.toString(), edited);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  });
+});
+
+test("notebook and whole-work backup preserve independent and shared programs", async t => {
+  await runBrowser(t, {width:820,height:900}, async page => {
+    await openLesson(page,"softmax");
+    const editor=sourceEditor(page), first=await readSource(editor);
+    const edited=first.replaceAll(" - row_max)", ")").replace("    return result", "    print(result.shape)\n    return result");
+    await replaceSource(page,editor,edited);
+    await page.locator("#work-status").filter({hasText:"Learner work saved"}).waitFor();
+    await page.locator("#guided-task").selectOption("lane");
+    const independent=(await readSource(editor)).replace("# Host code","# Separate complete program").replaceAll("from numba_cuda_mlir import cuda","from numba import cuda");
+    await replaceSource(page,editor,independent);
+    await page.locator("#work-status").filter({hasText:"Learner work saved"}).waitFor();
+    const file=await downloadFile(page,page.locator("#download-notebook"));
+    const book=JSON.parse(file.contents);
+    const exported=book.cells.find(c=>c.metadata.cuda_lab?.task==="exported");
+    assert.equal(exported.source,"%%experiment softmax wide-37 exported\n"+independent.replaceAll("from numba import cuda","from numba_cuda_mlir import cuda"));
+    const wide=book.cells.find(c=>c.metadata.cuda_lab?.task==="lane");
+    assert.ok(wide.source.includes(" - row_max)"));
+    assert.ok(wide.source.includes("# Host code"));
+    await editorTools(page).click();
+    const backup=JSON.parse((await downloadFile(page,page.locator("#backup-work"))).contents);
+    assert.equal(backup.openLesson.program,independent);
+    assert.equal(backup.durable.programs.softmax[0],edited);
+    assert.equal(backup.durable.programs.softmax[1],independent);
+    assert.equal(await readSource(editor),independent);
   });
 });
 
@@ -209,7 +240,7 @@ test("kernel-only drafts reopen with main and can still be restored", async (t) 
     await page.getByRole("button", { name: "Undo restore" }).click();
     assert.equal(await readSource(editor), source);
     const notebook=await downloadFile(page,page.getByRole("button",{name:"Download notebook"}));
-    const program=JSON.parse(notebook.contents).cells.find(cell=>cell.cell_type==='code'&&cell.source.includes('def main():')).source;
+    const program=JSON.parse(notebook.contents).cells.find(cell=>cell.metadata.cuda_lab?.task==='exported').source;
     assert.match(program,/from numba_cuda_mlir import cuda/);
     assert.doesNotMatch(program,/from numba import cuda/);
     assert.equal(await readSource(editor),source,'Export must preserve the saved legacy source');

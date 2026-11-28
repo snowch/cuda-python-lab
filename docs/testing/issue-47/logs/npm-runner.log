@@ -1,0 +1,19 @@
+
+> cuda-python-lab@0.1.0 test:runner
+> npm run build && node --test tests/runner.test.mjs
+
+
+> cuda-python-lab@0.1.0 build
+> node scripts/build.mjs
+
+Built 17 lessons in /tmp/47/review/regression/dist/
+✔ Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim (66169.479635ms)
+ℹ Browser: 156.0.8078.79
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66472.37867

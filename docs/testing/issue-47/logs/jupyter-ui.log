@@ -1,0 +1,18 @@
+Browser: 156.0.8078.79
+JupyterLab softmax.ipynb - cuda47-softmax Build a stable softmax
+JupyterLab precision.ipynb - cuda47-preci… See how rounding changes a sum
+JupyterLab first-value.… - cuda47-first… Write your first GPU value
+JupyterLab vector-add.i… - cuda47-vecto… One thread, one element
+JupyterLab grid-stride.… - cuda47-grid-… Let each thread do more work
+JupyterLab transfers.ipynb - cuda47-trans… Count bytes moved between host and GPU
+JupyterLab coalescing.i… - cuda47-coale… See how threads group memory accesses
+JupyterLab divergence.i… - cuda47-diver… When threads take different branches
+JupyterLab reduction.ipynb - cuda47-reduc… Add values across a block
+JupyterLab histogram.ipynb - cuda47-histo… Count inputs by category
+JupyterLab scan.ipynb - cuda47-scan Find positions with running totals
+JupyterLab tiled-transp… - cuda47-tiled… Transpose through a shared tile
+JupyterLab matmul.ipynb - cuda47-matmul Reuse inputs in matrix multiplication
+JupyterLab gather.ipynb - cuda47-gather Read values through an index array
+JupyterLab stencil.ipynb - cuda47-stencil Share neighboring values across threads
+JupyterLab sync-debug.i… - cuda47-sync-… Keep edge threads at the barrier
+JupyterLab fusion.ipynb - cuda47-fusion Remove an intermediate array

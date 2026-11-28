@@ -1,0 +1,81 @@
+A prerequisite can differ from the original starter
+CPU input: float32 [42]
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Starting result · host
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 0/1 match (rtol=0, atol=0).
+  First difference at (0,): observed 42.0, expected 73.0.
+Starting result failed its check. Inspect the differences above before making the task edit.
+
+CPU input: float32 [73]
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 0/1 match (rtol=0, atol=0).
+  First difference at (0,): observed 73.0, expected 42.0.
+Starting result · host
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Starting result verified. Make the requested edit in this cell, then rerun to check its objective.
+The starting program must print the measured row sums
+CPU input: stable fixture probabilities with host print [1. 1.]
+Starter comparison
+  Shape: (2, 5); expected (2, 5) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 10/10 finite; expected NaNs 0 · match
+  Values: 10/10 match (rtol=1e-05, atol=1e-07).
+Starting result · overflow
+  Probability row sums: [0.99999998 1.00000002] (absolute tolerance 2e-6); each probability must be in [0, 1].
+  Additional host output matches the requested observation.
+Starting result verified. Make the requested edit in this cell, then rerun to check its objective.
+
+CPU input: stable fixture probabilities with host print [1. 0.]
+Starter comparison
+  Shape: (2, 5); expected (2, 5) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 10/10 finite; expected NaNs 0 · match
+  Values: 10/10 match (rtol=1e-05, atol=1e-07).
+Starting result · overflow
+  Probability row sums: [0.99999998 1.00000002] (absolute tolerance 2e-6); each probability must be in [0, 1].
+  Additional output differs: '[1. 0.]'; expected [1, 1].
+Starting result failed its check. Inspect the differences above before making the task edit.
+Restoring atomic addition changes what can be verified
+CPU counter input: [0, 0, 2, 0]
+Starter comparison
+  Shape: (4,); expected (4,) · match
+  Dtype: int32; expected int32 · match
+  Finiteness: 4/4 finite; expected NaNs 0 · match
+  Values: 3/4 match (rtol=0, atol=0).
+  First difference at (2,): observed 2, expected 32.
+Starting result · restore
+Observed counters: [0, 0, 2, 0]. Repeat and record bin 2. Even an exact starter match cannot establish atomicity or race safety.
+Starting observation recorded within the experiment bounds. Make the requested edit and rerun.
+
+CPU counter input: [1, 0, 2, 0]
+Starter comparison
+  Shape: (4,); expected (4,) · match
+  Dtype: int32; expected int32 · match
+  Finiteness: 4/4 finite; expected NaNs 0 · match
+  Values: 2/4 match (rtol=0, atol=0).
+  First difference at (0,): observed 1, expected 0.
+Starting result · restore
+Counters fall outside this hot-bin experiment: only the routed bin receives increments.
+Starting result failed its check. Inspect the differences above before making the task edit.
+
+CPU counter input: [0, 0, 32, 0]
+Starter comparison
+  Shape: (4,); expected (4,) · match
+  Dtype: int32; expected int32 · match
+  Finiteness: 4/4 finite; expected NaNs 0 · match
+  Values: 4/4 match (rtol=0, atol=0).
+Objective · restore
+Numerical objective: pass. Explain the source or measurements requested in the task.

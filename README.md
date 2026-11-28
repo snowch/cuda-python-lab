@@ -6,7 +6,7 @@ Learn GPU programming through seventeen hands-on labs for Python developers. Edi
 
 1. Pick a lesson and, where available, a case. The editor shows the complete prepared program. Enter an optional prediction.
 2. Choose **Run** to execute it in the browser simulator. Inspect the named values in Console, make the suggested edit and run again. No GPU or installation is needed for this path.
-3. For an optional NVIDIA GPU experiment, choose **Download notebook**. Open it in Jupyter or Google Colab with a GPU runtime, then run the cells in order, including dependency installation. **Check the output** compares with the selected starter case.
+3. For an optional NVIDIA GPU experiment, choose **Download notebook**. Open it in Jupyter or Google Colab. Run **Set up this notebook**, then choose your exported program or a numbered task. Every lesson case is in the file. Each program cell runs and checks its own source and input.
 
 
 Choose **Export .py** in **Editor tools** to run the complete program directly with Python. Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later and a CUDA 12-compatible driver, and the dependencies in [requirements.txt](src/gpu/requirements.txt).
@@ -59,7 +59,8 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r src/gpu/requirements.txt
 python scripts/check_native.py --ptx --cpu-only
-# On an NVIDIA GPU, also execute every notebook and program export.
+# On an NVIDIA GPU, also execute the notebooks, guided variants and program exports.
+python -m pip install ipython
 python scripts/check_native.py
 ```
 
@@ -96,4 +97,4 @@ See [runner design](docs/code-runner-design.md) and [offline/update design](docs
 
 Kernels and GPU notebooks use `from numba_cuda_mlir import cuda` and Numba-CUDA-MLIR 0.6.0. The lessons teach the necessary CUDA API; previous Numba knowledge is not required. The optional **What happens at the first launch?** GPU lab connects compilation to GPU execution, compares first/warm launch times and investigates compiled-function reuse.
 
-The browser uses a documented compatibility compiler, not a native MLIR/WASM build. Saved legacy imports still run; exports adapt recognized CUDA imports without changing stored code. See [migration scope and limitations](docs/numba-cuda-mlir-migration.md). Check actual MLIR PTX compilation without a GPU using `python scripts/check_native.py --ptx --cpu-only` after installing `src/gpu/requirements.txt`; use the script without flags on an NVIDIA GPU to execute the native notebooks.
+The browser uses a documented compatibility compiler, not a native MLIR/WASM build. Saved legacy imports still run; exports adapt recognized CUDA imports without changing stored code. See [migration scope and limitations](docs/numba-cuda-mlir-migration.md). Check actual MLIR PTX compilation without a GPU using `python scripts/check_native.py --ptx --cpu-only` after installing `src/gpu/requirements.txt`; install IPython and use the script without flags on an NVIDIA GPU to execute the native notebooks. [Native notebook verification and platform requirements](docs/native-notebooks.md)

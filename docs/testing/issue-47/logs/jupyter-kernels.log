@@ -1,0 +1,17 @@
+coalescing: opened 11 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+divergence: opened 12 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+first-value: opened 13 cells, 1 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+fusion: opened 14 cells, 3 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+gather: opened 14 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+grid-stride: opened 15 cells, 3 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+histogram: opened 14 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+matmul: opened 11 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+precision: opened 12 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+reduction: opened 13 cells, 3 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+scan: opened 11 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+softmax: opened 12 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+stencil: opened 15 cells, 3 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+sync-debug: opened 13 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+tiled-transpose: opened 12 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+transfers: opened 11 cells, 2 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.
+vector-add: opened 15 cells, 3 fixtures; actual IPython setup ran; native execution stopped at the missing-driver gate; CPU isolation passed.

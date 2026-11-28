@@ -1,0 +1,5 @@
+Second vector-add export: 33 elements · 16 threads per block
+Run the cells in order on an NVIDIA GPU. In Google Colab, choose **Runtime → Change runtime type** and select a GPU. In Jupyter, use a Python environment on a machine with an NVIDIA GPU. To use another case, select it on the lesson page and download its notebook.
+Full program cells: 1
+First-value actual int32 [42], expected float32 [42]:
+1 of 1 values match the starter reference.
