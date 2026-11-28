@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.442
+The block loads the seven keep flags into
+
+00:00:03.442 --> 00:00:06.016
+shared memory. Lane six begins with one,
+
+00:00:06.016 --> 00:00:08.222
+and the extra slot contains zero.
+
+00:00:12.722 --> 00:00:15.427
+Lane six reads from distances one, two,
+
+00:00:15.427 --> 00:00:17.745
+and four over successive stages. What
+
+00:00:17.745 --> 00:00:19.677
+running total will it produce?
+
+00:00:28.177 --> 00:00:30.650
+Each stage uses barriers to separate reads
+
+00:00:30.650 --> 00:00:33.122
+from writes, so every lane reads values
+
+00:00:33.122 --> 00:00:34.535
+from the previous stage.
+
+00:00:39.035 --> 00:00:42.066
+The inclusive total at index six is four.
+
+00:00:42.066 --> 00:00:44.340
+Since destinations start at zero, the
+
+00:00:44.340 --> 00:00:46.992
+final kept item goes to position three.
