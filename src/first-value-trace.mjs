@@ -28,7 +28,7 @@ export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-
   <div class="trace-observed"><strong>Execution evidence</strong><p id="trace-evidence"></p><button class="trace-link" id="trace-console" type="button">Inspect Console</button></div>
 </section>`;
 
-export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reveal,predict,consoleFocus,onPredictionContext}) {
+export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reviewUndo,reveal,predict,consoleFocus,onPredictionContext}) {
   const programs=firstValuePrograms(starter()), el=id=>root.querySelector('#'+id);
   let current, observedSource, step, inspected=0;
   const buffers = [...root.querySelectorAll('[data-buffer]')];
@@ -104,7 +104,7 @@ export function mountFirstValueTrace({root,starter,source,fixture,runState,canAp
       el('trace-step').focus();
     }
   };
-  el('trace-undo').onclick=()=>{undoControl.focus();undoControl.scrollIntoView({block:'center'});};
+  el('trace-undo').onclick=reviewUndo;
   el('trace-line').onclick=()=>{if(current)reveal(step.anchor);};
   el('trace-predict').onclick=predict; el('trace-console').onclick=consoleFocus;
   update();

@@ -1,4 +1,4 @@
-import {coverage,locateThread,mapPrediction,vectorPrograms} from './thread-map-model.mjs';
+import {coverage,describeCellObservation,locateThread,mapPrediction,vectorPrograms} from './thread-map-model.mjs';
 import {mountSteps} from './step-controller.mjs';
 
 export const mapperMarkup=`<section class="value-trace thread-map" aria-labelledby="trace-title">
@@ -37,7 +37,7 @@ export const mapperMarkup=`<section class="value-trace thread-map" aria-labelled
   </div><button class="trace-link" type="button" id="map-console">Inspect Console</button>
 </section>`;
 
-export function mountThreadMapper({root,starter,fixture,source,runState,canApply,apply,undoControl,onPredictionContext,reveal,predict,consoleFocus}) {
+export function mountThreadMapper({root,starter,fixture,source,runState,canApply,apply,undoControl,reviewUndo,onPredictionContext,reveal,predict,consoleFocus}) {
   const el=id=>root.querySelector('#'+id);
   const thread=el('map-thread'), element=el('map-element'), launch=el('map-launch'), pair=el('map-pair'), initial=el('map-initial');
   let current, programs, caseId, lastText, phase=0, selection='element', index=0;
@@ -85,12 +85,7 @@ export function mountThreadMapper({root,starter,fixture,source,runState,canApply
       else if(index>=current.n)message='The simulator printed '+values.length+' elements. Index '+index+' is outside that array.';
       else {
         const cell=locateThread(current,selection,index);
-        message='GPGPU-Sim printed out['+index+'] = '+values[index]+'. The input sum is '+cell.expected+'. ';
-        if(cell.guard===null) {
-          message+='No thread covers this index in the open launch. ';
-          message+=values[index]===cell.expected?'The unchanged initial value matches the sum, so a numerical comparison would pass.':'The unchanged initial value differs from the sum.';
-        }
-        else message+='The source maps this element to block '+cell.block+', thread '+cell.local+'.';
+        message=describeCellObservation(cell,values[index]);
       }
     }
     el('map-observed').textContent=message;
@@ -108,7 +103,7 @@ export function mountThreadMapper({root,starter,fixture,source,runState,canApply
       }
     }
     const lines=[p.launch,'i = cuda.grid(1)','if i < n:','out[i] = a[i] + b[i]'];
-    const instruction=[mapPrediction(p).question,'blockIdx.x is the block number, blockDim.x is its thread count, and threadIdx.x is the local thread number. Both indices start at zero. Select an element or a thread to follow either direction.',
+    const instruction=['Start with the last array element. Step forward to find which thread, if any, can reach it.','blockIdx.x is the block number, blockDim.x is its thread count, and threadIdx.x is the local thread number. Both indices start at zero. Select an element or a thread to follow either direction.',
       'A thread enters the guard only when its index is smaller than the array length.',
       'Trace both reads and the output cell. Compare your prediction with a run of this program.'];
     el('map-narrative').textContent=instruction[phase];
@@ -151,7 +146,7 @@ export function mountThreadMapper({root,starter,fixture,source,runState,canApply
     if(!current||!next||current.source!==source()||!canApply())return;
     if(await apply(next.source,true) && root.isConnected && [document.body,el('map-apply')].includes(document.activeElement))el('map-step').focus();
   };
-  el('map-undo').onclick=()=>undoControl.focus();
+  el('map-undo').onclick=reviewUndo;
   el('map-predict').onclick=predict;el('map-console').onclick=consoleFocus;
   function update() {
     const text=source(), f=fixture(), changed=f.id!==caseId;

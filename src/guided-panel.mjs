@@ -2,15 +2,20 @@ import {guides, variant} from './guided-experiments.mjs';
 import {splitProgram} from './host-program.mjs';
 
 export const guidedMarkup = `
-  <label for="guided-task">Guided task</label><select id="guided-task"></select>
   <p id="task-action"></p><p id="task-evidence"></p>
-  <p id="setup-status"></p>
   <div class="actions">
-    <button class="button" id="prepare-task" type="button" hidden>Prepare starting program</button>
-    <button class="button" id="undo-prepare" type="button" hidden>Undo preparation</button>
     <button class="button" id="task-line" type="button">Show editable line</button>
     <a href="#console-title" id="task-console">Go to Console</a>
-  </div><p id="setup-feedback" role="status" hidden></p>`;
+  </div>
+  <details class="work-help" id="program-options"><summary id="program-options-title">About the starting program</summary>
+    <p id="case-note">Choosing a task opens its case and saved Python. Cases share kernel edits and keep separate host code and predictions.</p>
+    <p id="setup-status"></p>
+    <div class="actions">
+      <button class="button" id="prepare-task" type="button" aria-describedby="setup-status" hidden>Prepare starting program</button>
+      <button class="button" id="undo-prepare" type="button" aria-describedby="setup-status" hidden>Undo preparation</button>
+    </div>
+  </details>
+  <p id="setup-feedback" role="status" hidden></p>`;
 
 // Older undo slots contained only the visible text. A markerless legacy slot
 // has no historical shared kernel, so reopening it leaves today's kernel alone.
@@ -68,10 +73,8 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
       : 'Edit and run freely. Switching cases keeps your kernel and opens that case’s host draft.';
     find('task-evidence').textContent = task?.evidence ?? '';
     find('brief-title').textContent = task?.title ?? 'Free exploration';
-    find('brief-action').textContent = find('task-action').textContent;
-    find('brief-evidence').textContent = task?.evidence ?? '';
 
-    find('task-evidence').hidden = !task || (task.kind === 'run' && !task.instruction && !task.after.length);
+    find('task-evidence').hidden = !task?.evidence;
     awaitingSave = '';
     operationSource = undefined;
     feedback('');
@@ -103,6 +106,8 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     prepare.disabled = blocked;
     undo.hidden = !savedUndo || matches(v,savedUndo);
     undo.disabled = blocked;
+    find('program-options-title').textContent = !prepare.hidden && !undo.hidden ? 'Prepare starting program or undo'
+      : !prepare.hidden ? 'Prepare starting program' : !undo.hidden ? 'Review undo preparation' : 'About the starting program';
     find('setup-status').hidden = !task && undo.hidden;
     const previousTask = task?.before.length && tasks.find(t => t.fixture === task.fixture && t.after.length &&
       [...t.before,...t.after].join() === task.before.join());

@@ -73,7 +73,7 @@ try{
  await p.locator('#trace-step').selectOption('6');assert.deepEqual(await p.locator('[data-value]').allTextContents(),['[0]','[73]','[73]']);
  assert.equal(await run(p),'out = [73.0]');
  assert.equal(await v.locator('#case').inputValue(),'1');assert.equal(await download(v),vectorProgram);
- assert.match(await v.locator('#comparison-question').innerText(),/1 block × 32/);
+ assert.match(await v.locator('#prediction-prompt').innerText(),/1 block × 32/);
  assert.equal(await v.locator('#prediction').inputValue(),'In my one-block edit I expect the final zero.');
  assert.equal(await run(v),oldVector);
  await v.locator('#case').selectOption('0');assert.equal(await v.locator('#prediction').inputValue(),'Earlier 2 by 32 prediction');

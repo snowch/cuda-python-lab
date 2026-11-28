@@ -54,7 +54,9 @@ try{
    const active=owners.filter(Boolean).length;
    const notes=n+' elements, '+blocks+' × '+width+', last sum '+expected.at(-1)+', initial '+initial+': I predict a printed tail of '+simulatedReference.at(-1)+'.';
    await id('map-predict').press('Enter');await id('prediction').fill(notes);
-   assert.equal(await id('prediction-prompt').innerText(),await id('comparison-question').innerText());
+   await id('compare-prediction').press('Enter');
+   assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
+   assert.equal(await id('prediction').inputValue(),notes);
    assert.ok((await id('prediction-prompt').innerText()).includes(blocks+' '+(blocks===1?'block':'blocks')+' × '+width));
    await id('run').press('Enter');await id('run-status').filter({hasText:'Ran in GPGPU-Sim.'}).waitFor({timeout:90000});
    await page.waitForFunction(({source,ci,caseId})=>{const r=JSON.parse(localStorage.getItem('cuda-python-lab-v1')).results?.['vector-add']?.[ci];return r?.source===source&&r.caseId===caseId;},{source,ci,caseId:f.id});

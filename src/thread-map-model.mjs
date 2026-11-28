@@ -17,6 +17,18 @@ export function locateThread(program,kind,index) {
     expected:inArray?a[index]+b[index]:null,modeled:inArray?(writes?a[index]+b[index]:initial):null};
 }
 
+export function describeCellObservation(cell, printed) {
+  const observation='GPGPU-Sim printed out['+cell.index+'] = '+printed+'. The input sum is '+cell.expected+'. ';
+  if (printed!==cell.modeled) {
+    return observation+'The source model predicts '+cell.modeled+' here. The printed value disagrees. Inspect the program and Console.';
+  }
+  if (cell.guard===null) {
+    const comparison=printed===cell.expected ? 'matches the sum, so comparing this element alone would pass.' : 'differs from the sum.';
+    return observation+'No thread covers this index in the open launch. The unchanged initial value '+comparison;
+  }
+  return observation+'The source maps this element to block '+cell.block+', thread '+cell.local+'.';
+}
+
 export function vectorPrograms(starter,fixture) {
   const programs=new Map(), n=fixture.scalars.n;
   const launches=n===33?[[2,32],[3,16],[1,32]]:[[1,32]];

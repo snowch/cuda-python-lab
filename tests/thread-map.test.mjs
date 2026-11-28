@@ -3,7 +3,7 @@ import test from 'node:test';
 import {readFile} from 'node:fs/promises';
 import {standaloneProgram} from '../src/host-program.mjs';
 import {lessons} from '../src/course.mjs';
-import {coverage,locateThread,vectorPrograms} from '../src/thread-map-model.mjs';
+import {coverage,describeCellObservation,locateThread,vectorPrograms} from '../src/thread-map-model.mjs';
 import {launchChromium,serveBuild} from './browser-support.mjs';
 
 const slug='vector-add', fixtures=lessons[slug].cases;
@@ -39,6 +39,16 @@ test('logical owners agree with an independent enumeration of every block, local
   }
 });
 
+test('a selected observation cannot certify another cell or conceal a disagreement',()=>{
+  const cell={index:32,expected:0,modeled:-1,guard:null};
+  const mismatch=describeCellObservation(cell,7);
+  assert.match(mismatch,/printed out\[32\] = 7.*source model predicts -1.*disagrees/);
+  assert.doesNotMatch(mismatch,/unchanged|would pass/);
+  assert.match(describeCellObservation(cell,-1),/unchanged initial value differs/);
+  assert.match(describeCellObservation({...cell,modeled:0},0),/this element alone would pass/);
+  assert.match(describeCellObservation({...cell,guard:true,modeled:0,block:1,local:0},7),/disagrees/);
+});
+
 test('the mapper protects source identity, host-only ownership and scoped predictions',async t=>{
   const url=await serveBuild(t), browser=await launchChromium(t), page=await browser.newPage();
   const starter=standaloneProgram(kernel,fixtures[0]);
@@ -57,19 +67,22 @@ test('the mapper protects source identity, host-only ownership and scoped predic
   await id('map-initial').selectOption('-1');await id('map-pair').selectOption('cancel');
   assert.match(await id('prediction-prompt').innerText(),/2 blocks × 32/);
   assert.match(await id('map-preview').innerText(),/kernel\[1, 32\].*b_host\[-1\].*np.full/s);
-  await id('map-apply').press('Enter');await id('comparison-question').filter({hasText:'1 block × 32'}).waitFor();
-  assert.match(await id('comparison-evidence').innerText(),/33 and -33.*starts at -1/);
-  assert.match(await id('brief-prediction').innerText(),/earlier runs.*last 99/);
+  await id('map-apply').press('Enter');await id('prediction-prompt').filter({hasText:'1 block × 32'}).waitFor();
+  assert.match(await id('prediction-evidence').innerText(),/33 and -33.*starts at -1/);
+  await id('compare-prediction').press('Enter');
+  assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
+  assert.match(await id('prediction').inputValue(),/last 99/);
+  assert.match(await id('notes-scope').innerText(),/earlier runs/);
   await id('map-step').selectOption('3');assert.match(await id('map-equation').innerText(),/no launched owner/);
   assert.equal(await id('map-thread').inputValue(),'');assert.match(await id('map-cells').innerText(),/stays -1/);
   await id('map-undo').press('Enter');assert.equal(await page.locator(':focus').getAttribute('id'),'undo-prepare');
-  await id('undo-prepare').press('Enter');await id('comparison-question').filter({hasText:'2 blocks × 32'}).waitFor();
+  await id('undo-prepare').press('Enter');await id('prediction-prompt').filter({hasText:'2 blocks × 32'}).waitFor();
   await id('case').selectOption('2');await id('map-unavailable').waitFor();
   assert.match(await editor.innerText(),/a\[i\] - b\[i\]/);
   await id('case').selectOption('0');await id('map-body').waitFor();
   assert.ok((await id('prediction').inputValue()).includes('last 99'));
   await editor.press('Control+a');await page.keyboard.insertText(starter+'# my exact source\n');
-  await id('map-unavailable').waitFor();assert.match(await id('comparison-question').innerText(),/edited vector program/);
+  await id('map-unavailable').waitFor();assert.match(await id('prediction-prompt').innerText(),/edited vector program/);
   await id('work-status').filter({hasText:'Learner work saved'}).waitFor();await page.reload();
   await id('map-unavailable').waitFor();
   await id('editor-tools').evaluate(el=>el.open=true);

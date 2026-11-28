@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {mkdir, readFile} from 'node:fs/promises';
 import test from 'node:test';
-import {launchChromium, serveBuild} from './browser-support.mjs';
+import {launchChromium, reviewPreparation, serveBuild} from './browser-support.mjs';
 import {lessons} from '../src/course.mjs';
 import {standaloneProgram} from '../src/host-program.mjs';
 import {workKey} from '../src/learner-work.mjs';
@@ -498,6 +498,7 @@ test('guided preparation preserves dirty work across contention, storage denial,
   await a.locator('#guided-task').selectOption('narrow');
   assert.equal(await source(a),draft);
   const prepare=a.locator('#prepare-task'), undo=a.locator('#undo-prepare');
+  await reviewPreparation(a);
   assert.match(await a.locator('#setup-status').innerText(),/shared kernel.*host code/);
   await holdTransaction(b);
   await answer(a).fill('There will be three blocks.');
@@ -514,7 +515,7 @@ test('guided preparation preserves dirty work across contention, storage denial,
   assert.equal(backup.openLesson.program,original(0));
   await a.evaluate(()=>window.enableWrites());await a.locator('#retry-save').click();await saved(a);
   await a.reload();await editor(a).waitFor();
-  await undo.click();await saved(a);
+  await reviewPreparation(a);await undo.click();await saved(a);
   assert.equal(await source(a),draft);
   const fresh=await open(context,url);assert.equal(await source(fresh),draft);
   assert.equal(await answer(fresh).inputValue(),'There will be three blocks.');
@@ -580,8 +581,10 @@ test('undo restores the independent complete program and the displaced shared ke
   const originalRecord=await durable(a);
   assert.equal(originalRecord.drafts.softmax,hiddenShared);
   assert.equal(originalRecord.programs.softmax[1],custom);
+  await reviewPreparation(a);
   assert.match(await a.locator('#setup-status').innerText(),/shared kernel.*this case’s program/);
   async function prepare(){
+    await reviewPreparation(a);
     await a.locator('#prepare-task').click();await a.locator('#prepare-task').waitFor({state:'hidden'});await saved(a);
     assert.equal(await source(a),wide);
   }
@@ -595,8 +598,10 @@ test('undo restores the independent complete program and the displaced shared ke
   assert.equal(prepared.preparations.softmax['wide-37'].sharedKernel,hiddenShared);
   assert.equal(prepared.preparations.softmax['wide-37'].caseProgram,custom);
   await a.reload();await editor(a).waitFor();
+  await reviewPreparation(a);
   assert.match(await a.locator('#setup-status').innerText(),/Undo restores the shared kernel.*case’s program/);
   await failWrites(a,'QuotaExceededError');
+  await reviewPreparation(a);
   await a.locator('#undo-prepare').click();await status(a).filter({hasText:'could not be saved'}).waitFor();
   assert.equal(await source(a),custom);
   const backup=JSON.parse(await download(a,a.locator('#export-work')));
@@ -618,9 +623,11 @@ test('undo restores the independent complete program and the displaced shared ke
   await status(a).filter({hasText:'open program differs'}).waitFor();
   assert.ok(await a.locator('#undo-prepare').isDisabled());
   await a.locator('#latest-version summary').click();await a.locator('[data-load]').click();
+  await reviewPreparation(a);
   await a.locator('#setup-status').filter({hasText:'shared kernel changed since preparation'}).waitFor();
   await a.locator('#setup-feedback').waitFor({state:'hidden'});
   assert.equal(await source(a),'# A later kernel from another tab\n'+wide);
+  await reviewPreparation(a);
   await a.locator('#undo-prepare').click();
   await a.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
   await twoExports(unstable);
@@ -643,12 +650,14 @@ test('an earlier text-only preparation slot reopens a markerless file without gu
         cases:{'vector-add':1},preparations:{'vector-add':{'partial-16':custom}}}));
     },{key:workKey,custom,shared});
     const p=await open(context,url);
+    await reviewPreparation(p);
     await p.locator('#undo-prepare').click();
     await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
     assert.equal(await source(p),custom);
     assert.equal((await durable(p)).drafts['vector-add'],shared);
     const record=await durable(p);
     assert.equal(record.preparations['vector-add']['partial-16'].caseProgram,null);
+    await reviewPreparation(p);
     await p.locator('#undo-prepare').click();
     await p.waitForFunction(key=>!Object.hasOwn(JSON.parse(localStorage.getItem(key)).programs['vector-add'],'1'),workKey);
     assert.equal(await source(p),'# keep the present shared kernel\n'+original(1));
@@ -667,7 +676,9 @@ test('undo of an older split program discloses and archives a different current 
     }));
   },{key:workKey,later,earlier});
   const p=await open(context,url);
+  await reviewPreparation(p);
   assert.match(await p.locator('#setup-status').innerText(),/older undo copy.*recovery copies/);
+  await reviewPreparation(p);
   await p.locator('#undo-prepare').click();
   await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
   assert.equal(await source(p),earlier);

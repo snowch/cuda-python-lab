@@ -40,7 +40,7 @@ try{
  }
  if(!baseline){
   await page.goto(base+'#lesson/vector-add');await id('map-body').waitFor();
-  await id('goto-trace').tap();assert.equal(await page.locator(':focus').getAttribute('id'),'trace-title');
+  await id('brief-trace').tap();assert.equal(await page.locator(':focus').getAttribute('id'),'trace-title');
   const keyboard=[];
   async function tabTo(target,back=false) {
    for(let count=0;count<100;count++){
@@ -69,19 +69,19 @@ try{
   events.push({keyboard,actualStarter:await id('run-output').innerText()});
   await id('map-inputs').locator('summary').tap();
   await id('map-launch').selectOption('1 × 32');await id('map-pair').selectOption('cancel');await id('map-initial').selectOption('-1');
-  assert.match(await id('comparison-question').innerText(),/2 blocks × 32/);
+  assert.match(await id('prediction-prompt').innerText(),/2 blocks × 32/);
   await frame('proposal',id('map-preview'),true);
-  await id('map-apply').tap();await id('comparison-question').filter({hasText:'1 block × 32'}).waitFor();
+  await id('map-apply').tap();await id('prediction-prompt').filter({hasText:'1 block × 32'}).waitFor();
   assert.match(await id('map-observed').innerText(),/earlier code/);await saved();
   await id('map-predict').press('Enter');await id('prediction').fill('1 x 32, opposite inputs, initial -1: element 32 stays -1.');await saved();
   await id('run').press('Enter');await id('run-status').filter({hasText:'Ran in GPGPU-Sim.'}).waitFor({timeout:90000});
   await id('map-step').selectOption('3');await frame('uncovered',id('map-cells'));
-  await frame('comparison',id('comparison-question'));events.push({under:await id('map-observed').innerText(),note:await id('prediction').inputValue()});
-  await id('map-launch').selectOption('2 × 32');await id('map-apply').tap();await id('comparison-question').filter({hasText:'2 blocks × 32'}).waitFor();
+  await frame('comparison',id('compare-prediction'));events.push({under:await id('map-observed').innerText(),note:await id('prediction').inputValue()});
+  await id('map-launch').selectOption('2 × 32');await id('map-apply').tap();await id('prediction-prompt').filter({hasText:'2 blocks × 32'}).waitFor();
   await id('run').press('Enter');await id('run-status').filter({hasText:'Ran in GPGPU-Sim.'}).waitFor({timeout:90000});
   await id('map-step').selectOption('3');await frame('repair',id('map-cells'));
   events.push({repair:await id('map-observed').innerText()});
-  await id('map-undo').press('Enter');await id('undo-prepare').press('Enter');await id('comparison-question').filter({hasText:'1 block × 32'}).waitFor();
+  await id('map-undo').press('Enter');await id('undo-prepare').press('Enter');await id('prediction-prompt').filter({hasText:'1 block × 32'}).waitFor();
   await saved();await page.reload();await id('map-body').waitFor();
   assert.match(await id('prediction').inputValue(),/stays -1/);
   await id('map-undo').evaluate(e=>e.closest('details').open=true);await id('map-undo').press('Enter');
@@ -93,12 +93,12 @@ try{
   await id('map-unavailable').waitFor();await saved();await id('run').click();
   await id('run-status').filter({hasText:'Execution stopped with an error'}).waitFor({timeout:90000});
   assert.match(await id('run-output').innerText(),/SyntaxError/);
-  events.push({malformed:await id('run-output').innerText(),prompt:await id('comparison-question').innerText()});
+  events.push({malformed:await id('run-output').innerText(),prompt:await id('prediction-prompt').innerText()});
   await editor.press('Control+a');await page.keyboard.insertText(old.replace('out[i] = a[i] + b[i]','out[i] = a[i] - b[i]'));await saved();
   assert.match(await id('run-status').innerText(),/Previous run/);
   await id('run').click();await id('run-status').filter({hasText:'Ran in GPGPU-Sim.'}).waitFor({timeout:90000});
   assert.ok(await id('map-unavailable').isVisible());
-  events.push({custom:await id('run-output').innerText(),prompt:await id('comparison-question').innerText()});
+  events.push({custom:await id('run-output').innerText(),prompt:await id('prediction-prompt').innerText()});
   await page.evaluate(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='cuda-python-lab-v1')throw new DOMException('Test quota','QuotaExceededError');return set.call(this,k,v);};window.allowWrites=()=>Storage.prototype.setItem=set;});
   await id('prediction').fill('Export my open edited program and this unsaved note.');await id('work-status').filter({hasText:'could not be saved'}).waitFor();
   await id('work-recovery-link').press('Enter');const [file]=await Promise.all([page.waitForEvent('download'),id('export-work').click()]);

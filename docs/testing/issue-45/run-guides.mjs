@@ -5,7 +5,7 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {lessons} from '../../../src/course.mjs';
 import {guides,caseQuestion} from '../../../src/guided-experiments.mjs';
 import {standaloneProgram} from '../../../src/host-program.mjs';
-import {launchChromium,serveBuild} from '../../../tests/browser-support.mjs';
+import {launchChromium,reviewPreparation,serveBuild} from '../../../tests/browser-support.mjs';
 const evidence=new URL(process.env.GUIDE_EVIDENCE || './',import.meta.url);
 await mkdir(evidence,{recursive:true});
 const audit=(await readFile(new URL('../../course-audit/evidence/steps-final.jsonl',import.meta.url),'utf8')).trim().split('\n').map(JSON.parse);
@@ -96,7 +96,7 @@ try{
      let intended=(prerequisiteRows[task.id]??[]).reduce(applyRow,starter);
      const before=await source();
      if(before!==intended){
-       await page.locator('#prepare-task').click();await page.waitForFunction(()=>document.querySelector('#prepare-task').hidden);
+       await reviewPreparation(page);await page.locator('#prepare-task').click();await page.waitForFunction(()=>document.querySelector('#prepare-task').hidden);
      }
      assert.equal(await source(),intended);
      const action=await page.locator('#task-action').innerText();
@@ -119,11 +119,15 @@ try{
        if(slug==='first-value'){
          const match=intended.match(/out\[0\] = (\d+)/);
          assert.ok(prompt.includes('host starts at 0 and the kernel stores '+match[1]));
-         assert.equal(await page.locator('#comparison-question').innerText(),prompt);
+         await page.locator('#compare-prediction').press('Enter');
+         assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
+         assert.equal(await page.getByText(prompt,{exact:true}).count(),1);
        } else if(slug==='vector-add'){
          const [,blocks,width]=intended.match(/kernel\[(\d+), (\d+)\]/);
          assert.ok(prompt.includes(blocks+' '+(blocks==='1'?'block':'blocks')+' × '+width+' threads'));
-         assert.equal(await page.locator('#comparison-question').innerText(),prompt);
+         await page.locator('#compare-prediction').press('Enter');
+         assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
+         assert.equal(await page.getByText(prompt,{exact:true}).count(),1);
        } else assert.ok(notebook.cells[0].source.includes(prompt));
      }
      checks.push(record); console.log(slug,task.step,task.id,record.reasoning??record.runs.map(r=>r.auditRow).join(','));
