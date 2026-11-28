@@ -1,58 +1,52 @@
 WEBVTT
 
-00:00:00.500 --> 00:00:03.832
-An S M executes the threads in a block in
+00:00:00.500 --> 00:00:03.560
+In the eight by thirty-two case, the first
 
-00:00:03.832 --> 00:00:06.497
-groups called warps. In the eight rows by
+00:00:03.560 --> 00:00:05.855
+eight lanes read consecutive values. With
 
-00:00:06.497 --> 00:00:08.829
-thirty-two columns case, the block has one
+00:00:05.855 --> 00:00:08.533
+four bytes per value, offsets zero through
 
-00:00:08.829 --> 00:00:11.162
-warp. Each lane identifies one thread in
+00:00:08.533 --> 00:00:11.210
+seven fit in one aligned thirty-two byte
 
-00:00:11.162 --> 00:00:11.828
-that warp.
-
-00:00:13.328 --> 00:00:16.241
-A word offset counts four byte values from
-
-00:00:16.241 --> 00:00:19.154
-the start of the array. The first eight
-
-00:00:19.154 --> 00:00:20.974
-lanes read consecutive columns. Their
-
-00:00:20.974 --> 00:00:23.523
-eight values fit in one thirty-two byte
-
-00:00:23.523 --> 00:00:23.887
+00:00:11.210 --> 00:00:11.593
 sector.
 
-00:00:25.387 --> 00:00:28.402
-The transpose swaps row and column. In the
+00:00:16.093 --> 00:00:18.770
+The assignment swaps row and column in the
 
-00:00:28.402 --> 00:00:30.664
-output, these lanes write eight words
+00:00:18.770 --> 00:00:21.112
+output. Will those same lanes store into
 
-00:00:30.664 --> 00:00:33.302
-apart. The same eight lanes now touch
+00:00:21.112 --> 00:00:22.450
+one sector or several?
 
-00:00:33.302 --> 00:00:34.433
-eight distinct sectors.
+00:00:30.950 --> 00:00:33.377
+After the transpose, adjacent lanes write
 
-00:00:35.933 --> 00:00:39.014
-Across all lanes, the addresses cover four
+00:00:33.377 --> 00:00:36.209
+eight words apart. Their offsets are zero,
 
-00:00:39.014 --> 00:00:41.655
-read sectors and thirty-two write sectors.
+00:00:36.209 --> 00:00:39.040
+eight, and so on, through fifty-six. Each
 
-00:00:41.655 --> 00:00:43.856
-The calculation groups addresses. Measured
+00:00:39.040 --> 00:00:41.467
+falls in a different aligned sector.
 
-00:00:43.856 --> 00:00:47.377
-GPU traffic also depends on caches and the
+00:00:45.967 --> 00:00:48.706
+Across all thirty-two lanes, the address
 
-00:00:47.377 --> 00:00:49.138
-instructions the hardware runs.
+00:00:48.706 --> 00:00:51.445
+calculation covers four read sectors and
+
+00:00:51.445 --> 00:00:53.727
+thirty-two write sectors. Actual traffic
+
+00:00:53.727 --> 00:00:56.466
+also depends on the compiled instructions
+
+00:00:56.466 --> 00:00:57.379
+and caches.
