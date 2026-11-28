@@ -1,0 +1,1578 @@
+[
+  {
+    "route": "course",
+    "width": 320,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5381,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 320,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5381,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 390,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4570,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 390,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4570,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 820,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3333,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 820,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3333,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 1440,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2913,
+    "smallControls": []
+  },
+  {
+    "route": "course",
+    "width": 1440,
+    "heading": "CUDA Python Lab",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2913,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 320,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4928,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 320,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4928,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 390,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4489,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 390,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4489,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 820,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3190,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 820,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3190,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 1440,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3247,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "first-value",
+    "width": 1440,
+    "heading": "Write your first GPU value",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3247,
+    "taskToRun": 0,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 320,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4757,
+    "taskToRun": 2480.453125,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 320,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4757,
+    "taskToRun": 2480.453125,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 390,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4274,
+    "taskToRun": 2253.96875,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 390,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4274,
+    "taskToRun": 2253.96875,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 820,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3147,
+    "taskToRun": 1631.265625,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 820,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3147,
+    "taskToRun": 1631.265625,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 1440,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3203,
+    "taskToRun": 1664.46875,
+    "smallControls": []
+  },
+  {
+    "route": "vector-add",
+    "width": 1440,
+    "heading": "One thread, one element",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3203,
+    "taskToRun": 1664.46875,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 320,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4319,
+    "taskToRun": 2389.953125,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 320,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4319,
+    "taskToRun": 2389.953125,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 390,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3937,
+    "taskToRun": 2191.515625,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 390,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3937,
+    "taskToRun": 2191.515625,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 820,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2852,
+    "taskToRun": 1568.8125,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 820,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2852,
+    "taskToRun": 1568.8125,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 1440,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2895,
+    "taskToRun": 1602.015625,
+    "smallControls": []
+  },
+  {
+    "route": "grid-stride",
+    "width": 1440,
+    "heading": "Let each thread do more work",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2895,
+    "taskToRun": 1602.015625,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 320,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5341,
+    "taskToRun": 2816.5625,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 320,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5341,
+    "taskToRun": 2816.5625,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 390,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4830,
+    "taskToRun": 2517.625,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 390,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4830,
+    "taskToRun": 2517.625,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 820,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3315,
+    "taskToRun": 1772.59375,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 820,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3315,
+    "taskToRun": 1772.59375,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 1440,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3358,
+    "taskToRun": 1805.796875,
+    "smallControls": []
+  },
+  {
+    "route": "transfers",
+    "width": 1440,
+    "heading": "Count bytes moved between host and GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3358,
+    "taskToRun": 1805.796875,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 320,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5255,
+    "taskToRun": 2889.59375,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 320,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5255,
+    "taskToRun": 2889.59375,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 390,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4784,
+    "taskToRun": 2614.078125,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 390,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4784,
+    "taskToRun": 2614.078125,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 820,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3343,
+    "taskToRun": 1779.953125,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 820,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3343,
+    "taskToRun": 1779.953125,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 1440,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3362,
+    "taskToRun": 1789.078125,
+    "smallControls": []
+  },
+  {
+    "route": "coalescing",
+    "width": 1440,
+    "heading": "See how threads group memory accesses",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3362,
+    "taskToRun": 1789.078125,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 320,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4897,
+    "taskToRun": 2704.40625,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 320,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4897,
+    "taskToRun": 2704.40625,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 390,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4396,
+    "taskToRun": 2411.296875,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 390,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4396,
+    "taskToRun": 2411.296875,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 820,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3188,
+    "taskToRun": 1702.34375,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 820,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3188,
+    "taskToRun": 1702.34375,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 1440,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3207,
+    "taskToRun": 1711.46875,
+    "smallControls": []
+  },
+  {
+    "route": "divergence",
+    "width": 1440,
+    "heading": "When threads take different branches",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3207,
+    "taskToRun": 1711.46875,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 320,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5317,
+    "taskToRun": 2762.328125,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 320,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5317,
+    "taskToRun": 2762.328125,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 390,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4740,
+    "taskToRun": 2372.515625,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 390,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4740,
+    "taskToRun": 2372.515625,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 820,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3208,
+    "taskToRun": 1665.671875,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 820,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3208,
+    "taskToRun": 1665.671875,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 1440,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3251,
+    "taskToRun": 1698.875,
+    "smallControls": []
+  },
+  {
+    "route": "reduction",
+    "width": 1440,
+    "heading": "Add values across a block",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3251,
+    "taskToRun": 1698.875,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 320,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4725,
+    "taskToRun": 2403.734375,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 320,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4725,
+    "taskToRun": 2403.734375,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 390,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4243,
+    "taskToRun": 2126.453125,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 390,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4243,
+    "taskToRun": 2126.453125,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 820,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3115,
+    "taskToRun": 1559.5,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 820,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3115,
+    "taskToRun": 1559.5,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 1440,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3175,
+    "taskToRun": 1596.671875,
+    "smallControls": []
+  },
+  {
+    "route": "histogram",
+    "width": 1440,
+    "heading": "Count inputs by category",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3175,
+    "taskToRun": 1596.671875,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 320,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4887,
+    "taskToRun": 2586.546875,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 320,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4887,
+    "taskToRun": 2586.546875,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 390,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4460,
+    "taskToRun": 2349.1875,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 390,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4460,
+    "taskToRun": 2349.1875,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 820,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3195,
+    "taskToRun": 1668.28125,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 820,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3195,
+    "taskToRun": 1668.28125,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 1440,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3223,
+    "taskToRun": 1673.4375,
+    "smallControls": []
+  },
+  {
+    "route": "scan",
+    "width": 1440,
+    "heading": "Find positions with running totals",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3223,
+    "taskToRun": 1673.4375,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 320,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5072,
+    "taskToRun": 2577.234375,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 320,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5072,
+    "taskToRun": 2577.234375,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 390,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4562,
+    "taskToRun": 2311.828125,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 390,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4562,
+    "taskToRun": 2311.828125,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 820,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3177,
+    "taskToRun": 1674.921875,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 820,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3177,
+    "taskToRun": 1674.921875,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 1440,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3165,
+    "taskToRun": 1640.046875,
+    "smallControls": []
+  },
+  {
+    "route": "tiled-transpose",
+    "width": 1440,
+    "heading": "Transpose through a shared tile",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3165,
+    "taskToRun": 1640.046875,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 320,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4567,
+    "taskToRun": 2593.96875,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 320,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4567,
+    "taskToRun": 2593.96875,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 390,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4034,
+    "taskToRun": 2249.71875,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 390,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4034,
+    "taskToRun": 2249.71875,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 820,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2967,
+    "taskToRun": 1668.90625,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 820,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2967,
+    "taskToRun": 1668.90625,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 1440,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2979,
+    "taskToRun": 1658.109375,
+    "smallControls": []
+  },
+  {
+    "route": "matmul",
+    "width": 1440,
+    "heading": "Reuse inputs in matrix multiplication",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2979,
+    "taskToRun": 1658.109375,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 320,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5291,
+    "taskToRun": 2768.6875,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 320,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5291,
+    "taskToRun": 2768.6875,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 390,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4710,
+    "taskToRun": 2465.125,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 390,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4710,
+    "taskToRun": 2465.125,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 820,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3197,
+    "taskToRun": 1672.03125,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 820,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3197,
+    "taskToRun": 1672.03125,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 1440,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3230,
+    "taskToRun": 1705.234375,
+    "smallControls": []
+  },
+  {
+    "route": "softmax",
+    "width": 1440,
+    "heading": "Build a stable softmax",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3230,
+    "taskToRun": 1705.234375,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 320,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4392,
+    "taskToRun": 2446.515625,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 320,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4392,
+    "taskToRun": 2446.515625,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 390,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3936,
+    "taskToRun": 2153.40625,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 390,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3936,
+    "taskToRun": 2153.40625,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 820,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2840,
+    "taskToRun": 1528.59375,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 820,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2840,
+    "taskToRun": 1528.59375,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 1440,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2855,
+    "taskToRun": 1533.75,
+    "smallControls": []
+  },
+  {
+    "route": "gather",
+    "width": 1440,
+    "heading": "Read values through an index array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2855,
+    "taskToRun": 1533.75,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 320,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5100,
+    "taskToRun": 2773.828125,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 320,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5100,
+    "taskToRun": 2773.828125,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 390,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4476,
+    "taskToRun": 2383.59375,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 390,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4476,
+    "taskToRun": 2383.59375,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 820,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3302,
+    "taskToRun": 1774.734375,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 820,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3302,
+    "taskToRun": 1774.734375,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 1440,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3286,
+    "taskToRun": 1735.890625,
+    "smallControls": []
+  },
+  {
+    "route": "stencil",
+    "width": 1440,
+    "heading": "Share neighboring values across threads",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3286,
+    "taskToRun": 1735.890625,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 320,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4454,
+    "taskToRun": 2359.5625,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 320,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4454,
+    "taskToRun": 2359.5625,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 390,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4033,
+    "taskToRun": 2150.25,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 390,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4033,
+    "taskToRun": 2150.25,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 820,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2865,
+    "taskToRun": 1525.4375,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 820,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2865,
+    "taskToRun": 1525.4375,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 1440,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2880,
+    "taskToRun": 1530.59375,
+    "smallControls": []
+  },
+  {
+    "route": "precision",
+    "width": 1440,
+    "heading": "See how rounding changes a sum",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2880,
+    "taskToRun": 1530.59375,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 320,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4596,
+    "taskToRun": 2537.875,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 320,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4596,
+    "taskToRun": 2537.875,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 390,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4160,
+    "taskToRun": 2328.90625,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 390,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4160,
+    "taskToRun": 2328.90625,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 820,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2923,
+    "taskToRun": 1624.90625,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 820,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2923,
+    "taskToRun": 1624.90625,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 1440,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2951,
+    "taskToRun": 1630.0625,
+    "smallControls": []
+  },
+  {
+    "route": "sync-debug",
+    "width": 1440,
+    "heading": "Keep edge threads at the barrier",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2951,
+    "taskToRun": 1630.0625,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 320,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4943,
+    "taskToRun": 2587.953125,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 320,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4943,
+    "taskToRun": 2587.953125,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 390,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4438,
+    "taskToRun": 2322.546875,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 390,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4438,
+    "taskToRun": 2322.546875,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 820,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3196,
+    "taskToRun": 1646.59375,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 820,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3196,
+    "taskToRun": 1646.59375,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 1440,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3224,
+    "taskToRun": 1651.75,
+    "smallControls": []
+  },
+  {
+    "route": "fusion",
+    "width": 1440,
+    "heading": "Remove an intermediate array",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3224,
+    "taskToRun": 1651.75,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 320,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 5933,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 320,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 5933,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 390,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 4992,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 390,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 4992,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 820,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3224,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 820,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3224,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 1440,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "light",
+    "height": 3301,
+    "smallControls": []
+  },
+  {
+    "route": "gpu",
+    "width": 1440,
+    "heading": "Appendix A. Run on an NVIDIA GPU",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 3301,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 320,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2560,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 320,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2560,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 390,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "light",
+    "height": 2369,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 390,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 2369,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 820,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "light",
+    "height": 1383,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 820,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 1383,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 1440,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "light",
+    "height": 1346,
+    "smallControls": []
+  },
+  {
+    "route": "compiler",
+    "width": 1440,
+    "heading": "What happens at the first launch?",
+    "overflow": 0,
+    "theme": "dark",
+    "height": 1346,
+    "smallControls": []
+  }
+]

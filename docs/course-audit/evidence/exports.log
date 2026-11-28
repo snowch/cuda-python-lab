@@ -1,0 +1,39 @@
+first-value One element source and notebook program match fixture
+vector-add 33 elements · 32 threads per block source and notebook program match fixture
+vector-add 33 elements · 16 threads per block source and notebook program match fixture
+vector-add 32 elements · exact fit source and notebook program match fixture
+grid-stride 35 elements · 16 threads total source and notebook program match fixture
+grid-stride 35 elements · 8 threads total source and notebook program match fixture
+grid-stride 7 elements · 16 threads total source and notebook program match fixture
+transfers 33 elements source and notebook program match fixture
+transfers 8 elements source and notebook program match fixture
+coalescing 8 rows × 32 columns source and notebook program match fixture
+coalescing 5 rows × 13 columns source and notebook program match fixture
+divergence Alternating signs source and notebook program match fixture
+divergence Grouped signs source and notebook program match fixture
+reduction 16 values · 8 threads per block source and notebook program match fixture
+reduction 19 values · partial block source and notebook program match fixture
+reduction 39 values · 32 threads source and notebook program match fixture
+histogram Balanced destinations source and notebook program match fixture
+histogram All tokens route to 2 source and notebook program match fixture
+scan Keep flags · 7 elements source and notebook program match fixture
+scan Weighted counts · 13 elements source and notebook program match fixture
+tiled-transpose 8 rows × 8 columns source and notebook program match fixture
+tiled-transpose 11 rows × 13 columns source and notebook program match fixture
+matmul 5 × 6 times 6 × 7 source and notebook program match fixture
+matmul 4 × 4 times 4 × 4 source and notebook program match fixture
+softmax Extreme and equal logits source and notebook program match fixture
+softmax Two rows · 37 columns source and notebook program match fixture
+gather Consecutive positions source and notebook program match fixture
+gather Spaced positions source and notebook program match fixture
+stencil 16 values · direct reads source and notebook program match fixture
+stencil 16 values · shared tile source and notebook program match fixture
+stencil 13 values · partial tile source and notebook program match fixture
+precision Near the precision limit source and notebook program match fixture
+precision Smaller integers source and notebook program match fixture
+sync-debug 7 outputs · partial block source and notebook program match fixture
+sync-debug 8 outputs · two full blocks source and notebook program match fixture
+fusion 8 values · store temporary source and notebook program match fixture
+fusion 8 values · keep local source and notebook program match fixture
+fusion 13 values · keep local source and notebook program match fixture
+Compiler notebook downloaded, signature comparison present.

@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>GPU architecture experiments</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --ink: #153037;
+      --paper: #f4f6ef;
+      --card: #fff;
+      --active: #bfe7d2;
+      --accent: #14644b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink: #e1eee6;
+        --paper: #132226;
+        --card: #1d3135;
+        --active: #275648;
+        --accent: #8ed7b0;
+      }
+    }
+    [hidden] {
+      display: none !important;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      max-width: 58rem;
+      margin: auto;
+      padding: clamp(12px, 4vw, 44px);
+      background: var(--paper);
+      color: var(--ink);
+      font:
+        17px/1.5 "Source Sans 3",
+        system-ui,
+        sans-serif;
+    }
+    h1 {
+      line-height: 1.15;
+    }
+    main {
+      background: var(--card);
+      padding: clamp(12px, 3vw, 32px);
+      border-radius: 12px;
+    }
+    label {
+      display: inline-grid;
+      gap: 3px;
+      margin: 4px 12px 8px 0;
+    }
+    button,
+    select,
+    input {
+      font: inherit;
+      min-height: 44px;
+      padding: 5px 10px;
+    }
+    button {
+      cursor: pointer;
+    }
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--accent);
+    }
+    .cells {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: 5px 0 14px;
+    }
+    button.on,
+    .mark {
+      background: var(--active);
+      color: var(--ink);
+    }
+    button[aria-pressed="true"] {
+      outline: 3px solid var(--accent);
+    }
+    .mark,
+    code {
+      padding: 3px 6px;
+    }
+    pre {
+      white-space: pre-wrap;
+    }
+    section {
+      margin: 1.1em 0;
+    }
+    output {
+      display: block;
+      border-inline-start: 4px solid var(--accent);
+      padding: 8px 12px;
+    }
+    summary {
+      cursor: pointer;
+    }
+    .map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 6px;
+    }
+    .node,
+    .sector {
+      padding: 8px;
+      border: 1px solid;
+      border-radius: 6px;
+    }
+    .sector {
+      display: inline-block;
+      margin: 3px;
+    }
+    .sector span {
+      display: inline-block;
+      min-width: 1.1em;
+      text-align: center;
+    }
+    .sector .used {
+      background: var(--active);
+      font-weight: bold;
+    }
+  </style>
+  <h1>GPU architecture experiments</h1>
+  <p>
+    Conceptual models with fixed example inputs. Each control changes the
+    calculation on this page.
+  </p>
+  <label
+    >Experiment<select id="mode">
+      <option>Host and device</option>
+      <option>Thread ownership</option>
+      <option>Ready warps</option>
+      <option>Addresses and sectors</option>
+    </select></label
+  >
+  <main>
+    <h2 id="question"></h2>
+    <p id="assumption"></p>
+    <label
+      >Your prediction<input
+        id="prediction"
+        placeholder="Before revealing the result"
+    /></label>
+    <div id="controls"></div>
+    <button id="reveal">Reveal model</button>
+    <section id="model" hidden>
+      <div id="drawing"></div>
+      <output aria-live="polite" id="answer"></output>
+    </section>
+  </main>
+  <script>
+    const $ = (s) => document.getElementById(s);
+    const questions = [
+      "When does the host receive 42?",
+      "Who writes the final value?",
+      "Can another warp issue while a load is pending?",
+      "Which addresses share a sector?",
+    ];
+    const assumptions = [
+      "Trace the first-value starter. CUDA copies have logical source and destination arrays on both topologies.",
+      "Vector addition with a[i] = i + 1 and b[i] = 2(i + 1). Each logical thread checks i < n.",
+      "One illustrative issue slot, round-robin among ready warps. Each issues a load, waits the selected number of intervening slots, then issues an add.",
+      "Contiguous row-major storage. Model a single instruction with distinct aligned FP32 words and 32-byte sectors. Caches and DRAM transactions are outside this model.",
+    ];
+    const selects = (id, label, values, initial) =>
+      "<label>" +
+      label +
+      '<select id="' +
+      id +
+      '">' +
+      values
+        .map(
+          (v) =>
+            "<option " +
+            (v === initial ? "selected" : "") +
+            ">" +
+            v +
+            "</option>",
+        )
+        .join("") +
+      "</select></label>";
+    const navigation =
+      '<button id="back">Previous</button> <button id="next">Next</button> <button id="reset">Restart</button>';
+    let step = 0,
+      chosen = 32;
+    function init() {
+      const m = $("mode").selectedIndex;
+      step = 0;
+      chosen = 32;
+      $("question").textContent = questions[m];
+      $("assumption").textContent = assumptions[m];
+      $("prediction").value = "";
+      $("model").hidden = true;
+      $("reveal").hidden = false;
+      $("controls").innerHTML = [
+        selects("topology", "Physical memory", [
+          "Discrete GPU",
+          "Integrated SoC",
+        ]) + navigation,
+        selects("n", "Elements", [16, 33, 64], 33) +
+          selects("w", "Threads per block", [8, 16, 32], 32) +
+          selects("grid", "Blocks", ["Ceiling division", "One block"]),
+        selects("warps", "Resident warps", [1, 2, 3], 3) +
+          selects("wait", "Wait slots", [1, 2, 4], 2) +
+          navigation,
+        selects("stage", "Explore", [
+          "Row-major layout",
+          "Lane addresses",
+          "Direct transpose",
+          "Shared tile",
+        ]) +
+          selects("lanes", "Active lanes", [8, 32]) +
+          selects("stride", "Word stride", [1, 2, 8]) +
+          selects("offset", "Base word offset", [0, 1, 7]) +
+          selects("tile", "Threads across x", [8, 32]) +
+          selects("pad", "Padding words", [0, 1], 1),
+      ][m];
+      $("controls").onchange = () => {
+        step = 0;
+        render();
+      };
+      if ($("back")) {
+        $("back").onclick = () => {
+          step--;
+          render();
+        };
+        $("next").onclick = () => {
+          step++;
+          render();
+        };
+        $("reset").onclick = () => {
+          step = 0;
+          render();
+        };
+      }
+      render();
+    }
+    function render() {
+      const m = $("mode").selectedIndex;
+      let html = "",
+        answer = "",
+        last = 0;
+      if (m === 0) {
+        const rows = [
+          ["np.zeros(1)", "0", "unallocated", "—"],
+          ["cuda.to_device(out_host)", "0", "0", "—"],
+          ["kernel[1, 1](out)", "0", "write pending", "—"],
+          ["out[0] = 42", "0", "42", "—"],
+          ["out.copy_to_host()", "0", "42", "42"],
+        ];
+        last = 4;
+        const [line, host, device, result] = rows[step];
+        html =
+          "<code>" +
+          line +
+          "</code><p>CPU · out_host [" +
+          host +
+          "] → GPU · out [" +
+          device +
+          "] → CPU · result [" +
+          result +
+          "]</p>";
+        answer = $("topology").selectedIndex
+          ? "Integrated SoC · CPU and GPU access system DRAM. The API still creates separate arrays."
+          : "Discrete GPU · host RAM and device DRAM communicate through an interconnect.";
+        html +=
+          '<details><summary>Inside the GPU</summary><p>Host commands → work distributor → resident blocks on SMs</p><div class="map"><div class="node">One SM<br>Warp scheduler ↓<br>Register file ↔ execution pipelines (FP / INT, special functions, Tensor Cores)<br>Load/store ↔ shared memory or cache path</div><div class="node">Other SMs<br>Independent resident blocks</div></div><p>Cache path → shared L2 → memory controllers → ' +
+          ($("topology").selectedIndex ? "system DRAM" : "device DRAM") +
+          "</p></details>";
+      } else if (m === 1) {
+        const n = +$("n").value,
+          w = +$("w").value,
+          B = $("grid").selectedIndex ? 1 : Math.ceil(n / w),
+          total = B * w;
+        chosen = Math.min(chosen, total - 1);
+        html =
+          "<code>kernel[" +
+          B +
+          ", " +
+          w +
+          "](a, b, out, " +
+          n +
+          ")</code><p>" +
+          B +
+          " blocks · " +
+          total +
+          " launched · " +
+          Math.max(0, total - n) +
+          " skip · " +
+          Math.max(0, n - total) +
+          " uncovered</p>";
+        for (let b = 0; b < B; b++) {
+          html += "Block " + b + '<div class="cells">';
+          for (let t = 0; t < w; t++) {
+            const i = b * w + t;
+            html +=
+              '<button data-cell="' +
+              i +
+              '" class="' +
+              (i < n ? "on" : "") +
+              '" aria-pressed="' +
+              (i === chosen) +
+              '" aria-label="Index ' +
+              i +
+              (i < n ? " writes" : " skips") +
+              '">' +
+              i +
+              (i < n ? " ✓" : " ×") +
+              "</button>";
+          }
+          html += "</div>";
+        }
+        answer =
+          "i = " +
+          Math.floor(chosen / w) +
+          " × " +
+          w +
+          " + " +
+          (chosen % w) +
+          " = " +
+          chosen +
+          ". " +
+          (chosen < n
+            ? "Guard true. out[" +
+              chosen +
+              "] = " +
+              (chosen + 1) +
+              " + " +
+              2 * (chosen + 1) +
+              " = " +
+              3 * (chosen + 1)
+            : "Guard false. No array access.");
+      } else if (m === 2) {
+        const count = +$("warps").value,
+          latency = +$("wait").value,
+          ready = Array(count).fill(0),
+          pc = Array(count).fill(0),
+          history = [];
+        let cursor = 0;
+        for (let slot = 0; pc.some((p) => p < 2); slot++) {
+          const eligible = pc.map((p, i) => p < 2 && ready[i] <= slot);
+          let pick = -1;
+          for (let j = 0; j < count; j++) {
+            const k = (cursor + j) % count;
+            if (eligible[k]) {
+              pick = k;
+              break;
+            }
+          }
+          const names = pc.map((p, i) =>
+            p === 2 ? "Finished" : eligible[i] ? "Ready" : "Waiting",
+          );
+          const op = pick < 0 ? "Idle" : pc[pick] ? "Add" : "Load";
+          if (pick >= 0) {
+            names[pick] = "Issuing " + op;
+            pc[pick]++;
+            ready[pick] = slot + latency + 1;
+            cursor = (pick + 1) % count;
+          }
+          history.push({ names, op, pick });
+        }
+        last = history.length - 1;
+        step = Math.min(step, last);
+        const state = history[step];
+        html = state.names
+          .map(
+            (s, i) =>
+              "<p><b>Warp " +
+              i +
+              '</b> → <span class="mark">' +
+              s +
+              "</span></p>",
+          )
+          .join("");
+        answer =
+          "Slot " +
+          (step + 1) +
+          " of " +
+          history.length +
+          ". " +
+          (state.pick < 0
+            ? "No eligible warp."
+            : "Warp " +
+              state.pick +
+              " issues " +
+              state.op.toLowerCase() +
+              ".") +
+          " Compare the idle slots with one resident warp.";
+      } else {
+        const stage = $("stage").selectedIndex;
+        for (const id of ["tile", "pad"])
+          $(id).parentElement.hidden = stage !== 3;
+        for (const id of ["lanes", "offset", "stride"])
+          $(id).parentElement.hidden =
+            stage === 0 || stage === 3 || (id === "stride" && stage === 2);
+        const n = +$("lanes").value,
+          base = +$("offset").value,
+          stride = +$("stride").value;
+        if (stage === 0) {
+          html = "3 × 4 matrix<div>";
+          for (let r = 0; r < 3; r++) {
+            html += '<div class="cells">';
+            for (let c = 0; c < 4; c++) {
+              const i = 4 * r + c;
+              html += '<button data-cell="' + i + '">' + i + "</button>";
+            }
+            html += "</div>";
+          }
+          html += "</div>";
+          const i = chosen < 12 ? chosen : 6;
+          answer =
+            "Row " +
+            Math.floor(i / 4) +
+            ", column " +
+            (i % 4) +
+            " → linear word " +
+            i +
+            " → byte offset " +
+            4 * i +
+            ".";
+        } else if (stage === 3) {
+          const width = +$("tile").value,
+            pitch = width + +$("pad").value,
+            banks = Array.from({ length: 32 }, () => []);
+          for (let lane = 0; lane < 32; lane++) {
+            const x = lane % width,
+              y = Math.floor(lane / width),
+              word = x * pitch + y;
+            banks[word % 32].push(word);
+          }
+          html =
+            '<p>One warp reads tile[tx, ty] after the block barrier. Assume aligned FP32, 32 banks, one word per bank per service round.</p><div class="cells">' +
+            banks
+              .map(
+                (words, bank) =>
+                  '<span class="node">Bank ' +
+                  bank +
+                  "<br>" +
+                  (words.length ? "words " + words.join(", ") : "unused") +
+                  "</span>",
+              )
+              .join("") +
+            "</div>";
+          answer =
+            "Pitch " +
+            pitch +
+            " words. " +
+            banks.filter((b) => b.length).length +
+            " banks used. Maximum distinct words in a bank = " +
+            Math.max(...banks.map((b) => new Set(b).size)) +
+            ". Writer (2, 0) reads word " +
+            2 * pitch +
+            ".";
+        } else {
+          let lines = [];
+          for (const s of stage === 2 ? [1, 8] : [stride]) {
+            const words = Array.from({ length: n }, (_, i) => base + i * s),
+              sectors = new Set(words.map((w) => Math.floor(w / 8)));
+            html +=
+              "<p>Stride " +
+              s +
+              ' · lane → word → sector</p><div class="cells">' +
+              words
+                .map(
+                  (w, i) =>
+                    '<span class="mark">' +
+                    i +
+                    " → " +
+                    w +
+                    " → " +
+                    Math.floor(w / 8) +
+                    "</span>",
+                )
+                .join("") +
+              "</div>";
+            html +=
+              "<div>" +
+              [...sectors]
+                .map(
+                  (k) =>
+                    '<div class="sector">Sector ' +
+                    k +
+                    "<br>" +
+                    Array.from({ length: 8 }, (_, j) =>
+                      words.includes(k * 8 + j)
+                        ? '<span class="used">✓</span>'
+                        : "<span>·</span>",
+                    ).join("") +
+                    "</div>",
+                )
+                .join("") +
+              "</div>";
+            lines.push(
+              4 * n +
+                " useful bytes / " +
+                32 * sectors.size +
+                " sector bytes (" +
+                sectors.size +
+                " sectors, " +
+                ((100 * 4 * n) / (32 * sectors.size)).toFixed(1) +
+                "%).",
+            );
+          }
+          answer = lines.join(" Then ");
+        }
+      }
+      $("drawing").innerHTML = html;
+      $("answer").textContent = answer;
+      for (const b of $("drawing").querySelectorAll("[data-cell]"))
+        b.onclick = () => {
+          chosen = +b.dataset.cell;
+          render();
+          $("drawing")
+            .querySelector('[data-cell="' + chosen + '"]')
+            .focus();
+        };
+      if ($("back")) {
+        $("back").disabled = step === 0;
+        $("next").disabled = step === last;
+      }
+    }
+    $("mode").onchange = init;
+    $("reveal").onclick = () => {
+      $("model").hidden = false;
+      $("reveal").hidden = true;
+    };
+    init();
+  </script>
+</html>

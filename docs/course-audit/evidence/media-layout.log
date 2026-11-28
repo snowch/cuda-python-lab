@@ -1,0 +1,17 @@
+first-value 7 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+vector-add 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+grid-stride 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+transfers 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+divergence 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+histogram 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+scan 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+sync-debug 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+tiled-transpose 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+matmul 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+softmax 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+gather 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+stencil 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+precision 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+fusion 3 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+coalescing 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
+reduction 4 paused clip, captions on; portrait, landscape fullscreen, tablet, desktop captured in both themes
