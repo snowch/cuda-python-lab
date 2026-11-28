@@ -568,7 +568,7 @@ function showLesson(slug) {
   function openPrediction() {
     prediction.value = caseAnswer(state);
     syncPrediction();
-    find('prediction-label').textContent = 'Your prediction · '+fixture.label;
+    find('prediction-label').textContent = (modeled?'Your prediction · ':'Your prediction · Starter case: ')+fixture.label;
     if (!modeled) find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
     const earlier = state.predictions[slug];
     find('earlier-prediction').hidden = !earlier || (lesson.cases.length === 1 && !Object.hasOwn(state.caseAnswers?.[slug] ?? {},fixture.id));

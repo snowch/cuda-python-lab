@@ -74,7 +74,8 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     find('task-evidence').textContent = task?.evidence ?? '';
     find('brief-title').textContent = task?.title ?? 'Free exploration';
 
-    find('task-evidence').hidden = !task?.evidence;
+    // The original no-edit run instruction already names what to read.
+    find('task-evidence').hidden = !task?.evidence || (task.kind==='run' && !task.instruction && !task.after.length);
     awaitingSave = '';
     operationSource = undefined;
     feedback('');
