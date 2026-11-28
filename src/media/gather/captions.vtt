@@ -1,0 +1,31 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:02.964
+Thread one reads index eight from the
+
+00:00:02.964 --> 00:00:05.076
+index array, then fetches value one
+
+00:00:05.076 --> 00:00:06.836
+hundred eight from that position.
+
+00:00:11.336 --> 00:00:13.919
+The indices are eight elements apart. How
+
+00:00:13.919 --> 00:00:16.132
+many aligned thirty-two byte sectors do
+
+00:00:16.132 --> 00:00:17.608
+their value reads touch?
+
+00:00:26.108 --> 00:00:29.240
+Each value lies in a different sector. The
+
+00:00:29.240 --> 00:00:31.588
+eight consecutive index reads touch one
+
+00:00:31.588 --> 00:00:33.546
+sector, under the same alignment
+
+00:00:33.546 --> 00:00:33.937
+assumption.

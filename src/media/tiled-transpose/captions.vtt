@@ -1,0 +1,25 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:02.979
+Thread zero, two loads input row two,
+
+00:00:02.979 --> 00:00:05.458
+column zero into the shared tile. The
+
+00:00:05.458 --> 00:00:07.583
+block barrier makes that tile ready.
+
+00:00:12.083 --> 00:00:14.972
+Thread two, zero reads shared tile at two,
+
+00:00:14.972 --> 00:00:17.139
+zero. Which thread loaded that position?
+
+00:00:25.639 --> 00:00:28.301
+Thread zero, two loaded it. Thread two,
+
+00:00:28.301 --> 00:00:30.962
+zero writes that value into output row
+
+00:00:30.962 --> 00:00:32.103
+zero, column two.

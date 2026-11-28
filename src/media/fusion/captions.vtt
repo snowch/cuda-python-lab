@@ -1,0 +1,34 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.787
+Each thread reads one x and one y value
+
+00:00:03.787 --> 00:00:06.343
+from GPU memory and computes a local
+
+00:00:06.343 --> 00:00:06.708
+intermediate.
+
+00:00:11.208 --> 00:00:13.326
+The temporary path writes the intermediate
+
+00:00:13.326 --> 00:00:15.798
+and reads it back. How many temporary
+
+00:00:15.798 --> 00:00:17.916
+reads and writes disappear for eight
+
+00:00:17.916 --> 00:00:18.269
+threads?
+
+00:00:26.769 --> 00:00:29.379
+Keeping the value local removes eight
+
+00:00:29.379 --> 00:00:31.989
+temporary writes and eight temporary reads
+
+00:00:31.989 --> 00:00:34.599
+in this source-level count. Compiler and
+
+00:00:34.599 --> 00:00:36.774
+cache behavior affect measured traffic.

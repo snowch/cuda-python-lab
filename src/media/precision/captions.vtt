@@ -1,0 +1,31 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.182
+The thread adds one to sixteen million
+
+00:00:03.182 --> 00:00:05.098
+seven hundred seventy-seven thousand two
+
+00:00:05.098 --> 00:00:07.397
+hundred sixteen. Float thirty two rounds
+
+00:00:07.397 --> 00:00:10.079
+the sum back to the original value.
+
+00:00:14.579 --> 00:00:17.470
+The thread then adds the negative of the
+
+00:00:17.470 --> 00:00:20.000
+original value. What happens to the one?
+
+00:00:28.500 --> 00:00:30.981
+The starter grouping returns zero because
+
+00:00:30.981 --> 00:00:33.875
+the one was rounded away. Canceling the
+
+00:00:33.875 --> 00:00:36.356
+large positive and negative values first
+
+00:00:36.356 --> 00:00:37.183
+gives one.
