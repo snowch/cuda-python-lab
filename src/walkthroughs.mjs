@@ -78,6 +78,8 @@ export const walkthroughs = {
     stages: [
       {
         title: "Launch two blocks",
+        rows: [{"label": "Block 0", "cells": ["0", "1", "…", "31"]}, {"label": "Block 1", "cells": ["0", "1", "…", "31"], "mark": [0, 1]}, {"label": "Inputs", "cells": ["0", "1", "…", "32"], "mark": [3]}],
+        note: "Two blocks of 32 threads cover 33 elements.",
         highlight: "def kernel(a, b, out, n):",
         diagram: ["33 elements · n = 33", "kernel[2, 32](a, b, out, 33)", "2 blocks × 32 threads = 64 threads"],
         narration: "The host launches two blocks of thirty-two GPU threads. The arrays have thirty-three elements, so some threads have no element to write.",
@@ -85,6 +87,8 @@ export const walkthroughs = {
       },
       {
         title: "Find each thread’s index",
+        rows: [{"label": "Block 1", "cells": ["thread 0", "thread 1"]}, {"label": "Index i", "cells": ["32", "33"], "mark": [0, 1]}],
+        note: "i = block × 32 + thread.",
         highlight: "i = cuda.grid(1)",
         diagram: ["i = block × 32 + thread", "Block 1, thread 0 → i = 32", "Block 1, thread 1 → i = 33"],
         narration: "Each thread calculates its global index. In block one, thread zero gets thirty-two. The next thread gets thirty-three.",
@@ -92,6 +96,8 @@ export const walkthroughs = {
       },
       {
         title: "Predict which thread writes",
+        rows: [{"label": "Thread", "cells": ["0", "1"]}, {"label": "Index i", "cells": ["32", "33"]}, {"label": "i < 33?", "cells": ["?", "?"], "mark": [0, 1]}],
+        note: "Which thread enters the if block?",
         highlight: "if i < n:",
         diagram: ["n = 33", "Thread 0 → 32 < 33 ?", "Thread 1 → 33 < 33 ?"],
         narration: "The bounds check compares each index with thirty-three. Which of these two threads enters the if block?",
@@ -99,6 +105,8 @@ export const walkthroughs = {
       },
       {
         title: "Only the valid index writes",
+        rows: [{"label": "Thread 0", "cells": ["i = 32", "33 + 66", "out[32] = 99"], "mark": [2]}, {"label": "Thread 1", "cells": ["i = 33", "skips"]}],
+        note: "The guard excludes the out-of-range thread.",
         highlight: "out[i] = a[i] + b[i]",
         diagram: ["Thread 0 → out[32] = 33 + 66 = 99", "Thread 1 → i = 33, so it skips", "The CPU copies the result back."],
         narration: "Thread zero writes ninety-nine at index thirty-two. Thread one skips the assignment because index thirty-three is outside the arrays.",
@@ -111,6 +119,8 @@ export const walkthroughs = {
     stages: [
       {
         title: "Start with a global index",
+        rows: [{"label": "Thread", "cells": ["Block 0", "thread 3"], "mark": [1]}, {"label": "First", "cells": ["3"], "mark": [0]}],
+        note: "Two blocks × eight threads = sixteen threads.",
         highlight: "first = cuda.grid(1)",
         diagram: ["35 elements · n = 35", "2 blocks × 8 threads = 16 threads", "Block 0, thread 3 → first = 3"],
         narration: "The host launches sixteen threads for thirty-five elements. Block zero, thread three starts at global index three.",
@@ -118,6 +128,8 @@ export const walkthroughs = {
       },
       {
         title: "Calculate the stride",
+        rows: [{"label": "Blocks", "cells": ["2"]}, {"label": "Threads", "cells": ["8 per block"]}, {"label": "Stride", "cells": ["2 × 8 = 16"], "mark": [0]}],
+        note: "The stride is the total number of threads.",
         highlight: "stride = cuda.gridDim.x * cuda.blockDim.x",
         diagram: ["2 blocks × 8 threads = 16", "stride = 16", "Next index = current index + 16"],
         narration: "The stride equals the total number of threads. Here, two blocks times eight threads gives a stride of sixteen.",
@@ -125,6 +137,8 @@ export const walkthroughs = {
       },
       {
         title: "Predict this thread’s indices",
+        rows: [{"label": "Thread 3", "cells": ["3", "19", "?"], "mark": [2]}, {"label": "Limit", "cells": ["n = 35"]}],
+        note: "Add 16 at each step; stop before 35.",
         highlight: "for i in range(first, n, stride):",
         diagram: ["first = 3 · n = 35 · stride = 16", "3 → 19 → ?", "The loop stops before 35."],
         narration: "Starting at three, add sixteen for each visit. Which indices will this thread process before it reaches thirty-five?",
@@ -132,6 +146,8 @@ export const walkthroughs = {
       },
       {
         title: "Visit two array elements",
+        rows: [{"label": "Thread 3", "cells": ["3", "19", "35"], "mark": [0, 1]}, {"label": "Action", "cells": ["write", "write", "stop"]}],
+        note: "The loop visits 3 and 19; 35 is outside the range.",
         highlight: "out[i] = values[i] * 2",
         diagram: ["3 → 19 → 35 stops", "Thread 3 writes out[3] and out[19]", "Each output is twice its input."],
         narration: "The thread visits indices three and nineteen. Thirty-five is outside the loop, so it stops. At each visit, the thread doubles the input into the output.",
