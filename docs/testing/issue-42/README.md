@@ -46,6 +46,8 @@ All 41 tests in the main suite passed. The separate runner suite also passed. Th
 | All 38 configured cases across 17 lessons, edited source, offline execution, Python error and cancellation | [Runner assertions](../../../tests/runner.test.mjs) · [Runner log](npm-test-runner.log) |
 | Keyboard focus order, case/lesson-specific recovery guidance, visible controls and page width | [Browser assertions](../../../tests/learner-work.test.mjs) · [Save-panel accessibility scans](handoff.log) · Screenshots below |
 
+The first PR CI run passed every persistence check and failed the pre-existing navigation column assertion on Chromium 159. At 390 px, I reproduced the timing window on Chromium 156. The disclosure was open, its detached panel was still hidden, and the computed grid value was `minmax(0px, 1fr)`. The test’s string split counted two tokens. The visible grid reported one 358 px column. The check now also requires a visible panel before applying the original 1/2/4 column assertions. [CI failure](https://github.com/snowch/cuda-python-lab/actions/runs/46132762667/job/140941352023) · [Navigation test](../../../tests/shared-style.test.mjs)
+
 ### Rendered workbench
 
 Each image is a Chromium viewport screenshot from a running lesson. The saved state adds a single line below the prediction. An error puts retry and export next to the answer. Opening recovery exposes the chosen version and a keyboard-selectable, read-only text area. On the phone viewport, the controls wrap within the prediction card below the sticky header. The border, text and actionable controls distinguish states in both themes.
