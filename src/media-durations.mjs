@@ -4,5 +4,5 @@ export const mediaDurations={
   "grid-stride": 51.973,
   "first-value": 79.366667,
   "reduction": 52.64644,
-  "coalescing": 50.48644
+  "coalescing": 61.4
 };
