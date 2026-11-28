@@ -509,7 +509,7 @@ test('guided preparation preserves dirty work across contention, storage denial,
   assert.equal(await source(a),original(0));
   const backup=JSON.parse(await download(a,a.locator('#export-work')));
   assert.match(await a.locator('#setup-feedback').innerText(),/Export learner work or retry/);
-  assert.equal(backup.tab.preparations['vector-add']['partial-32'],draft);
+  assert.equal(backup.tab.preparations['vector-add']['partial-32'].program,draft);
   assert.equal(backup.durable.programs['vector-add'][0],draft);
   assert.equal(backup.openLesson.program,original(0));
   await a.evaluate(()=>window.enableWrites());await a.locator('#retry-save').click();await saved(a);
@@ -529,7 +529,7 @@ test('guided preparation preserves dirty work across contention, storage denial,
   await replace(a,draft+'# typed while checking\n');
   await b.evaluate(()=>window.releaseSaveLock());await saved(a);
   assert.equal(await source(a),draft+'# typed while checking\n');
-  assert.equal((await durable(a)).preparations['vector-add']['partial-32'],original(0));
+  assert.equal((await durable(a)).preparations['vector-add']['partial-32'].program,original(0));
   await context.close();
 });
 
@@ -564,5 +564,90 @@ test('case answers remain separate and an ambiguous legacy answer stays availabl
   assert.equal(await answer(b).inputValue(),'Columns 0 and 2 tie');
   assert.equal((await durable(b)).predictions.softmax,'My original row question');
   assert.deepEqual((await durable(b)).recoveryCopies,[]);
+  await context.close();
+});
+
+test('undo restores the independent complete program and the displaced shared kernel as one transaction', async t => {
+  const url=await serveBuild(t),browser=await launchChromium(t),context=await browser.newContext();
+  const a=await open(context,url,'softmax'),other=await open(context,url,'softmax');
+  const softmaxKernel=await readFile(new URL('../src/kernels/softmax.py',import.meta.url),'utf8');
+  const [extreme,wide]=lessons.softmax.cases.map(f=>standaloneProgram(softmaxKernel,f));
+  const unstable=extreme.replaceAll(' - row_max)',' )');
+  const hiddenShared=unstable.split('\n# Host code\n')[0].trimEnd()+'\n';
+  const custom=wide.replace('# Host code','# Independent full program');
+  await replace(a,unstable);await saved(a);
+  await a.locator('#guided-task').selectOption('lane');await replace(a,custom);await saved(a);
+  const originalRecord=await durable(a);
+  assert.equal(originalRecord.drafts.softmax,hiddenShared);
+  assert.equal(originalRecord.programs.softmax[1],custom);
+  assert.match(await a.locator('#setup-status').innerText(),/shared kernel.*this case’s program/);
+  async function prepare(){
+    await a.locator('#prepare-task').click();await a.locator('#prepare-task').waitFor({state:'hidden'});await saved(a);
+    assert.equal(await source(a),wide);
+  }
+  async function twoExports(expectedCaseZero){
+    const fresh=await open(context,url,'softmax');
+    await fresh.locator('#case').selectOption('1');assert.equal(await source(fresh),custom);
+    await fresh.locator('#case').selectOption('0');assert.equal(await source(fresh),expectedCaseZero);
+    await fresh.close();
+  }
+  await prepare(); const prepared=await durable(a);
+  assert.equal(prepared.preparations.softmax['wide-37'].sharedKernel,hiddenShared);
+  assert.equal(prepared.preparations.softmax['wide-37'].caseProgram,custom);
+  await a.reload();await editor(a).waitFor();
+  assert.match(await a.locator('#setup-status').innerText(),/Undo restores the shared kernel.*case’s program/);
+  await failWrites(a,'QuotaExceededError');
+  await a.locator('#undo-prepare').click();await status(a).filter({hasText:'could not be saved'}).waitFor();
+  assert.equal(await source(a),custom);
+  const backup=JSON.parse(await download(a,a.locator('#export-work')));
+  assert.equal(backup.tab.drafts.softmax,hiddenShared);
+  assert.equal(backup.tab.programs.softmax[1],custom);
+  assert.deepEqual(backup.durable.drafts,prepared.drafts);
+  assert.deepEqual(backup.durable.programs,prepared.programs);
+  await a.evaluate(()=>window.enableWrites());await a.locator('#retry-save').click();await saved(a);
+  await twoExports(unstable);
+  const restored=await durable(a);
+  assert.deepEqual(restored.drafts,originalRecord.drafts);
+  assert.deepEqual(restored.programs,originalRecord.programs);
+  t.diagnostic('After failed undo the checkpoint retained both prepared fields. Retry restored the original shared draft and both serialized complete programs byte for byte; both fresh case exports matched.');
+
+  // An intervening editor has a newer shared kernel. Review it in this tab first.
+  await prepare();
+  const changed='# A later kernel from another tab\n'+extreme;
+  await replace(other,changed);await saved(other);
+  await status(a).filter({hasText:'open program differs'}).waitFor();
+  assert.ok(await a.locator('#undo-prepare').isDisabled());
+  await a.locator('#latest-version summary').click();await a.locator('[data-load]').click();
+  await a.locator('#setup-status').filter({hasText:'shared kernel changed since preparation'}).waitFor();
+  await a.locator('#undo-prepare').click();
+  await a.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
+  await twoExports(unstable);
+  const after=await durable(a);
+  const laterKernel=changed.split('\n# Host code\n')[0].trimEnd()+'\n';
+  assert.ok(after.recoveryCopies.some(copy=>JSON.stringify(copy.path)==='["drafts","softmax"]' && copy.value===laterKernel));
+  assert.equal(after.preparations.softmax['wide-37'].sharedKernel,laterKernel);
+  t.diagnostic('A stale Undo was blocked. After explicit review/load, Undo disclosed its cross-case scope, restored both original effective sources and retained the exact newer kernel in the recovery archive and swap slot.');
+  await context.close();
+});
+
+test('an earlier text-only preparation slot reopens a markerless file without guessing a shared kernel', async t=>{
+  const url=await serveBuild(t),browser=await launchChromium(t),context=await browser.newContext();
+  const custom=original(1).replace('# Host code','# my independent launch');
+  const shared='# keep the present shared kernel\n'+kernel;
+  await context.addInitScript(({key,custom,shared})=>{
+    if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify({drafts:{'vector-add':shared},
+      cases:{'vector-add':1},preparations:{'vector-add':{'partial-16':custom}}}));
+  },{key:workKey,custom,shared});
+  const p=await open(context,url);
+  await p.locator('#undo-prepare').click();
+  await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
+  assert.equal(await source(p),custom);
+  assert.equal((await durable(p)).drafts['vector-add'],shared);
+  const record=await durable(p);
+  assert.equal(record.preparations['vector-add']['partial-16'].caseProgram,null);
+  await p.locator('#undo-prepare').click();
+  await p.waitForFunction(key=>!Object.hasOwn(JSON.parse(localStorage.getItem(key)).programs['vector-add'],'1'),workKey);
+  assert.equal(await source(p),'# keep the present shared kernel\n'+original(1));
+  t.diagnostic('The legacy text slot restored its independent file and preserved the current shared kernel. Swapping back removed the synthetic case draft and reopened the inherited program.');
   await context.close();
 });

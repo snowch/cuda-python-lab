@@ -82,7 +82,7 @@ function displayCopy() {
   const actions = {
     predictions:'This answer came from an earlier lesson-wide question.',
     caseAnswers:'Paste this answer into the prediction box for this case.',
-    preparations:'Paste this complete program into the editor to recover it.',
+    preparations:'The copy contains a case program and its shared-kernel state. Export learner work to keep both.',
     drafts:'Replace the kernel above “# Host code” in the editor.',
     restoredDrafts:'Replace the kernel above “# Host code” in the editor.',
     legacy:'Choose Export learner work to keep the complete earlier collection as JSON.',
@@ -91,7 +91,8 @@ function displayCopy() {
     restoredPrograms:'Paste this complete program into the editor.',
   };
   control('work-copy-help').textContent = where + '. ' + (actions[field] ?? 'Export learner work to keep this copy.');
-  control('work-copy-text').value = typeof copy.value === 'string' ? copy.value : JSON.stringify(copy.value,null,2);
+  control('work-copy-text').value = field === 'preparations' && typeof copy.value === 'object'
+    ? copy.value.program : typeof copy.value === 'string' ? copy.value : JSON.stringify(copy.value,null,2);
 }
 function warnUnload(event) { event.preventDefault(); event.returnValue = ''; }
 function updateSaveStatus() {
@@ -369,7 +370,7 @@ function showLesson(slug) {
     <section class="reading experiment guided" aria-labelledby="guided-title">
       <h2 id="guided-title">Run the experiment</h2>
       <p>Choose a task to open its case and saved code. Use <strong>Run</strong> in the editor to execute the program in this browser.</p>
-      <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
+      <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Starter case
             <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
           </label>
       ${guidedMarkup}
@@ -425,7 +426,7 @@ function showLesson(slug) {
     </section>
 
     <section class="reading lesson-explanation">
-      <h2>Explain the result</h2>
+      <h2>Explain the authored examples</h2>
       <p>${escape(lesson.explain)}</p>
       ${diagrams[slug] ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
       ${hardwareLocation(slug)}
@@ -526,7 +527,7 @@ function showLesson(slug) {
   }
   function openPrediction() {
     prediction.value = caseAnswer(state);
-    find('prediction-label').textContent = 'Predict before you run · ' + fixture.label;
+    find('prediction-label').textContent = 'Predict before you run · Starter case: ' + fixture.label;
     find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
     const earlier = state.predictions[slug];
     find('earlier-prediction').hidden = !earlier || (lesson.cases.length === 1 && !Object.hasOwn(state.caseAnswers?.[slug] ?? {},fixture.id));
@@ -609,9 +610,18 @@ function showLesson(slug) {
   input.onchange = () => selectCase(Number(input.value),find('guided-task').value === 'explore' ? 'explore' : undefined);
   const view = lessonView;
   lessonView.guide = mountGuide({slug,lesson,work,find,selectCase,
-    snapshot:()=>({fixture,starter,source:editor.source,saved:caseSource(work.confirmed)}),
+    snapshot:()=>({fixture,starter,source:editor.source,saved:caseSource(work.confirmed),
+      caseProgram:work.confirmed.programs[slug]?.[caseIndex] ?? null,
+      sharedKernel:work.confirmed.drafts[slug] ?? null}),
     active:()=>lessonView === view,
-    replace:source=>{editor.reset(source);saveEditor();},
+    replace:(target,retainKernel)=>{
+      work.change(['drafts',slug],target.sharedKernel ?? undefined,{retainPrevious:retainKernel});
+      work.change(['programs',slug,String(caseIndex)],target.caseProgram ?? undefined,{exactProgram:true,hostChanged:true});
+      shownSource = target.program;
+      editor.reset(shownSource);
+      updateRestore();
+      runner.reset();
+    },
     reveal:line=>{if(!editor.reveal(line)) {find('editor-tools').open=true;showLine(line);}},
     readingTask:savedReadingState()?.controls.find(([id])=>id==='guided-task')?.[1],
   });

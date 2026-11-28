@@ -12,13 +12,27 @@ export const guidedMarkup = `
     <a href="#console-title" id="task-console">Go to Console</a>
   </div><p id="setup-feedback" role="status" hidden></p>`;
 
-function changeSummary(current, target) {
-  const a = splitProgram(current), b = splitProgram(target);
-  if (!a || !b) return 'the complete program, including its kernel and host code';
-  const parts = [];
-  if (a.kernel !== b.kernel) parts.push('the shared kernel used across this lesson’s cases');
-  if (a.host !== b.host) parts.push('the host code for this case');
-  return parts.join(' and ') || 'the spacing between kernel and host code';
+// Older undo slots contained only the visible text. A markerless legacy slot
+// has no historical shared kernel, so reopening it leaves today's kernel alone.
+function replacement(view, program, slot) {
+  if (slot && typeof slot === 'object') return slot;
+  const parts = splitProgram(program);
+  return {program, caseProgram:program, sharedKernel:parts?.kernel ?? view.sharedKernel};
+}
+
+function affected(view, target) {
+  const units = [];
+  if (target.sharedKernel !== view.sharedKernel) units.push('the shared kernel used across this lesson’s cases');
+  if (target.caseProgram !== view.caseProgram) units.push('this case’s program, including its host code');
+  return units.join(' and ');
+}
+
+function sameOwnership(a, b) {
+  return a.caseProgram === b.caseProgram && a.sharedKernel === b.sharedKernel;
+}
+
+function matches(view, target) {
+  return view.source === target.program && sameOwnership(view,target);
 }
 
 export function mountGuide({slug, lesson, work, find, snapshot, selectCase, replace, reveal, active, readingTask}) {
@@ -61,12 +75,13 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     } else if (awaitingSave && work.error) {
       feedback('The open program is in this tab. Export learner work or retry the save before leaving.');
     }
-    const savedUndo = work.confirmed.preparations?.[slug]?.[v.fixture.id];
+    const slot = work.confirmed.preparations?.[slug]?.[v.fixture.id];
+    const savedUndo = slot && replacement(v,slot.program ?? slot,slot);
     const blocked = Boolean(work.error || work.dirty || work.saving || checking || v.source !== v.saved);
     const prepare = find('prepare-task'), undo = find('undo-prepare');
     prepare.hidden = !task || v.source === start;
     prepare.disabled = blocked;
-    undo.hidden = typeof savedUndo !== 'string' || savedUndo === v.source;
+    undo.hidden = !savedUndo || matches(v,savedUndo);
     undo.disabled = blocked;
     find('setup-status').hidden = !task && undo.hidden;
     const previousTask = task?.before.length && tasks.find(t => t.fixture === task.fixture && t.after.length &&
@@ -75,8 +90,12 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     let note = !task ? '' : v.source === start ? 'The editor matches ' + where + '.'
       : v.source === end ? 'The editor contains the edit for this task.'
       : 'The open program differs from ' + where + '.';
-    if (!prepare.hidden) note += ' Prepare replaces ' + changeSummary(v.source,start) + ' and keeps the open program for Undo.';
-    if (!undo.hidden) note += ' Undo swaps the open program with the version kept before preparation.';
+    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + ' and keeps the open program for Undo.';
+    if (!undo.hidden) {
+      note += ' Undo restores ' + (affected(v,savedUndo) || 'the earlier program') + '.';
+      if (slot.installedKernel !== undefined && v.sharedKernel !== slot.installedKernel && v.sharedKernel !== savedUndo.sharedKernel)
+        note += ' The shared kernel changed since preparation. Undo keeps its current version in recovery copies.';
+    }
     if ((!prepare.hidden || !undo.hidden) && blocked) note += v.source !== v.saved && !work.dirty && !work.saving && !work.error
       ? ' Review the saved program before preparing or undoing.' : ' Wait for a confirmed save before replacing code.';
     find('setup-status').textContent = note.trim();
@@ -85,23 +104,29 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     const before = snapshot(), selected = select.value;
     const path = ['preparations',slug,before.fixture.id];
     const previous = work.confirmed.preparations?.[slug]?.[before.fixture.id];
-    const target = undo ? previous : start;
-    if (checking || work.dirty || work.saving || work.error || typeof target !== 'string' || target === before.source) return;
+    if (checking || work.dirty || work.saving || work.error || (undo ? !previous : !task)) return;
+    const target = undo ? replacement(before,previous.program ?? previous,previous) : replacement(before,start);
+    if (matches(before,target)) return;
     checking = true; update();
     try {
       await work.observe();
       if (!active()) return;
       const now = snapshot();
       if (work.dirty || work.saving || work.error || selected !== select.value || now.fixture !== before.fixture ||
-          before.source !== now.source || now.source !== now.saved || previous !== work.confirmed.preparations?.[slug]?.[now.fixture.id]) {
+          now.source !== before.source || !sameOwnership(now,before) || now.source !== now.saved ||
+          JSON.stringify(previous) !== JSON.stringify(work.confirmed.preparations?.[slug]?.[now.fixture.id])) {
         feedback('The open or saved work changed. Review it before trying again.');
         return;
       }
       // The synchronous pair joins the same transactional batch. On a conflict or storage
       // failure the displaced source remains in the checkpoint, recovery archive or pending export.
-      work.refresh(['preparations']);
-      work.change(path,before.source,{retainPrevious:!undo});
-      replace(target);
+      work.refresh(['preparations','drafts','programs']);
+      work.change(path,{
+        program:before.source, caseProgram:before.caseProgram, sharedKernel:before.sharedKernel,
+        installedKernel:target.sharedKernel,
+      },{retainPrevious:!undo});
+      const intervening = undo && previous.installedKernel !== undefined && before.sharedKernel !== previous.installedKernel;
+      replace(target,intervening);
       awaitingSave = undo ? 'Previous program reopened. Undo again to return to the program you just left.'
         : 'Starting program prepared. Your previous program is available in Undo preparation.';
       feedback('Saving the open program and its undo copy…');

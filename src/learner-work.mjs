@@ -30,7 +30,7 @@ function hostPart(program) {
   return typeof program === 'string' ? splitProgram(program)?.host ?? program : program;
 }
 
-function mergeEdit(record, {path, base, value, hostChanged, retainPrevious}) {
+function mergeEdit(record, {path, base, value, hostChanged, retainPrevious, exactProgram}) {
   const current = get(record, path);
   // A new preparation may displace an older undo slot. Undo itself swaps the two programs.
   if (retainPrevious && !equal(current,value)) remember(record.recoveryCopies,path,current);
@@ -42,7 +42,7 @@ function mergeEdit(record, {path, base, value, hostChanged, retainPrevious}) {
       remember(record.recoveryCopies, path, current);
     }
   }
-  if (program && typeof value === 'string') {
+  if (program && !exactProgram && typeof value === 'string') {
     const parts = keepHost || splitProgram(value);
     if (parts) {
       const kernel = record.drafts[path[1]] ?? parts.kernel;
@@ -229,7 +229,7 @@ export function openLearnerWork(onChange) {
     const before = get(state, path);
     if (equal(before, value)) return;
     pending.set(key, {path, value, base:previous ? previous.base : before ?? options.displayed,
-      retainPrevious:previous?.retainPrevious || options.retainPrevious, hostChanged:previous?.hostChanged || options.hostChanged});
+      exactProgram:options.exactProgram, retainPrevious:previous?.retainPrevious || options.retainPrevious, hostChanged:previous?.hostChanged || options.hostChanged});
     put(state, path, value);
     if (saving) onChange();
     else flush();

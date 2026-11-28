@@ -1,0 +1,2 @@
+Browser: 156.0.8078.79
+Old implementation: undo restored the exact independent 37-column file. The other case exported the starter kernel, losing its prior shared maximum-shift edit.

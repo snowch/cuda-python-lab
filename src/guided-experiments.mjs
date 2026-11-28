@@ -49,11 +49,11 @@ export const guides = {
   'vector-add': [
     phase(1,'launch','partial-32','Count the launched threads','Read the last output and multiply the two launch dimensions.'),
     phase(2,'owner','partial-32','Locate index 32','Use quotient and remainder with a block width of 32.',read),
-    phase(3,'narrow','partial-32','Change the launch width','Compare the last output and the owner of index 32.',{after:['launch16'],anchor:'kernel[2, 32]'}),
+    phase(3,'narrow','partial-32','Change the launch width','The starter uses 2 blocks of 32. Your edited launch uses 3 blocks of 16. Compare the last output and the owner of index 32.',{after:['launch16'],anchor:'kernel[2, 32]'}),
   ],
   'grid-stride': [
     phase(1,'visits','stride-16','Trace the sixteen-thread launch','Compare the listed indices with the printed array.'),
-    phase(2,'eight','stride-16','Halve the block width','Compare the full array and the spacing between visits.',{after:['launch8'],anchor:'kernel[2, 8]'}),
+    phase(2,'eight','stride-16','Halve the block width','The starter launches 16 threads in total. Your edit launches 8. Compare the full array and the spacing between visits.',{after:['launch8'],anchor:'kernel[2, 8]'}),
     phase(3,'overlap','stride-16','Reason about an incorrect stride','On paper, list the visits of global threads 3 and 7 using a stride of four.',{...read,before:['launch8'],instruction:'Keep the eight-thread launch. For Thread 3 in each block, list the indices below 35 it would visit if the stride were four. What is their first shared index?'}),
   ],
   transfers: [
