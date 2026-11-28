@@ -6,8 +6,8 @@
 > cuda-python-lab@0.1.0 build
 > node scripts/build.mjs
 
-Built 17 lessons in /tmp/45/test-final/dist/
-✔ Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim (64508.410099ms)
+Built 17 lessons in /tmp/45/gate-tests/dist/
+✔ Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim (64983.76412ms)
 ℹ Browser: 156.0.8078.79
 ℹ tests 1
 ℹ suites 0
@@ -16,4 +16,4 @@ Built 17 lessons in /tmp/45/test-final/dist/
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 64850.201458
+ℹ duration_ms 65310.131424
