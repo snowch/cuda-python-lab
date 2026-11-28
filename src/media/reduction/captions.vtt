@@ -1,58 +1,40 @@
 WEBVTT
 
-00:00:00.500 --> 00:00:02.928
-For sixteen values and eight threads per
+00:00:00.500 --> 00:00:02.933
+In block zero, eight threads copy the
 
-00:00:02.928 --> 00:00:05.356
-block, each thread in block zero copies
+00:00:02.933 --> 00:00:05.018
+values one through eight into shared
 
-00:00:05.356 --> 00:00:07.784
-one value into scratch. Scratch is shared
+00:00:05.018 --> 00:00:07.451
+memory. Each slot belongs to one thread
 
-00:00:07.784 --> 00:00:10.558
-memory that the threads in the same block
+00:00:07.451 --> 00:00:08.841
+during this first load.
 
-00:00:10.558 --> 00:00:11.252
-can access.
+00:00:13.341 --> 00:00:15.630
+All threads reach the barrier. Thread one
 
-00:00:12.752 --> 00:00:15.286
-Thread one stores two, while thread five
+00:00:15.630 --> 00:00:18.247
+then reads the six stored by thread five.
 
-00:00:15.286 --> 00:00:17.820
-stores six. Each must reach the block
+00:00:22.747 --> 00:00:24.994
+At distance four, thread one adds the
 
-00:00:17.820 --> 00:00:19.991
-barrier before any thread continues. The
+00:00:24.994 --> 00:00:27.884
+value in slot five to its own slot. What
 
-00:00:19.991 --> 00:00:22.525
-barrier lets thread one read the value
+00:00:27.884 --> 00:00:29.168
+will slot one contain?
 
-00:00:22.525 --> 00:00:23.973
-written by thread five.
+00:00:37.669 --> 00:00:40.531
+Thread one adds two and six and stores
 
-00:00:25.473 --> 00:00:28.121
-At a distance of four, thread one reads
+00:00:40.531 --> 00:00:42.677
+eight. The other active threads update
 
-00:00:28.121 --> 00:00:31.101
-scratch at index five and adds six to its
+00:00:42.677 --> 00:00:45.181
+their slots too. A barrier completes the
 
-00:00:31.101 --> 00:00:33.087
-two. The notebook experiment prints those
-
-00:00:33.087 --> 00:00:35.073
-two inputs from inside the kernel.
-
-00:00:36.573 --> 00:00:39.318
-In the nineteen value case, the last block
-
-00:00:39.318 --> 00:00:41.721
-starts with three inputs and five zeros.
-
-00:00:41.721 --> 00:00:43.780
-All eight threads reach the barrier.
-
-00:00:43.780 --> 00:00:46.525
-Compare the sum of those three inputs with
-
-00:00:46.525 --> 00:00:48.584
-the last output printed by main.
+00:00:45.181 --> 00:00:46.970
+stage before the next distance.
