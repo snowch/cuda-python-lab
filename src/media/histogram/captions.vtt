@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.375
+Each thread reads a token and atomically
+
+00:00:03.375 --> 00:00:05.838
+increments its selected counter. In this
+
+00:00:05.838 --> 00:00:08.302
+case all thirty-two tokens select counter
+
+00:00:08.302 --> 00:00:08.713
+two.
+
+00:00:13.213 --> 00:00:15.912
+All counters start at zero. What will
+
+00:00:15.912 --> 00:00:18.225
+counter two contain after all thirty-two
+
+00:00:18.225 --> 00:00:18.610
+updates?
+
+00:00:27.110 --> 00:00:29.386
+Counter two contains thirty-two. Every
+
+00:00:29.386 --> 00:00:31.206
+atomic update is counted.
+
+00:00:35.706 --> 00:00:37.696
+With an ordinary increment, two threads
+
+00:00:37.696 --> 00:00:40.349
+could both read zero and both write one.
+
+00:00:40.349 --> 00:00:43.002
+Two increments would leave a count of one.

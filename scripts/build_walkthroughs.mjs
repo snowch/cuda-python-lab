@@ -168,6 +168,52 @@ function reductionSlide(stage, kernel) {
   </div></div></main></html>`;
 }
 
+function patternSlide(stage, kernel) {
+  const lines = kernel.split("\n");
+  const position = lines.findIndex(line => line.trim() === stage.highlight);
+  if (position < 0) throw new Error(`Highlighted code not found: ${stage.highlight}`);
+  const code = lines.filter(line => line.trim()).map(line =>
+    `<code class="${line.trim() === stage.highlight ? "current" : ""}">${escape(stage.sceneKind === "race" && line.trim() === stage.highlight ? line.replace(stage.highlight, "counts[tokens[i]] += 1") : line)}</code>`
+  ).join("");
+  const laneRow = (grouped, block) => {
+    const lanes = Array.from({length:32}, (_,i) => grouped ? block === 0 : i % 2 === 0);
+    return `<div class="warp"><span>Block ${block}</span><div class="lanes">${lanes.map(negative =>
+      `<i class="${negative ? "negative" : "positive"}"></i>`).join("")}</div></div>`;
+  };
+  const visual = stage.sceneKind === "warp" ? `
+    <h2>${stage.grouped ? "Grouped signs" : "Alternating signs"}</h2>
+    ${laneRow(stage.grouped,0)}${laneRow(stage.grouped,1)}
+    <div class="legend"><span class="negative">Negative</span><span class="positive">Positive</span></div>
+    <p>${escape(stage.note)}</p>` : stage.sceneKind === "race" ? `
+    <h2>Plain increment · edited code</h2>
+    <div class="race"><div>Thread A <strong>read 0 → write 1</strong></div><div>Thread B <strong>read 0 → write 1</strong></div></div>
+    <p>${escape(stage.note)}</p>` : `
+    <h2>Four counters</h2>
+    <div class="counters">${[0,1,2,3].map((index) =>
+      `<div><span>${index}</span><strong class="${index === 2 ? "selected" : ""}">${index === 2 ? escape(stage.count) : "0"}</strong></div>`).join("")}</div>
+    <p>${escape(stage.note)}</p>`;
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
+    * { box-sizing:border-box; } body { margin:0; background:#142326; color:#effaf3; font:19px system-ui,sans-serif; }
+    main { padding:22px 36px; } h1 { margin:0 0 12px; font-size:29px; }
+    h2 { margin:0 0 12px; font-size:21px; }
+    .layout { display:grid; grid-template-columns:1fr 1.15fr; gap:20px; }
+    .code { background:#101e21; border-radius:7px; padding:12px 0; align-self:start; }
+    code { display:block; white-space:pre; font:16px/1.5 monospace; padding:0 9px; color:#b7d9ce; border-left:3px solid transparent; }
+    .current { background:#365340; border-color:#b5ed8d; color:#effaf3; }
+    .visual { background:#24393b; border-radius:7px; padding:14px 16px; }
+    .warp { display:grid; grid-template-columns:64px 1fr; gap:8px; align-items:center; margin-bottom:12px; font-size:15px; }
+    .lanes { display:grid; grid-template-columns:repeat(32,1fr); gap:2px; }
+    .lanes i { height:25px; border-radius:2px; } .negative { background:#97d8ba; color:#142326; } .positive { background:#778ea6; color:#101e21; }
+    .legend { display:flex; gap:8px; font-size:14px; } .legend span { padding:2px 7px; border-radius:3px; }
+    .race div { display:flex; justify-content:space-between; gap:12px; padding:8px; border-bottom:1px solid #527071; } .race strong { color:#b5ed8d; font-family:monospace; }
+    .counters { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; text-align:center; }
+    .counters span, .counters strong { display:block; } .counters span { font-size:14px; color:#b7d9ce; }
+    .counters strong { font:24px/1.8 monospace; background:#142326; border:1px solid #527071; border-radius:4px; }
+    .counters .selected { border-color:#b5ed8d; background:#365340; }
+    p { margin:12px 0 0; font-size:16px; line-height:1.35; color:#d4e7df; }
+  </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout"><div class="code">${code}</div><div class="visual">${visual}</div></div></div></main></html>`;
+}
+
 function vectorSlide(stage, kernel) {
   const highlighted = stage.highlight ?? "";
   const lines = kernel.split("\n");
@@ -199,6 +245,7 @@ function vectorSlide(stage, kernel) {
 
 function slide(walkthrough, stage, program) {
   if (stage.trace) return traceSlide(stage, program);
+  if (stage.sceneKind) return patternSlide(stage, program.kernel);
   if (stage.lines) return transferSlide(stage, program);
   if (stage.phase) return reductionSlide(stage, program.kernel);
   if (stage.mode) return coalescingSlide(stage, program.kernel);
