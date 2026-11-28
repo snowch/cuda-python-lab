@@ -123,5 +123,14 @@ test('portrait lessons present one task and prediction before the full-width edi
     await notes.fill('For the original inputs I expect the two largest probabilities to tie. After changing the exponentials I expect the finiteness check to fail. I will compare both rows and their sums.');
     assert.ok(await notes.evaluate(e=>e.scrollHeight<=e.clientHeight+1),'A short paragraph should remain readable in the answer field.');
     assert.equal(await page.locator('#program-options').evaluate(el=>el.open),false);
+    await page.setViewportSize({width:320,height:340});
+    await page.locator('#compare-prediction').press('Enter');
+    const visible=await page.evaluate(()=>{
+      const q=document.querySelector('#prediction-prompt').getBoundingClientRect();
+      const evidence=document.querySelector('#prediction-evidence')?.getBoundingClientRect() ?? q;
+      return q.top>=visualViewport.offsetTop && evidence.bottom<=visualViewport.offsetTop+visualViewport.height;
+    });
+    assert.ok(visible,'Returning from Console keeps the question and current evidence on screen.');
+    await page.setViewportSize({width:820,height:1180});
   }
 });

@@ -399,8 +399,9 @@ function showLesson(slug) {
     <section class="prediction">
       <label for="prediction" id="prediction-label">Predict before you run</label>
       <p id="prediction-prompt"></p>
-      ${modeled ? '<p id="prediction-evidence"></p><p id="notes-scope">Notes stay with this case and may include earlier runs.</p>' : ''}
+      ${modeled ? '<p id="prediction-evidence"></p>' : ''}
       <textarea id="prediction" rows="3" aria-describedby="prediction-prompt${modeled ? ' prediction-evidence notes-scope' : ''}"></textarea>
+      ${modeled ? '<p id="notes-scope">Notes stay with this case and may include earlier runs.</p>' : ''}
       <details id="earlier-prediction" hidden><summary>Earlier lesson prediction</summary>
         <p>This answer was saved for the whole lesson. Copy any part you want to use for this case.</p>
         <label>Earlier answer<textarea id="legacy-answer" readonly rows="2"></textarea></label>
@@ -669,7 +670,25 @@ function showLesson(slug) {
   });
 
   find('change-task').onclick=()=>find('guided-task').focus();
-  find('compare-prediction').onclick=()=>prediction.focus();
+  // Keep the question and its evidence in view if a soft keyboard shrinks the viewport.
+  function alignPrediction() {
+    if(document.activeElement!==prediction)return;
+    const viewport=window.visualViewport;
+    const labelTop=find('prediction-label').getBoundingClientRect().top;
+    const answerTop=prediction.getBoundingClientRect().top;
+    const room=viewport?.height ?? window.innerHeight;
+    const top=answerTop-labelTop+64<=room ? labelTop : find('prediction-prompt').getBoundingClientRect().top;
+    window.scrollBy(0,top-(viewport?.offsetTop ?? 0)-8);
+  }
+  function focusPrediction() {
+    prediction.focus({preventScroll:true});
+    alignPrediction();
+    window.visualViewport?.addEventListener('resize',alignPrediction);
+  }
+  const releasePrediction=()=>window.visualViewport?.removeEventListener('resize',alignPrediction);
+  prediction.addEventListener('blur',releasePrediction);
+  window.addEventListener('cuda-python-lab:lesson-changed',releasePrediction,{once:true});
+  find('compare-prediction').onclick=focusPrediction;
   find('work-recovery-link').onclick=()=>control('work-status').focus();
   if(modeled) {
     find('skip-to-task').onclick=()=>find('guided-task').focus();
@@ -682,7 +701,7 @@ function showLesson(slug) {
         find('prediction-prompt').textContent = question;
         find('prediction-evidence').textContent = evidence;
       },
-      reveal:line=>editor.reveal(line),predict:()=>prediction.focus(),consoleFocus:()=>find('console-title').focus()});
+      reveal:line=>editor.reveal(line),predict:focusPrediction,consoleFocus:()=>find('console-title').focus()});
     view.trace=viewTrace;
     find('brief-trace').onclick=()=>{find('trace-title').focus();find('trace-title').scrollIntoView({block:'start'});};
   }
