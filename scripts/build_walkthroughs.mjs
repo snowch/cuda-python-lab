@@ -144,7 +144,8 @@ function reductionSlide(stage, kernel) {
     .filter(line => line.trim()).map(line =>
       `<code class="${line.trim() === stage.highlight ? "current" : ""}">${escape(line)}</code>`
     ).join("");
-  const values = stage.phase === "after" ? [6,8,10,12,5,6,7,8] : [1,2,3,4,5,6,7,8];
+  const values = stage.slots ?? (stage.phase === "after" ? [6,8,10,12,5,6,7,8] : [1,2,3,4,5,6,7,8]);
+  const chosen = stage.slotHighlights ?? (stage.phase === "start" ? [] : [1,5]);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
     * { box-sizing:border-box; } body { margin:0; background:#142326; color:#effaf3; font:19px system-ui,sans-serif; }
     main { padding:22px 36px; } h1 { margin:0 0 12px; font-size:29px; }
@@ -162,8 +163,8 @@ function reductionSlide(stage, kernel) {
     .note { margin:10px 0 0; font-size:17px; color:#d4e7df; }
   </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout">
     <div class="code">${code}</div>
-    <div class="visual"><h2>Block 0 · shared scratch</h2><div class="slots">${values.map((value,index) =>
-      `<div class="slot ${stage.phase !== "start" && (index === 1 || index === 5) ? "chosen" : ""}"><span>${index}</span><strong>${value}</strong></div>`
+    <div class="visual"><h2>${escape(stage.memoryLabel ?? "Block 0 · shared scratch")}</h2><div class="slots" style="grid-template-columns:repeat(${values.length},1fr)">${values.map((value,index) =>
+      `<div class="slot ${chosen.includes(index) ? "chosen" : ""}"><span>${index}</span><strong>${value}</strong></div>`
     ).join("")}</div><p class="note">${escape(stage.note)}</p></div>
   </div></div></main></html>`;
 }

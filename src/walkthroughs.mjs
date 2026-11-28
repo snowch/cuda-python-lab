@@ -240,6 +240,73 @@ export const walkthroughs = {
       },
     ],
   },
+  scan: {
+    title: "Follow one lane through a shared scan",
+    stages: [
+      {
+        title: "Load the keep flags",
+        phase: "scan", highlight: "scratch[lane] = values[lane] if lane < n else 0",
+        slots: [1,0,1,1,0,0,1,0], slotHighlights: [6],
+        note: "Lane 6 begins with 1. Slot 7 is zero padding.",
+        narration: "The block loads the seven keep flags into shared memory. Lane six begins with one, and the extra slot contains zero.",
+        hold: 4,
+      },
+      {
+        title: "Predict the last running total",
+        phase: "scan", highlight: "previous = scratch[lane - distance] if lane >= distance else 0",
+        slots: [1,0,1,1,0,0,1,0], slotHighlights: [6],
+        note: "Lane 6 will read distances 1, 2, and 4. What total will it produce?",
+        narration: "Lane six reads from distances one, two, and four over successive stages. What running total will it produce?",
+        hold: 8,
+      },
+      {
+        title: "Wait between reads and writes",
+        phase: "scan", highlight: "cuda.syncthreads()",
+        slots: [1,0,1,1,0,0,1,0], slotHighlights: [6],
+        note: "One barrier finishes the reads; another finishes the writes.",
+        narration: "Each stage uses barriers to separate reads from writes, so every lane reads values from the previous stage.",
+        hold: 4,
+      },
+      {
+        title: "Find the kept item’s position",
+        phase: "scan", highlight: "out[lane] = scratch[lane]",
+        slots: [1,1,2,3,3,3,4,4], slotHighlights: [6],
+        note: "out[6] = 4 · destination = 4 − 1 = 3.",
+        narration: "The inclusive total at index six is four. Since destinations start at zero, the final kept item goes to position three.",
+        hold: 4,
+      },
+    ],
+  },
+  "sync-debug": {
+    title: "Follow the edge thread to the barrier",
+    stages: [
+      {
+        title: "Fill all four shared slots",
+        phase: "sync", highlight: "slot[lane] = i if i < n else -1",
+        memoryLabel: "Block 1 · shared slots", slots: [4,5,6,-1], slotHighlights: [3],
+        note: "Thread 3 has index 7, outside the seven-output case, and stores −1.",
+        narration: "Block one has four threads. Thread three is outside the seven-output array, so it stores minus one in its shared slot.",
+        hold: 4,
+      },
+      {
+        title: "Predict the boundary read",
+        phase: "sync", highlight: "out[i] = slot[(lane + 1) % 4]",
+        memoryLabel: "Block 1 · shared slots", slots: [4,5,6,-1], slotHighlights: [2,3],
+        note: "Thread 2 writes out[6] using the next slot. What value does it read?",
+        narration: "Thread two writes output six using the next slot. What value does it read?",
+        speech: "Thread two writes output six using the next slot. [pause 0.6] What value does it read?",
+        hold: 8,
+      },
+      {
+        title: "Keep the edge thread at the barrier",
+        phase: "sync", highlight: "cuda.syncthreads()",
+        memoryLabel: "Block 1 · shared slots", slots: [4,5,6,-1], slotHighlights: [3],
+        note: "Thread 2 reads slot[3] = −1. Thread 3 must reach the barrier.",
+        narration: "Thread two reads minus one from thread three. If thread three returned early, it would skip the shared write and the required block barrier.",
+        hold: 4,
+      },
+    ],
+  },
   coalescing: {
     title: "Follow a warp’s addresses into memory sectors",
     stages: [

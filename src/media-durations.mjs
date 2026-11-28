@@ -5,6 +5,8 @@ export const mediaDurations={
   "transfers": 54.3,
   "divergence": 50.3,
   "histogram": 47.0,
+  "scan": 51.0,
+  "sync-debug": 38.0,
   "first-value": 79.366667,
   "reduction": 51.0,
   "coalescing": 61.4

@@ -1,0 +1,28 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:02.918
+Block one has four threads. Thread three
+
+00:00:02.918 --> 00:00:05.335
+is outside the seven-output array, so it
+
+00:00:05.335 --> 00:00:07.753
+stores minus one in its shared slot.
+
+00:00:12.253 --> 00:00:14.719
+Thread two writes output six using the
+
+00:00:14.719 --> 00:00:17.184
+next slot. What value does it read?
+
+00:00:25.684 --> 00:00:28.111
+Thread two reads minus one from thread
+
+00:00:28.111 --> 00:00:30.537
+three. If thread three returned early, it
+
+00:00:30.537 --> 00:00:32.964
+would skip the shared write and the
+
+00:00:32.964 --> 00:00:34.004
+required block barrier.
