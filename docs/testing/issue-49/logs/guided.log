@@ -1,0 +1,60 @@
+Browser: 156.0.8078.79
+first-value 1 copy cuda.to_device(out_host) copies the CPU array; the GPU write changes the device allocation.
+first-value 2 run 1
+first-value 3 write 2
+first-value 3 host 3
+vector-add 1 launch 4
+vector-add 2 owner Index 32 is Block 1, Thread 0. The other 31 lanes in that block skip the write.
+vector-add 3 narrow 5
+grid-stride 1 visits 6
+grid-stride 2 eight 7
+grid-stride 3 overlap Thread 3 in Blocks 0 and 1 starts at 3 and 7. With stride 4 both visit 7, 11, …, 31.
+transfers 1 bytes 8,9
+transfers 2 traffic Two float32 reads and one write per active thread request 396 bytes for 33 threads. The three explicit copies also sum to 396 bytes.
+transfers 3 short 10,11
+coalescing 1 column 12,13
+coalescing 2 sectors Threads (0,0)/(7,0) read words 0/7 and write 0/56. Aligned sectors are 0/0 and 0/7.
+coalescing 3 edge 14
+divergence 1 negative 15
+divergence 2 count 16
+divergence 3 group 17,18
+reduction 1 partials 19
+reduction 2 pair In Block 0 lanes 1 and 5 load values 2 and 6. Lane 1 reads both after the load barrier.
+reduction 3 tail 20
+histogram 1 balanced 21
+histogram 1 hot 22
+histogram 2 race 23,24,25,26
+histogram 3 restore 27
+scan 1 destination 28
+scan 2 lane At distances 1, 2 and 4, lane 6 reads lanes 5, 4 and 2.
+scan 3 weights 29
+tiled-transpose 1 coordinate 30,31
+tiled-transpose 2 padding 32
+tiled-transpose 3 edges 34
+matmul 1 passes 35
+matmul 2 zero In the second pass inner indices 6 and 7 are out of range; tile_a[0,2] and [0,3] receive zero.
+matmul 3 reuse 36
+softmax 1 sums 37,38
+softmax 2 overflow 39
+softmax 3 lane 41
+gather 1 adjacent 42
+gather 1 spaced 43
+gather 2 adjacent-sectors Contiguous indices 0…7 all map to aligned sector 0.
+gather 2 spaced-sectors Indices 0,8,…,56 map to eight aligned sectors, 0…7.
+gather 3 direct 44
+stencil 1 reads 45
+stencil 1 compare 46
+stencil 2 loads Sixteen center values and two valid inter-block halos. Block 1 stages input[7] in its own tile[0].
+stencil 3 omit 47
+stencil 3 tail 49
+precision 1 round 50
+precision 2 regroup 51
+precision 3 small 53
+sync-debug 1 full 54
+sync-debug 1 partial 55
+sync-debug 2 sentinel 56
+sync-debug 3 barrier Block 1 lane 3 would skip the write of slot[3] and the barrier. Lane 2 consumes that slot. No invalid kernel was executed.
+fusion 1 store 57
+fusion 2 keep 58
+fusion 3 bypass 59,60
+All 38 pristine cases and 51 authored instructions verified.

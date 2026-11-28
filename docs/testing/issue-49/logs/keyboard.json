@@ -1,0 +1,262 @@
+[
+ {
+  "reach": "guided-task",
+  "steps": [
+   "Skip to main content",
+   "CUDA Python Lab Numba CUDA MLIR",
+   "code-runner-open",
+   "app-status-open",
+   "theme",
+   "course-nav",
+   "CUDA foundations",
+   "starter-notes",
+   "guided-task"
+  ],
+  "arrived": {
+   "id": "guided-task",
+   "scrollY": 463,
+   "y": 405,
+   "height": 44
+  }
+ },
+ {
+  "reach": "prepare-task",
+  "steps": [
+   "guided-task",
+   "prepare-task"
+  ],
+  "arrived": {
+   "id": "prepare-task",
+   "scrollY": 463,
+   "y": 756,
+   "height": 44
+  }
+ },
+ {
+  "reach": "run",
+  "steps": [
+   "run"
+  ],
+  "arrived": {
+   "id": "run",
+   "scrollY": 1844,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "focusAfterRun": {
+   "id": "stop",
+   "scrollY": 1844,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "reach": "stop",
+  "steps": [],
+  "arrived": {
+   "id": "stop",
+   "scrollY": 1844,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "focusAfterStop": {
+   "id": "run",
+   "scrollY": 1844,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "reach": "prediction",
+  "steps": [
+   "Python program source",
+   "editor-tools",
+   "prediction"
+  ],
+  "arrived": {
+   "id": "prediction",
+   "scrollY": 1379,
+   "y": 225,
+   "height": 44
+  }
+ },
+ {
+  "reach": "task-line",
+  "steps": [
+   "goto-trace",
+   "task-console",
+   "task-line"
+  ],
+  "arrived": {
+   "id": "task-line",
+   "scrollY": 834,
+   "y": 357,
+   "height": 44
+  }
+ },
+ {
+  "reach": "run",
+  "steps": [
+   "run"
+  ],
+  "arrived": {
+   "id": "run",
+   "scrollY": 1807,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "outputToEntireInstruction": {
+   "pageUps": 0,
+   "visible": true,
+   "origin": 1988,
+   "destination": 1988
+  }
+ },
+ {
+  "reach": "task-console",
+  "steps": [
+   "compare-prediction",
+   "change-task",
+   "brief-trace",
+   "task-brief",
+   "GPU setup instructions",
+   "download-notebook",
+   "run",
+   "Python program source",
+   "editor-tools",
+   "prediction",
+   "goto-trace",
+   "task-console"
+  ],
+  "arrived": {
+   "id": "task-console",
+   "scrollY": 1259,
+   "y": 12,
+   "height": 44
+  }
+ },
+ {
+  "reach": "undo-prepare",
+  "steps": [
+   "compare-prediction",
+   "change-task",
+   "brief-trace",
+   "task-brief",
+   "GPU setup instructions",
+   "download-notebook",
+   "run",
+   "Python program source",
+   "editor-tools",
+   "prediction",
+   "goto-trace",
+   "task-console",
+   "task-line",
+   "undo-prepare"
+  ],
+  "arrived": {
+   "id": "undo-prepare",
+   "scrollY": 810,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "reach": "brief-trace",
+  "steps": [
+   "run",
+   "download-notebook",
+   "GPU setup instructions",
+   "task-brief",
+   "brief-trace"
+  ],
+  "arrived": {
+   "id": "brief-trace",
+   "scrollY": 1928,
+   "y": 791,
+   "height": 44
+  }
+ },
+ {
+  "reach": "trace-step",
+  "steps": [
+   "trace-step"
+  ],
+  "arrived": {
+   "id": "trace-step",
+   "scrollY": 3098,
+   "y": 245,
+   "height": 44
+  }
+ },
+ {
+  "reach": "trace-line",
+  "steps": [
+   "trace-step",
+   "Original hostout_host[0]",
+   "Deviceout[42]",
+   "Copied hostresult[42]Returned",
+   "trace-line"
+  ],
+  "arrived": {
+   "id": "trace-line",
+   "scrollY": 3098,
+   "y": 649,
+   "height": 44
+  }
+ },
+ {
+  "reach": "prediction",
+  "steps": [
+   "Python program source",
+   "editor-tools",
+   "prediction"
+  ],
+  "arrived": {
+   "id": "prediction",
+   "scrollY": 1409,
+   "y": 279,
+   "height": 44
+  }
+ },
+ {
+  "reach": "work-recovery-link",
+  "steps": [
+   "retry-save",
+   "export-work",
+   "editor-tools",
+   "Python program source",
+   "run",
+   "download-notebook",
+   "GPU setup instructions",
+   "task-brief",
+   "brief-trace",
+   "change-task",
+   "compare-prediction",
+   "work-recovery-link"
+  ],
+  "arrived": {
+   "id": "work-recovery-link",
+   "scrollY": 2531,
+   "y": 409,
+   "height": 44
+  }
+ },
+ {
+  "reach": "retry-save",
+  "steps": [
+   "retry-save"
+  ],
+  "arrived": {
+   "id": "retry-save",
+   "scrollY": 1379,
+   "y": 472,
+   "height": 44
+  }
+ }
+]

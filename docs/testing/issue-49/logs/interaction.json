@@ -1,0 +1,25 @@
+[
+  {
+    "customSourceSha256": "98a0c8c33faaf863f5c46783198d6687bd0d0752d99f66ff0fd2b4adf1093cf9",
+    "stdout": "out = [91.0]",
+    "scope": "The Console shows the saved output for this custom program. Its intermediate values are outside the model."
+  },
+  {
+    "malformedStatus": "Execution stopped with an error.",
+    "diagnostic": "Traceback (most recent call last):\n  File \"<exec>\", line 117, in run_program\n  File \"/lib/python312.zip/ast.py\", line 52, in parse\n    return compile(source, filename, mode, flags,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"first-value.py\", line 6\n    out[0] =\n            ^\nSyntaxError: invalid syntax\n"
+  },
+  {
+    "offlineRecording": {
+      "duration": 79.366667,
+      "currentTime": 60.010679,
+      "readyState": 4,
+      "activeCaption": "The GPU thread writes 42 to the GPU array."
+    }
+  },
+  {
+    "offline": true,
+    "errors": [],
+    "fixture": "one",
+    "sourceAfterNavigation": "16f591794cdc9676d95aefea646745adcce2d8126ae8e47d7697bfea2a51784f"
+  }
+]

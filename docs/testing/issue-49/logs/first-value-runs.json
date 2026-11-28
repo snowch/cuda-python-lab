@@ -1,0 +1,152 @@
+[
+  {
+    "label": "unmodified one-element starter",
+    "fixture": "one",
+    "sourceSha256": "3e323f4c00e00ebc22fe8089b3602865416a4e0f9b55744ba1644d89f3b775ec",
+    "ptxSha256": "819039fbfae7582feb080fdefdd57a3a2644a9fde7c7e8fa0e4629e6550a62ba",
+    "host": 0,
+    "store": 42,
+    "printed": false,
+    "observedStdout": "out = [42.0]",
+    "modeledFinal": [
+      0,
+      42,
+      42
+    ]
+  },
+  {
+    "label": "supported edit printing the copied result",
+    "fixture": "one",
+    "sourceSha256": "1e25f33aa2835c583e1198c2145e823ad0c30896dad3b8b49f57f115199b0ae5",
+    "ptxSha256": "77852072a41a98d76fad578bf62cddd0527394f13b9079ac36f37d3a2327fdac",
+    "host": 0,
+    "store": 73,
+    "printed": false,
+    "observedStdout": "out = [73.0]",
+    "modeledFinal": [
+      0,
+      73,
+      73
+    ]
+  },
+  {
+    "label": "supported edit printing the copied result",
+    "fixture": "one",
+    "sourceSha256": "d95ad1ae1224b448a5fa8519733ec363e55439fcd536e9bd31886936c8585f88",
+    "ptxSha256": "bd78e877e967bbac6929f708981f54caaf6d718501f6fad63ed89afe65c27640",
+    "host": 5,
+    "store": 42,
+    "printed": false,
+    "observedStdout": "out = [42.0]",
+    "modeledFinal": [
+      5,
+      42,
+      42
+    ]
+  },
+  {
+    "label": "supported edit printing the copied result",
+    "fixture": "one",
+    "sourceSha256": "c3ed2be92f5dc19511dbc7ec0a3b5be2946c10dd9e53ba4eec26a439549a6f3f",
+    "ptxSha256": "e231b837ce00d03d6dbfea0ad606046f7aed8e5b9954599f72a924669ed315da",
+    "host": 5,
+    "store": 73,
+    "printed": false,
+    "observedStdout": "out = [73.0]",
+    "modeledFinal": [
+      5,
+      73,
+      73
+    ]
+  },
+  {
+    "label": "supported edit with original printed",
+    "fixture": "one",
+    "sourceSha256": "7819764eb83b1cc2a160e892e7b5fe7797fac5f2d350b28c9ec0b4ff1aa60788",
+    "ptxSha256": "2517b842f3455586612453617b28a38dd3d6a5e712f8339406dd0028ed216d02",
+    "host": 0,
+    "store": 42,
+    "printed": true,
+    "observedStdout": "out = [42.0]\n[0.0]",
+    "modeledFinal": [
+      0,
+      42,
+      42
+    ]
+  },
+  {
+    "label": "supported edit with original printed",
+    "fixture": "one",
+    "sourceSha256": "9ab4dfd21da8531fa62c2ec54596149471797984511a82756c126de5b82daa87",
+    "ptxSha256": "2e190b41b5b960fa5267e2ebdb28727ec78523055a967896dd452a57ff72b166",
+    "host": 0,
+    "store": 73,
+    "printed": true,
+    "observedStdout": "out = [73.0]\n[0.0]",
+    "modeledFinal": [
+      0,
+      73,
+      73
+    ]
+  },
+  {
+    "label": "supported edit with original printed",
+    "fixture": "one",
+    "sourceSha256": "16f591794cdc9676d95aefea646745adcce2d8126ae8e47d7697bfea2a51784f",
+    "ptxSha256": "112497dc5445405fd9d64fe967eec7ccc08321de11fd4fc97dfff06d343f2eed",
+    "host": 5,
+    "store": 42,
+    "printed": true,
+    "observedStdout": "out = [42.0]\n[5.0]",
+    "modeledFinal": [
+      5,
+      42,
+      42
+    ]
+  },
+  {
+    "label": "supported edit with original printed",
+    "fixture": "one",
+    "sourceSha256": "1588cf4961b8f157b40ab36b17c27e5db1f866e77f2d3758b7b4155692a88de7",
+    "ptxSha256": "0d097d9e7a365138ed4ca989f759738d00efc806cb12997602e2abb9a97815cc",
+    "host": 5,
+    "store": 73,
+    "printed": true,
+    "observedStdout": "out = [73.0]\n[5.0]",
+    "modeledFinal": [
+      5,
+      73,
+      73
+    ]
+  },
+  {
+    "label": "after actual compile error and source restoration",
+    "fixture": "one",
+    "sourceSha256": "1588cf4961b8f157b40ab36b17c27e5db1f866e77f2d3758b7b4155692a88de7",
+    "ptxSha256": "77852072a41a98d76fad578bf62cddd0527394f13b9079ac36f37d3a2327fdac",
+    "host": 5,
+    "store": 73,
+    "printed": true,
+    "observedStdout": "out = [73.0]\n[5.0]",
+    "modeledFinal": [
+      5,
+      73,
+      73
+    ]
+  },
+  {
+    "label": "offline reload and new kernel execution",
+    "fixture": "one",
+    "sourceSha256": "16f591794cdc9676d95aefea646745adcce2d8126ae8e47d7697bfea2a51784f",
+    "ptxSha256": "819039fbfae7582feb080fdefdd57a3a2644a9fde7c7e8fa0e4629e6550a62ba",
+    "host": 5,
+    "store": 42,
+    "printed": true,
+    "observedStdout": "out = [42.0]\n[5.0]",
+    "modeledFinal": [
+      5,
+      42,
+      42
+    ]
+  }
+]

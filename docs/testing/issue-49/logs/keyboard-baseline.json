@@ -1,0 +1,163 @@
+[
+ {
+  "reach": "guided-task",
+  "steps": [
+   "Skip to main content",
+   "CUDA Python Lab course outline",
+   "code-runner-open",
+   "app-status-open",
+   "theme",
+   "course-nav",
+   "CUDA foundations",
+   "from numba_cuda_mlir import cuda",
+   "@cuda.jit\ndef kernel(out):\n    out[0] = 42",
+   "kernel[1, 1](out)\nresult = out.copy_to_host()",
+   "guided-task"
+  ],
+  "arrived": {
+   "id": "guided-task",
+   "scrollY": 1133,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "reach": "prepare-task",
+  "steps": [
+   "guided-task",
+   "prepare-task"
+  ],
+  "arrived": {
+   "id": "prepare-task",
+   "scrollY": 1512,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "reach": "run",
+  "steps": [
+   "run"
+  ],
+  "arrived": {
+   "id": "run",
+   "scrollY": 2475,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "focusAfterRun": {
+   "id": "Skip to main content\n  \n    \n      \n      CUD",
+   "scrollY": 2475,
+   "y": -2475,
+   "height": 4832
+  }
+ },
+ {
+  "reach": "stop",
+  "steps": [
+   "stop"
+  ],
+  "arrived": {
+   "id": "stop",
+   "scrollY": 2475,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "focusAfterStop": {
+   "id": "Skip to main content\n  \n    \n      \n      CUD",
+   "scrollY": 2475,
+   "y": -2475,
+   "height": 4832
+  }
+ },
+ {
+  "reach": "prediction",
+  "steps": [
+   "run",
+   "Python program source",
+   "editor-tools",
+   "prediction"
+  ],
+  "arrived": {
+   "id": "prediction",
+   "scrollY": 2010,
+   "y": 313,
+   "height": 44
+  }
+ },
+ {
+  "reach": "task-line",
+  "steps": [
+   "task-console",
+   "task-line"
+  ],
+  "arrived": {
+   "id": "task-line",
+   "scrollY": 1536,
+   "y": 423,
+   "height": 44
+  }
+ },
+ {
+  "reach": "run",
+  "steps": [
+   "run"
+  ],
+  "arrived": {
+   "id": "run",
+   "scrollY": 2475,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "outputToEntireInstruction": {
+   "pageUps": 2,
+   "visible": true,
+   "origin": 2359,
+   "destination": 1221
+  }
+ },
+ {
+  "reach": "task-console",
+  "steps": [
+   "GPU setup instructions",
+   "download-notebook",
+   "run",
+   "Python program source",
+   "editor-tools",
+   "prediction",
+   "task-console"
+  ],
+  "arrived": {
+   "id": "task-console",
+   "scrollY": 1564,
+   "y": 503,
+   "height": 44
+  }
+ },
+ {
+  "reach": "undo-prepare",
+  "steps": [
+   "GPU setup instructions",
+   "download-notebook",
+   "run",
+   "Python program source",
+   "editor-tools",
+   "prediction",
+   "task-console",
+   "task-line",
+   "undo-prepare"
+  ],
+  "arrived": {
+   "id": "undo-prepare",
+   "scrollY": 1564,
+   "y": 451,
+   "height": 44
+  }
+ }
+]

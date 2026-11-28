@@ -1,0 +1,59 @@
+- region "Follow the value":
+  - paragraph: One element · source-level model
+  - heading "Follow the value" [level=2]
+  - paragraph: Step through the open program, then compare the three arrays with what your code prints in GPGPU-Sim.
+  - paragraph: Open code · One element · host 0 · store 42
+  - text: Program step
+  - combobox "Program step":
+    - option "1 / 8 · Predict the values"
+    - option "2 / 8 · Create the host array"
+    - option "3 / 8 · Copy to the device"
+    - option "4 / 8 · Compile the kernel"
+    - option "5 / 8 · Launch one thread"
+    - option "6 / 8 · Store on the device" [selected]
+    - option "7 / 8 · Copy back"
+    - option "8 / 8 · Return the result"
+  - paragraph: Select an array to inspect element 0.
+  - group "Select an array to inspect element 0.":
+    - button "Original host out_host [0]":
+      - text: Original host
+      - code: out_host
+      - strong: "[0]"
+    - button "Device out [42] Written" [pressed]:
+      - text: Device
+      - code: out
+      - strong: "[42]"
+      - text: Written
+    - button "Copied host result Not created":
+      - text: Copied host
+      - code: result
+      - strong: Not created
+  - paragraph: out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 42.
+  - text: Device · kernel · The device thread writes 42 into element 0 of out. It has no argument pointing to the original host array.
+  - button "Show line 6 · out[0] = 42"
+  - button "Previous step"
+  - button "Next step"
+  - button "Restart steps"
+  - button "Write a prediction"
+  - group:
+    - text: Change the program inputs Original host value
+    - combobox "Original host value":
+      - option "0" [selected]
+      - option "5"
+    - text: Device store
+    - combobox "Device store":
+      - option "42" [selected]
+      - option "73"
+    - text: Host output
+    - combobox "Host output":
+      - option "Copied result" [selected]
+      - option "Result and original"
+    - paragraph: The controls match the open program.
+    - button "Apply edits to Python" [disabled]
+    - paragraph: Applying changes the open program and saves its previous version in Undo preparation.
+  - group:
+    - text: Where can these arrays live?
+    - paragraph: In a discrete GPU system, host RAM and GPU memory are physically separate. An integrated GPU such as Jetson can share physical DRAM with the CPU. In both systems this code creates distinct logical arrays. Copy time requires a hardware measurement.
+  - strong: Execution evidence
+  - paragraph: Run the open program to collect its printed output.
+  - button "Inspect Console"

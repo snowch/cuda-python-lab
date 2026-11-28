@@ -1,0 +1,26 @@
+# Instruction and interaction review
+
+The task has four observable parts. Locate a named expression, predict the effect of changing it, run the edited program, and explain the returned evidence. The workbench keeps the exact edit and evidence cue between Run and Console. The action also stays where the learner chooses a task. Both views read the same selected task. There is one editable source and one prediction field.
+
+| Learner-facing surface | Copy and interaction decision |
+| --- | --- |
+| Lesson opening | Keep the learning goal and first conceptual paragraph visible. **Read the starter program** discloses the authored examples. The displayed examples describe the shipped starter. The editor contains the learner's open code. |
+| Selecting a task | “Choose a task to open its case and your saved code” describes the automatic action. “Use Prepare starting program when you want the supplied starting point” makes replacement explicit. Free exploration has its own selection. |
+| Preparing and undoing | The note identifies whether the source already matches, differs or contains the expected edit. Name the shared kernel and case-owned host program individually when affected. Preserve the cross-case warning and displaced-kernel archive. Separate saving the undo slot from confirming that it is durable. |
+| Finding and editing | **Show editable line** selects the expression in the real editor. **Show line** in the array model includes the line number and exact matched expression. Escape followed by Tab exits the editor. |
+| Running and comparing | The open **Current task** details show the complete instruction, its evidence cue and the learner's current prediction when present. Long mathematical expressions wrap. **Review prediction** focuses the one editable answer. The longer worked example and runner settings are optional. |
+| Source and output identity | The model identifies the open case, initializer and store. Its input preview names the statements that would change. **Apply edits to Python** enters the existing preparation transaction. An unsupported program has a runnable editor and a plain-language explanation of the model's scope. |
+| Evidence, errors and saves | The execution panel says whether a run is pending, failed, stale or matched, and exposes matched stdout. The run area links to recovery when a save warning or recovery copy exists. Export backs up the visible program and answer. Retry is a separate action. |
+| Completing a lesson | The existing reversible completion control remains separate from Run and from comparison with expected values. It still uses the confirmed learner-work transaction. |
+| Array steps | Each sentence identifies an actor, Python object or operation. The source-line control opens the exact expression. The nouns “original host”, “device” and “copied host” retain their identity even when values match. The operation words “Read”, “Created”, “Argument”, “Written” and “Returned” convey the change without relying on color. |
+| Compilation and hardware | Introduce compilation at the decorator, describe code generation at launch, and connect the explanation to actual PTX. The supplementary note names logical arrays and physical DRAM separately. Runtime quantities such as transfer time require hardware measurements. |
+
+The 51 existing learner instructions were replayed with their selected cases and experimental source changes. The ledger records the exact action and evidence cue for each phase. The first-value matrix reviews each new explanatory step against the original narration. [Instruction ledger](logs/guided-runs.jsonl) · [Recording parity](video-parity.md)
+
+## Reuse boundary
+
+The paused step controller takes ordered titles and a render callback. It maintains the current index and synchronizes a native select, Previous, Next and Restart. Boundary buttons retain keyboard focus. A later lesson can reuse that small contract, the labelled buffer/control pattern, and a distinct section for measured results. The one-element source whitelist, host/store choices, array liveness, copy semantics, and code anchors belong to first-value. A different lesson needs its own verified model and its own source/evidence checks. [Controller](../../../src/step-controller.mjs) · [Model](../../../src/first-value-model.mjs) · [View](../../../src/first-value-trace.mjs)
+
+## Layout trade-offs
+
+The existing stacked UI preserved reading order but put a completed run more than a screen away from the full edit. A prototype placed the task beside the real editor from 800 px, with a compact disclosure beside Run on small screens. At 820 px, the first-value plan-to-Run distance fell from 923 to 304 CSS px in that prototype. On a 390 px device a second column would narrow both code and instructions. The shipped version uses one column there, an in-flow header on small phones, a collapsible starter explanation, and full task text beside the result. Long tasks can still extend below the fold. Their full evidence remains reachable without reconstructing earlier steps or losing the editor selection. [Prototype capture](screenshots/prototype.jpg) · [Measurements](logs/responsive-prototype.json) · [Tablet softmax](screenshots/long-task-820-light.jpg)
