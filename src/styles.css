@@ -405,7 +405,7 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 #map-equation,#map-preview { font-family:var(--mono); overflow-wrap:anywhere; }
 #map-preview { white-space:pre-wrap; }
 #map-cells { border-collapse:collapse; width:100%; table-layout:fixed; }
-#map-cells th,#map-cells td { text-align:left; padding:.4rem; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+#map-cells th,#map-cells td { white-space:normal; text-align:left; padding:.4rem; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
 #map-cells td { font-family:var(--mono); }
 #map-cells caption { text-align:left; color:var(--muted); font-size:.9rem; }
 @media(max-width:550px) {
