@@ -39,7 +39,7 @@ try{
    return [...new Set(files)].sort();
   },id);
  }
- await p.goto(url+'#lesson/first-value');await editor(p).waitFor();await install(p);
+ await p.goto(url+'#lesson/first-value');await editor(p).waitFor();await install(p);console.log("Baseline installed");
  await v.goto(url+'#lesson/vector-add');await editor(v).waitFor();
  const firstProgram=(await download(p)).replace('out[0] = 42','out[0] = 73');await replace(p,firstProgram);
  await p.locator('#prediction').fill('Host 0, store 73. Keep this note through the update.');await p.locator('#complete').check();await saved(p);
@@ -51,14 +51,22 @@ try{
  assert.equal(await run(p),'out = [73.0]');await p.locator('#walkthrough > summary').click();
  async function play(p,slug,seek){
   const video=p.locator('video[data-walkthrough="'+slug+'"]');
-  return video.evaluate(async(el,seek)=>{el.muted=true;el.textTracks[0].mode='showing';await el.play();el.currentTime=seek;await new Promise(r=>el.addEventListener('seeked',r,{once:true}));el.pause();return {duration:el.duration,caption:el.textTracks[0].activeCues[0]?.text};},seek);
+  await video.evaluate(async el=>{el.muted=true;el.textTracks[0].mode='showing';await el.play();el.pause();});
+  await video.evaluate((el,time)=>{el.currentTime=time;},seek);
+  await p.waitForFunction(({slug,time})=>{
+   const el=document.querySelector('video[data-walkthrough="'+slug+'"]');
+   return el && !el.seeking && Math.abs(el.currentTime-time)<.2 && el.textTracks[0]?.activeCues?.length;
+  },{slug,time:seek},{timeout:30000});
+  return video.evaluate(el=>({duration:el.duration,caption:el.textTracks[0].activeCues[0].text}));
  }
+ console.log('Baseline ran offline');
  const originalMovie=await play(p,'first-value',60);assert.match(originalMovie.caption,/writes 42/);
  await ctx.setOffline(false);directory=pathToFileURL(resolve(newBuild)+'/');
  await p.locator('#app-status-open').click();await p.locator('#app-status-details').evaluate(d=>d.open=true);
  await p.locator('#check-update').click();await p.locator('#version-status').filter({hasText:'Update available'}).waitFor({timeout:90000});
  await p.locator('#download-update').click();await p.locator('#restart-update').waitFor({state:'visible',timeout:90000});
  assert.equal(await release(p),old.id);assert.equal(await release(v),old.id);
+ console.log('Update downloaded, original tabs still open');
  await ctx.setOffline(true);
  assert.match((await play(p,'first-value',60)).caption,/writes 42/);
  const oldVector=await run(v);assert.equal(JSON.parse(oldVector.slice(6)).at(-1),0);
@@ -79,6 +87,7 @@ try{
  await v.locator('#case').selectOption('0');assert.equal(await v.locator('#prediction').inputValue(),'Earlier 2 by 32 prediction');
  await v.locator('#map-inputs').evaluate(d=>d.open=true);await v.locator('#map-launch').selectOption('1 × 32');await v.locator('#map-initial').selectOption('-1');await v.locator('#map-apply').click();
  await v.locator('#map-preview').filter({hasText:'Controls match'}).waitFor();await saved(v);
+ console.log('Both tabs restarted offline; checking sentinel and retained video');
  const fresh=await run(v);assert.equal(JSON.parse(fresh.slice(6)).at(-1),-1);
  await v.locator('#walkthrough').evaluate(d=>d.open=true);const retainedMovie=await play(v,'vector-add',40);assert.match(retainedMovie.caption,/writes ninety-nine/);
  const newFiles=await cacheInventory(v,next.id);assert.equal(newFiles.length,48);

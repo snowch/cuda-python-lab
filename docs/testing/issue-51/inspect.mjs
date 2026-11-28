@@ -20,7 +20,13 @@ try{
    await page.waitForFunction(t=>document.documentElement.dataset.theme===t,theme);
    await target.evaluate(e=>e.scrollIntoView({block:'center'}));
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
-   assert.equal(overflow,0);
+   if(overflow) {
+    const outside=await page.evaluate(()=>[...document.querySelectorAll('main *')]
+      .filter(e=>e.getBoundingClientRect().right>innerWidth+.5 && !e.closest('.cm-scroller'))
+      .map(e=>[e.tagName,e.id,e.className,e.getBoundingClientRect().right]).slice(0,35));
+    await page.screenshot({path:join(out,'overflow.jpg')});
+    throw Error(JSON.stringify({name,width,theme,overflow,outside}));
+   }
    let violations;
    if(scan && [320,820].includes(width)){
     await page.addScriptTag({path:process.env.AXE_PATH});
