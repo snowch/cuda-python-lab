@@ -53,7 +53,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: python -m pip install -r src/gpu/requirements.txt
+      - run: python -m pip install -r src/gpu/requirements.txt nbformat ipython
+      - run: python tests/test_notebooks.py
       - run: python scripts/check_native.py --ptx --cpu-only
 
   deploy:

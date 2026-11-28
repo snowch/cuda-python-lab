@@ -96,6 +96,12 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  await context.setOffline(true);await tab.reload();await editor(tab).waitFor();
  await tab.locator('#case').selectOption('1');assert.equal(await tab.locator('#prediction').inputValue(),'Sixteen lanes per block');
  await tab.locator('#case').selectOption('2');assert.equal(await tab.locator('#prediction').inputValue(),'Saved in second tab');
+ const download=tab.waitForEvent('download');
+ await tab.locator('#download-notebook').click();
+ const offlineBook=JSON.parse(await readFile(await (await download).path(),'utf8'));
+ const caseIds=new Set(offlineBook.cells.flatMap(c=>c.metadata.cuda_lab ? [c.metadata.cuda_lab.case] : []));
+ assert.deepEqual([...caseIds].sort(),['exact-32','partial-16','partial-32']);
+ assert.match(offlineBook.cells.find(c=>c.metadata.cuda_lab?.task==='exported').source,/^%%experiment vector-add exact-32 exported/);
  await tab.locator('#run').click();await finished(tab);
  await context.setOffline(false);await page.locator('#app-status-open').click();await page.locator('#app-status-details>summary').click();
  await page.locator('#remove-offline').click();await page.locator('#confirm-remove').click();

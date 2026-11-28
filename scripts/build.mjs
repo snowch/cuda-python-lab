@@ -109,6 +109,8 @@ const slugs = modules.flatMap((module) => module.lessons);
 if (new Set(slugs).size !== slugs.length || slugs.length !== Object.keys(lessons).length) {
   throw new Error("Each course lesson must appear in exactly one module.");
 }
+const notebookRuntime = await readFile(new URL("notebook-runtime.py",src), "utf8");
+await writeFile(new URL("notebook-support.mjs",dist), "export default " + JSON.stringify(notebookRuntime) + ";\n");
 const starters = Object.fromEntries(await Promise.all(slugs.map(async (slug) => [
   slug, await readFile(new URL(`kernels/${slug}.py`, src), "utf8"),
 ])));
