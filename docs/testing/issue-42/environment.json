@@ -1,0 +1,21 @@
+{
+  "source_commit": "890983d5517cbec6173ee2142926a8ac3c44e3c0",
+  "source_tree": "c37af74c01f13011d547e25e9d1c9ff6c4a6ef9d",
+  "base_commit": "cdfb58ee009ff221bde5062154a5b3ea4319f8a6",
+  "checkout_status": "",
+  "release_id": "27fcd185a39ceec8edf8287b78ccb773cf46b20fdd2af2d413c758fa81a975da",
+  "release_commit": "890983d5517cbec6173ee2142926a8ac3c44e3c0",
+  "os": "Linux x86_64",
+  "node": "v24.22.3",
+  "npm": "11.19.1",
+  "playwright_core": "1.65.1",
+  "chromium": "Chromium 156.0.8078.79 built on Debian GNU/Linux 13 (trixie)",
+  "axe_core": "4.14.1",
+  "assets": {
+    "app.mjs": "2b37f908e21df307a5e273c29a8a4240509aaa0a797ad6d44450202eeaa48915",
+    "learner-work.mjs": "0dc9e146d56fb54251cc4ee94cb70c653e157cccb89f0eb4703d5de012ad5b0f",
+    "runtime/gpgpu-sim.wasm": "59fa21ccd1a1f3b4e82e51a7436c925aad72e1b8f415eabee81fbac231708919",
+    "runtime/nvptx.wasm": "b0f8b20f9c9500cade2afd7925235323232f12ed821de8e0c328407c2e4f2f00"
+  },
+  "configuration": "GPT-6.2 Astra, Extra high, confirmed by the session user. No separate runtime effort meter was available."
+}

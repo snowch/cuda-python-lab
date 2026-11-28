@@ -1,0 +1,61 @@
+890983d5517cbec6173ee2142926a8ac3c44e3c0
+Run 1
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (15720.672023ms)
+ℹ Browser: 156.0.8078.79
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16108.287004
+Run 2
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (16300.961312ms)
+ℹ Browser: 156.0.8078.79
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16622.832904
+Run 3
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (14838.552018ms)
+ℹ Browser: 156.0.8078.79
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15164.701446
+Run 4
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (16002.193311ms)
+ℹ Browser: 156.0.8078.79
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16337.54126
+Run 5
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (15042.5171ms)
+ℹ Browser: 156.0.8078.79
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15448.932658
