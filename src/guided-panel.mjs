@@ -18,7 +18,7 @@ function changeSummary(current, target) {
   const parts = [];
   if (a.kernel !== b.kernel) parts.push('the shared kernel used across this lesson’s cases');
   if (a.host !== b.host) parts.push('the host code for this case');
-  return parts.join(' and ');
+  return parts.join(' and ') || 'the spacing between kernel and host code';
 }
 
 export function mountGuide({slug, lesson, work, find, snapshot, selectCase, replace, reveal, active, readingTask}) {
@@ -29,7 +29,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     option.title = lesson.cases.find(c => c.id === t.fixture).label;
     select.add(option);
   }
-  let task, start, end, checking = false;
+  let task, start, end, checking = false, awaitingSave = '';
   const feedback = message => {
     find('setup-feedback').textContent = message;
     find('setup-feedback').hidden = !message;
@@ -44,6 +44,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
       : 'Edit and run freely. Switching cases keeps your kernel and opens that case’s host draft.';
     find('task-evidence').textContent = task?.evidence ?? '';
     find('task-evidence').hidden = !task || (task.kind === 'run' && !task.instruction && !task.after.length);
+    awaitingSave = '';
     feedback('');
     update();
   }
@@ -54,6 +55,12 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
   }
   function update() {
     const v = snapshot();
+    if (awaitingSave && !work.dirty && !work.saving && !work.error) {
+      feedback(awaitingSave);
+      awaitingSave = '';
+    } else if (awaitingSave && work.error) {
+      feedback('The open program is in this tab. Export learner work or retry the save before leaving.');
+    }
     const savedUndo = work.confirmed.preparations?.[slug]?.[v.fixture.id];
     const blocked = Boolean(work.error || work.dirty || work.saving || checking || v.source !== v.saved);
     const prepare = find('prepare-task'), undo = find('undo-prepare');
@@ -95,7 +102,9 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
       work.refresh(['preparations']);
       work.change(path,before.source,{retainPrevious:!undo});
       replace(target);
-      feedback(undo ? 'Previous program reopened. Undo again to return to the program you just left.' : 'Starting program prepared. Your previous program is available in Undo preparation.');
+      awaitingSave = undo ? 'Previous program reopened. Undo again to return to the program you just left.'
+        : 'Starting program prepared. Your previous program is available in Undo preparation.';
+      feedback('Saving the open program and its undo copy…');
     } finally { checking = false; if (active()) update(); }
   }
   select.onchange = () => {

@@ -508,6 +508,7 @@ test('guided preparation preserves dirty work across contention, storage denial,
   await status(a).filter({hasText:'could not be saved'}).waitFor();
   assert.equal(await source(a),original(0));
   const backup=JSON.parse(await download(a,a.locator('#export-work')));
+  assert.match(await a.locator('#setup-feedback').innerText(),/Export learner work or retry/);
   assert.equal(backup.tab.preparations['vector-add']['partial-32'],draft);
   assert.equal(backup.durable.programs['vector-add'][0],draft);
   assert.equal(backup.openLesson.program,original(0));
