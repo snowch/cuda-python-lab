@@ -59,7 +59,7 @@ export function mountThreadMapper({root,starter,fixture,source,runState,canApply
     const grid=el('map-blocks');grid.replaceChildren();
     for(let b=0;b<blocks;b++) {
       const row=document.createElement('button');row.type='button';row.className='map-block';
-      row.setAttribute('aria-label','Inspect first thread in block '+b);
+      row.setAttribute('aria-description','Inspect the first thread in this block.');
       const label=document.createElement('strong');label.textContent='Block '+b;
       const strip=document.createElement('span');strip.className='map-strip';strip.setAttribute('aria-hidden','true');
       strip.style.gridTemplateColumns='repeat('+width+', minmax(0, 1fr))';

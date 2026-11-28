@@ -48,6 +48,9 @@ test('the mapper protects source identity, host-only ownership and scoped predic
   },other);
   await page.goto(url+'#lesson/vector-add');
   const id=s=>page.locator('#'+s), editor=page.getByRole('textbox',{name:'Python program source'});
+  const block=page.getByRole('button',{name:'Block 1 i = 32–63',exact:true});
+  await block.press('Enter');
+  assert.equal(await id('map-thread').inputValue(),'32');
   await id('map-predict').press('Enter');assert.equal(await page.locator(':focus').getAttribute('id'),'prediction');
   await id('prediction').fill('2 × 32, normal inputs, zero initial: last 99');
   await id('map-inputs summary').click();await id('map-launch').selectOption('1 × 32');
