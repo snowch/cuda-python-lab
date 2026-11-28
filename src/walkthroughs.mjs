@@ -307,6 +307,62 @@ export const walkthroughs = {
       },
     ],
   },
+  "tiled-transpose": {
+    title: "Trace tiled transpose on the GPU",
+    stages: [
+      {"title": "Load the shared tile", "highlight": "tile[ty, tx] = values[row, col]", "rows": [{"label": "Thread", "cells": ["(0, 2)"], "mark": [0]}, {"label": "Loads", "cells": ["values[2, 0]"], "mark": [0]}, {"label": "Shared", "cells": ["tile[2, 0]"], "mark": [0]}], "note": "Block (0, 0) · the barrier makes the tile ready.", "narration": "Thread zero, two loads input row two, column zero into the shared tile. The block barrier makes that tile ready.", "hold": 4},
+      {"title": "Predict who writes it", "highlight": "out[out_row, out_col] = tile[tx, ty]", "rows": [{"label": "Shared", "cells": ["tile[2, 0]"], "mark": [0]}, {"label": "Thread", "cells": ["(2, 0)"], "mark": [0]}, {"label": "Output", "cells": ["out[0, 2]"], "mark": [0]}], "note": "Thread (2, 0) reads tile[2, 0]. Who loaded it?", "narration": "Thread two, zero reads shared tile at two, zero. Which thread loaded that position?", "hold": 8},
+      {"title": "The tile swaps coordinates", "highlight": "out[out_row, out_col] = tile[tx, ty]", "rows": [{"label": "Loader", "cells": ["(0, 2)"], "mark": [0]}, {"label": "Shared", "cells": ["tile[2, 0]"], "mark": [0]}, {"label": "Writer", "cells": ["(2, 0)"], "mark": [0]}], "note": "values[2, 0] becomes out[0, 2].", "narration": "Thread zero, two loaded it. Thread two, zero writes that value into output row zero, column two.", "hold": 4},
+    ],
+  },
+  "matmul": {
+    title: "Trace matmul on the GPU",
+    stages: [
+      {"title": "Load a pair of tiles", "highlight": "tile_a[ty, tx] = a[row, a_col] if row < m and a_col < k else 0", "rows": [{"label": "Pass 1", "cells": ["0", "1", "2", "3"], "mark": []}, {"label": "Pass 2", "cells": ["4", "5", "6", "7"], "mark": [2, 3]}], "note": "5 × 6 times 6 × 7 · inner dimension k = 6.", "narration": "The block stages four inner positions per pass in shared memory. The second pass covers positions four through seven.", "hold": 4},
+      {"title": "Predict the padded positions", "highlight": "for start in range(0, k, TILE):", "rows": [{"label": "Pass 2", "cells": ["4", "5", "6", "7"], "mark": []}, {"label": "Valid", "cells": ["0", "1", "2", "3", "4", "5"], "mark": []}], "note": "Which positions in the second pass fall outside k = 6?", "narration": "The inner dimension contains six positions, zero through five. Which positions in the second pass are outside the input?", "hold": 8},
+      {"title": "Fill the tail with zero", "highlight": "tile_b[ty, tx] = b[b_row, col] if b_row < k and col < n else 0", "rows": [{"label": "Pass 2", "cells": ["4", "5", "6", "7"], "mark": [2, 3]}, {"label": "Loaded", "cells": ["valid", "valid", "0", "0"], "mark": [2, 3]}], "note": "All threads participate in the tile barriers.", "narration": "Positions six and seven load zero. Threads still reach the barriers that make the shared tiles ready and protect their reuse.", "hold": 4},
+    ],
+  },
+  "softmax": {
+    title: "Trace softmax on the GPU",
+    stages: [
+      {"title": "Find the row maximum", "highlight": "row_max = scratch[0]", "rows": [{"label": "Scores", "cells": ["1000", "999", "1000", "997", "−1000"], "mark": [0, 2]}, {"label": "Maximum", "cells": ["1000"], "mark": [0]}], "note": "One block finds the maximum for the row.", "narration": "One block finds the largest score in the row. Here, that maximum is one thousand.", "hold": 4},
+      {"title": "Predict matching probabilities", "highlight": "out[row, col] = math.exp(values[row, col] - row_max) / scratch[0]", "rows": [{"label": "Scores", "cells": ["1000", "999", "1000", "997", "−1000"], "mark": [0, 2]}, {"label": "Shifted", "cells": ["0", "−1", "0", "−3", "−2000"], "mark": [0, 2]}], "note": "Which columns receive equal probabilities?", "narration": "Subtracting the maximum gives zero for columns zero and two. Which columns will have equal probabilities?", "hold": 8},
+      {"title": "Normalize the shifted scores", "highlight": "out[row, col] = math.exp(values[row, col] - row_max) / scratch[0]", "rows": [{"label": "Shifted", "cells": ["0", "−1", "0", "−3", "−2000"], "mark": [0, 2]}, {"label": "exp", "cells": ["1", "exp(−1)", "1", "exp(−3)", "≈0"], "mark": [0, 2]}], "note": "Divide each exponential by their shared sum.", "narration": "The two zero shifts have the same exponential, one. Dividing by the shared row sum gives those columns equal probabilities.", "hold": 4},
+    ],
+  },
+  "gather": {
+    title: "Trace gather on the GPU",
+    stages: [
+      {"title": "Follow one indirect read", "highlight": "out[i] = values[indices[i]]", "rows": [{"label": "indices", "cells": ["0", "8", "16", "24", "32", "40", "48", "56"], "mark": [1]}, {"label": "values", "cells": ["100", "…", "108", "…", "116", "…"], "mark": [2]}, {"label": "out", "cells": ["100", "108", "…"], "mark": [1]}], "note": "Thread 1 reads indices[1] = 8, then values[8] = 108.", "narration": "Thread one reads index eight from the index array, then fetches value one hundred eight from that position.", "hold": 4},
+      {"title": "Predict the sectors", "highlight": "out[i] = values[indices[i]]", "rows": [{"label": "indices", "cells": ["0", "8", "16", "24", "32", "40", "48", "56"], "mark": []}, {"label": "Sector", "cells": ["?", "?", "?", "?", "?", "?", "?", "?"], "mark": []}], "note": "Each aligned 32-byte sector holds eight four-byte values.", "narration": "The indices are eight elements apart. How many aligned thirty-two byte sectors do their value reads touch?", "hold": 8},
+      {"title": "Map indices to sectors", "highlight": "out[i] = values[indices[i]]", "rows": [{"label": "indices", "cells": ["0", "8", "16", "24", "32", "40", "48", "56"], "mark": []}, {"label": "Sector", "cells": ["0", "1", "2", "3", "4", "5", "6", "7"], "mark": [0, 1, 2, 3, 4, 5, 6, 7]}], "note": "Value reads touch 8 sectors; index reads touch 1.", "narration": "Each value lies in a different sector. The eight consecutive index reads touch one sector, under the same alignment assumption.", "hold": 4},
+    ],
+  },
+  "stencil": {
+    title: "Trace stencil on the GPU",
+    stages: [
+      {"title": "Load the center and halo", "highlight": "tile[lane + 1] = values[i] if i < n else 0.0", "rows": [{"label": "Input", "cells": ["8", "9", "10"], "mark": [0]}, {"label": "Index", "cells": ["7", "8", "9"], "mark": []}, {"label": "Block 1", "cells": ["halo", "lane 0", "lane 1"], "mark": [0]}], "note": "The first thread loads a left halo from the preceding block.", "narration": "Block one starts at index eight. Its first thread also loads the neighbor at index seven into the left halo.", "hold": 4},
+      {"title": "Predict the boundary output", "highlight": "out[i] = tile[lane] + tile[lane + 1] + tile[lane + 2]", "rows": [{"label": "Input", "cells": ["8", "9", "10"], "mark": []}, {"label": "Index", "cells": ["7", "8", "9"], "mark": []}, {"label": "out[8]", "cells": ["?"], "mark": []}], "note": "What sum does the first output of Block 1 receive?", "narration": "The first output of block one adds these three inputs. What value will it receive?", "hold": 8},
+      {"title": "Read the ready tile", "highlight": "out[i] = tile[lane] + tile[lane + 1] + tile[lane + 2]", "rows": [{"label": "Input", "cells": ["8", "9", "10"], "mark": []}, {"label": "out[8]", "cells": ["27"], "mark": [0]}], "note": "The barrier precedes these shared-memory reads.", "narration": "The thread adds eight, nine, and ten to write twenty-seven. The block barrier makes the shared tile ready before the read.", "hold": 4},
+    ],
+  },
+  "precision": {
+    title: "Trace precision on the GPU",
+    stages: [
+      {"title": "Round the first addition", "highlight": "first = float32(a[i] + b[i])", "rows": [{"label": "a", "cells": ["16,777,216"], "mark": []}, {"label": "b", "cells": ["1"], "mark": []}, {"label": "Rounded", "cells": ["16,777,216"], "mark": [0]}], "note": "At this magnitude, float32 rounds a + b back to a.", "narration": "The thread adds one to sixteen million seven hundred seventy-seven thousand two hundred sixteen. Float thirty two rounds the sum back to the original value.", "hold": 4},
+      {"title": "Predict the final sum", "highlight": "out[i] = float32(first + c[i])", "rows": [{"label": "first", "cells": ["16,777,216"], "mark": []}, {"label": "c", "cells": ["−16,777,216"], "mark": []}, {"label": "out", "cells": ["?"], "mark": []}], "note": "What happens to the 1 after the subtraction?", "narration": "The thread then adds the negative of the original value. What happens to the one?", "speech": "The thread then adds the negative of the original value. [pause 0.6] What happens to the one?", "hold": 8},
+      {"title": "Compare the grouping", "highlight": "out[i] = float32(first + c[i])", "rows": [{"label": "(a+b)+c", "cells": ["0"], "mark": [0]}, {"label": "(a+c)+b", "cells": ["1"], "mark": [0]}], "note": "Each addition rounds to float32.", "narration": "The starter grouping returns zero because the one was rounded away. Canceling the large positive and negative values first gives one.", "hold": 4},
+    ],
+  },
+  "fusion": {
+    title: "Trace fusion on the GPU",
+    stages: [
+      {"title": "Compute a local value", "highlight": "value = float32(alpha * x[i] + y[i])", "rows": [{"label": "Inputs", "cells": ["x[i]", "y[i]"], "mark": []}, {"label": "Local", "cells": ["value"], "mark": [0]}], "note": "One thread reads x and y and computes a local value.", "narration": "Each thread reads one x and one y value from GPU memory and computes a local intermediate.", "hold": 4},
+      {"title": "Predict the saved accesses", "highlight": "temp[i] = value", "rows": [{"label": "Store path", "cells": ["write temp", "read temp"], "mark": []}, {"label": "Local path", "cells": ["keep value"], "mark": []}, {"label": "8 threads", "cells": ["?"], "mark": []}], "note": "How many temporary reads and writes disappear?", "narration": "The temporary path writes the intermediate and reads it back. How many temporary reads and writes disappear for eight threads?", "hold": 8},
+      {"title": "Remove the temporary traffic", "highlight": "value = temp[i]", "rows": [{"label": "Removed", "cells": ["8 writes", "8 reads"], "mark": [0, 1]}, {"label": "Remaining", "cells": ["read x", "read y", "write out"], "mark": []}], "note": "Source-level count · compiler and caches affect measured traffic.", "narration": "Keeping the value local removes eight temporary writes and eight temporary reads in this source-level count. Compiler and cache behavior affect measured traffic.", "hold": 4},
+    ],
+  },
   coalescing: {
     title: "Follow a warp’s addresses into memory sectors",
     stages: [

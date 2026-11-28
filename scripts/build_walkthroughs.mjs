@@ -215,6 +215,33 @@ function patternSlide(stage, kernel) {
   </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout"><div class="code">${code}</div><div class="visual">${visual}</div></div></div></main></html>`;
 }
 
+function statesSlide(stage, kernel) {
+  const lines = kernel.split("\n");
+  const position = lines.findIndex(line => line.trim() === stage.highlight);
+  if (position < 0) throw new Error(`Highlighted code not found: ${stage.highlight}`);
+  const code = lines.slice(Math.max(0, position - 2), Math.min(lines.length, position + 3))
+    .filter(line => line.trim()).map(line =>
+      `<code class="${line.trim() === stage.highlight ? "current" : ""}">${escape(line)}</code>`
+    ).join("");
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
+    * { box-sizing:border-box; } body { margin:0; background:#142326; color:#effaf3; font:19px system-ui,sans-serif; }
+    main { padding:22px 36px; } h1 { margin:0 0 12px; font-size:29px; }
+    .layout { display:grid; grid-template-columns:0.9fr 1.25fr; gap:20px; }
+    .code { background:#101e21; border-radius:7px; padding:12px 0; align-self:start; }
+    code { display:block; white-space:pre-wrap; overflow-wrap:anywhere; font:16px/1.45 monospace; padding:0 9px; color:#b7d9ce; border-left:3px solid transparent; }
+    .current { background:#365340; border-color:#b5ed8d; color:#effaf3; }
+    .visual { background:#24393b; border-radius:7px; padding:12px 15px; }
+    .row { display:grid; grid-template-columns:100px minmax(0,1fr); gap:7px; align-items:center; margin-bottom:8px; }
+    .label { font-size:15px; color:#b7d9ce; } .cells { display:flex; gap:4px; }
+    .cell { flex:1; min-width:0; text-align:center; padding:7px 2px; background:#142326; border:1px solid #527071; border-radius:3px; font:15px/1.3 monospace; overflow-wrap:anywhere; }
+    .cell.mark { border-color:#b5ed8d; background:#365340; }
+    .note { margin:8px 0 0; font-size:16px; line-height:1.35; color:#d4e7df; }
+  </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout">
+    <div class="code">${code}</div>
+    <div class="visual">${stage.rows.map(row => `<div class="row"><span class="label">${escape(row.label)}</span><div class="cells">${row.cells.map((cell,index) => `<span class="cell ${row.mark?.includes(index) ? "mark" : ""}">${escape(String(cell))}</span>`).join("")}</div></div>`).join("")}<p class="note">${escape(stage.note)}</p></div>
+  </div></div></main></html>`;
+}
+
 function vectorSlide(stage, kernel) {
   const highlighted = stage.highlight ?? "";
   const lines = kernel.split("\n");
@@ -246,6 +273,7 @@ function vectorSlide(stage, kernel) {
 
 function slide(walkthrough, stage, program) {
   if (stage.trace) return traceSlide(stage, program);
+  if (stage.rows) return statesSlide(stage, program.kernel);
   if (stage.sceneKind) return patternSlide(stage, program.kernel);
   if (stage.lines) return transferSlide(stage, program);
   if (stage.phase) return reductionSlide(stage, program.kernel);

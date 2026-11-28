@@ -1,0 +1,28 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.333
+One block finds the largest score in the
+
+00:00:03.333 --> 00:00:05.812
+row. Here, that maximum is one thousand.
+
+00:00:10.312 --> 00:00:12.872
+Subtracting the maximum gives zero for
+
+00:00:12.872 --> 00:00:15.859
+columns zero and two. Which columns will
+
+00:00:15.859 --> 00:00:17.139
+have equal probabilities?
+
+00:00:25.639 --> 00:00:28.499
+The two zero shifts have the same
+
+00:00:28.499 --> 00:00:30.950
+exponential, one. Dividing by the shared
+
+00:00:30.950 --> 00:00:33.401
+row sum gives those columns equal
+
+00:00:33.401 --> 00:00:33.810
+probabilities.

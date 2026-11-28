@@ -1,0 +1,28 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.248
+Block one starts at index eight. Its first
+
+00:00:03.248 --> 00:00:05.652
+thread also loads the neighbor at index
+
+00:00:05.652 --> 00:00:07.369
+seven into the left halo.
+
+00:00:11.869 --> 00:00:14.486
+The first output of block one adds these
+
+00:00:14.486 --> 00:00:16.776
+three inputs. What value will it receive?
+
+00:00:25.276 --> 00:00:28.039
+The thread adds eight, nine, and ten to
+
+00:00:28.039 --> 00:00:29.765
+write twenty-seven. The block barrier
+
+00:00:29.765 --> 00:00:32.183
+makes the shared tile ready before the
+
+00:00:32.183 --> 00:00:32.528
+read.
