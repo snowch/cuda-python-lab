@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Trace the missing halo</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body {
+      font:
+        17px/1.5 "Source Sans 3",
+        system-ui,
+        sans-serif;
+      max-width: 47rem;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    select,
+    button {
+      font: inherit;
+      min-height: 44px;
+      max-width: 100%;
+    }
+    label {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+      margin: 1em 0;
+    }
+    article {
+      border: 1px solid;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    output {
+      display: block;
+      font-weight: 600;
+    }
+    p {
+      overflow-wrap: anywhere;
+    }
+    code {
+      white-space: pre-wrap;
+    }
+    #cells {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    button[aria-pressed="true"] {
+      outline: 3px solid currentColor;
+    }
+  </style>
+  <h1>Trace the missing halo</h1>
+  <p>
+    Compare recorded GPGPU-Sim runs from the stencil lesson. Predict what
+    selecting the 13-value case will do to the kernel edit.
+  </p>
+  <label>Recorded experiment<select id="run"></select></label>
+  <article>
+    <code id="line"></code>
+    <p id="context"></p>
+    <div id="cells" role="group" aria-label="Select output index"></div>
+    <output id="reading" aria-live="polite"></output>
+  </article>
+  <p>
+    The reference sums each input and its two neighbours, using zero outside the
+    array. A mismatch marks a changed value. The dependency explanation comes
+    from the source.
+  </p>
+  <script>
+    const states = [
+        {
+          case: "16 values \u00b7 direct reads",
+          values: [
+            3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0,
+            39.0, 42.0, 45.0, 31.0,
+          ],
+          kernel: "Direct reads",
+        },
+        {
+          case: "16 values \u00b7 shared tile",
+          values: [
+            3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0,
+            39.0, 42.0, 45.0, 31.0,
+          ],
+          kernel: "Shared tile",
+        },
+        {
+          case: "16 values \u00b7 shared tile",
+          values: [
+            3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 19.0, 30.0, 33.0, 36.0,
+            39.0, 42.0, 45.0, 31.0,
+          ],
+          kernel: "Missing left halo",
+        },
+        {
+          case: "13 values \u00b7 partial tile",
+          values: [
+            3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 19.0, 30.0, 33.0, 36.0,
+            25.0,
+          ],
+          kernel: "Missing left halo",
+        },
+        {
+          case: "13 values \u00b7 partial tile",
+          values: [
+            3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0,
+            25.0,
+          ],
+          kernel: "Restored shared tile",
+        },
+      ],
+      select = document.querySelector("#run");
+    let index = 8;
+    states.forEach((s, i) =>
+      select.add(new Option(i + 1 + ". " + s.case + " · " + s.kernel, i)),
+    );
+    function draw() {
+      const s = states[+select.value],
+        bad = s.kernel === "Missing left halo",
+        n = s.values.length;
+      index = Math.min(index, n - 1);
+      document.querySelector("#line").textContent = bad
+        ? "tile[0] = 0.0"
+        : s.kernel === "Direct reads"
+          ? "out[i] = left + values[i] + right"
+          : "tile[0] = values[i - 1] if i > 0 else 0.0";
+      document.querySelector("#context").textContent =
+        +select.value === 3
+          ? "New host input, same edited kernel."
+          : +select.value === 4
+            ? "Same 13 inputs after Restore starter."
+            : s.kernel + ".";
+      const ref = (i) =>
+        (i === 0 ? 0 : i) + (i + 1) + (i === n - 1 ? 0 : i + 2);
+      const grid = document.querySelector("#cells");
+      grid.replaceChildren();
+      s.values.forEach((v, i) => {
+        const b = document.createElement("button");
+        b.textContent = i + (v === ref(i) ? " ✓" : " ≠");
+        b.setAttribute("aria-pressed", i === index);
+        b.setAttribute(
+          "aria-label",
+          "Index " + i + (v === ref(i) ? ", matches reference" : ", differs"),
+        );
+        b.onclick = () => {
+          index = i;
+          draw();
+          grid.children[i].focus();
+        };
+        grid.append(b);
+      });
+      document.querySelector("#reading").textContent =
+        "out[" +
+        index +
+        "] = " +
+        s.values[index] +
+        ". CPU reference = " +
+        ref(index) +
+        ". " +
+        (bad && index === 8
+          ? "Block 1 needs input[7] = 8. Its first thread stages zero instead."
+          : "");
+    }
+    select.value = "3";
+    select.onchange = draw;
+    draw();
+  </script>
+</html>

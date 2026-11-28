@@ -1,0 +1,9 @@
+Durable predictions after both inputs: { stencil: 'Boundary reads the halo' }
+Vector prediction in fresh third tab: ""
+Fresh third tab shows code marker: false
+Original vector tab before reload: { prediction: 'Index 32 belongs to block 1', codeMarker: true }
+Original vector tab after reload: { prediction: 'Index 32 belongs to block 1', codeMarker: true }
+Durable predictions after original tab reload: { 'vector-add': 'Index 32 belongs to block 1' }
+Fresh stencil tab after original vector reload: ""
+Quota injection, visible save error: [ 'Up to date online. Not saved for offline use.' ]
+Prediction after reload with denied write: ""

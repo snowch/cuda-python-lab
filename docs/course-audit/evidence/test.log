@@ -1,0 +1,63 @@
+
+> cuda-python-lab@0.1.0 test
+> npm run build && node --test --test-concurrency=1 --test-timeout=180000 tests/deployment-assets.test.mjs tests/shared-style.test.mjs tests/code-runner.test.mjs tests/offline.test.mjs tests/browser.test.mjs tests/lifecycle.test.mjs
+
+
+> cuda-python-lab@0.1.0 build
+> node scripts/build.mjs
+
+Built 17 lessons in /workspace/cuda-python-lab/dist/
+✔ course location shares the outline row across routes, sizes and themes (8994.475887ms)
+ℹ Browser: 156.0.8078.79
+✔ every case exports a CUDA notebook containing its complete program (13587.115152ms)
+ℹ Browser: 156.0.8078.79
+✔ the full first program is keyboard accessible and edits reach both exports (1526.710405ms)
+ℹ Browser: 156.0.8078.79
+✔ case changes preserve the shared kernel and the host draft for each case (1799.420459ms)
+ℹ Browser: 156.0.8078.79
+✔ kernel-only drafts reopen with main and can still be restored (1389.814018ms)
+ℹ Browser: 156.0.8078.79
+✔ architecture walkthroughs play with captions and expose transcripts by keyboard (5795.043483ms)
+ℹ Browser: 156.0.8078.79
+✔ the GPU appendix gives notebook setup, investigations and the occupancy worksheet (929.146028ms)
+ℹ Browser: 156.0.8078.79
+✔ optional compiler lab exports an MLIR notebook and names the quantities to compare (817.478505ms)
+ℹ Browser: 156.0.8078.79
+✔ reuses one worker across clients, while messages/results belong to each current run (2.032549ms)
+✔ idle release counts from completion and never interrupts a running job (1.832905ms)
+✔ explicit stop cancels the owner, ignores late replies and allows a fresh worker (1.051171ms)
+✔ timeout and crashes release memory and next run can start again (1.76178ms)
+✔ a second client cannot replace the busy job, and detaching another client cannot cancel it (0.818849ms)
+✔ manual startup prepares without running code, and compile errors keep the toolchain ready (1.317864ms)
+✔ Compile during manual startup waits, then runs automatically on the same worker (1.934064ms)
+✔ stopping or detaching a queued compile cancels startup without running that code (2.56906ms)
+✔ startup errors reach the queued compile without leaving an editor waiting (0.512006ms)
+✔ default idle policy is thirty minutes and settings keep the last completion as the deadline origin (1.287891ms)
+✔ shortening an expired idle policy releases memory; changing it during a run does not interrupt code (0.831167ms)
+✔ telemetry updates allocation without completing a job; elapsed time includes queued startup and survives memory release (0.523983ms)
+✔ Python program errors keep the toolchain and do not count as completed runs (0.397887ms)
+✔ only infrastructure download failures emit runtime recovery (0.326272ms)
+✔ a worker import failure during startup opens infrastructure recovery (0.54212ms)
+✔ unchanged builds keep compiler and GPU archive bytes stable across build times (2977.700371ms)
+✔ retention verifies prior bytes, keeps a bounded history and rejects corruption (16.512969ms)
+✔ an open lesson runs after deployment; an expired runtime recovers without losing 43 or the prior result (25877.620479ms)
+ℹ Browser: 156.0.8078.79
+✔ manual startup introduces the runner once, retains it between lessons, and releases memory without losing work (10551.301013ms)
+ℹ Browser: 156.0.8078.79
+✔ verified offline course survives a new tab, lesson navigation, two-tab update/restart and removal (51564.349095ms)
+ℹ Browser: 156.0.8078.79
+✔ release pins the SPA assets and verifies every offline resource (50.461961ms)
+✔ the bare homepage orients visitors and the start link preserves saved lesson work (3713.935423ms)
+ℹ Browser: 156.0.8078.79
+✔ all lesson topic references and shared ending components are present (28694.285373ms)
+ℹ Browser: 156.0.8078.79
+✔ completion survives stale snapshots and concurrent edits in another tab (8829.597777ms)
+ℹ Browser: 156.0.8078.79
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168895.284725

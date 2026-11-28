@@ -1,0 +1,6 @@
+Generated notebook reference cell with int32 result for float32 fixture:
+1 of 1 values match the starter reference.
+first-value [np.float64(42.0), np.float64(73.0), np.float64(73.0)]
+histogram [np.int64(8), np.int64(32), np.int64(2), np.int64(2), np.int64(2), np.int64(2), np.int64(32)]
+stencil [np.float64(27.0), np.float64(27.0), np.float64(19.0), np.float64(19.0), np.float64(27.0)]
+sync-debug [np.int64(7), np.int64(-1), np.int64(-9)]

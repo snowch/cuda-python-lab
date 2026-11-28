@@ -1,0 +1,17 @@
+{"slug":"vector-add","duration":51.866667,"rate":1,"muted":false,"cues":14,"quality":1556,"dropped":26}
+{"slug":"grid-stride","duration":51.973,"rate":1,"muted":false,"cues":13,"quality":1559,"dropped":23}
+{"slug":"first-value","duration":79.366667,"rate":1,"muted":false,"cues":17,"quality":2381,"dropped":25}
+{"slug":"divergence","duration":50.31,"rate":1,"muted":false,"cues":14,"quality":1509,"dropped":10}
+{"slug":"transfers","duration":54.342,"rate":1,"muted":false,"cues":13,"quality":1630,"dropped":11}
+{"slug":"histogram","duration":47.002,"rate":1,"muted":false,"cues":12,"quality":1410,"dropped":10}
+{"slug":"sync-debug","duration":38.004,"rate":1,"muted":false,"cues":9,"quality":1140,"dropped":30}
+{"slug":"scan","duration":51,"rate":1,"muted":false,"cues":12,"quality":1530,"dropped":33}
+{"slug":"tiled-transpose","duration":36.103,"rate":1,"muted":false,"cues":8,"quality":1083,"dropped":27}
+{"slug":"matmul","duration":39.9,"rate":1,"muted":false,"cues":11,"quality":1197,"dropped":49}
+{"slug":"softmax","duration":37.81,"rate":1,"muted":false,"cues":9,"quality":1134,"dropped":65}
+{"slug":"gather","duration":37.937,"rate":1,"muted":false,"cues":10,"quality":1138,"dropped":84}
+{"slug":"stencil","duration":36.533333,"rate":1,"muted":false,"cues":9,"quality":1096,"dropped":67}
+{"slug":"precision","duration":41.183,"rate":1,"muted":false,"cues":10,"quality":1235,"dropped":55}
+{"slug":"fusion","duration":40.774,"rate":1,"muted":false,"cues":11,"quality":1223,"dropped":34}
+{"slug":"coalescing","duration":61.38,"rate":1,"muted":false,"cues":17,"quality":1841,"dropped":49}
+{"slug":"reduction","duration":50.97,"rate":1,"muted":false,"cues":13,"quality":1529,"dropped":27}

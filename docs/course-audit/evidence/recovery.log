@@ -1,0 +1,9 @@
+Interrupted cold download: Code runner files could not be loaded. Failed to fetch
+first successful run after recovery 18581 ms browser elapsed out = [42.0]
+warm run 2390 ms browser elapsed out = [42.0]
+1280x800 first-value { overflow: 0, heading: 'Write your first GPU value' }
+1280x800 coalescing { overflow: 0, heading: 'See how threads group memory accesses' }
+1280x800 gpu { overflow: 0, heading: 'Appendix A. Run on an NVIDIA GPU' }
+First visit offline Error: page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:8012/#lesson/first-value
+Call log:
+  - navigating to "http://localhost:8012/#lesson/first-value", waiting until "load"

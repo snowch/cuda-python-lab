@@ -1,0 +1,9 @@
+Run elapsed / allocated 9.5 s 92.3 MiB
+After free 0.0 MiB out = [42.0]
+Focus after editor Esc Tab <button class="button primary" id="run" type="button">Run</button>
+Appendix pre tabindex null
+CSS zoom 200% appendix { width: 1280, page: 1280, visualViewport: 1280 }
+Restored prediction / prompt / case Lane 0 also writes column 32 Row 0 is [1000, 999, 1000, 997, −1000]. What is the exponential of the largest score after subtracting the row maximum? Which two columns should have equal probabilities? Two rows · 37 columns
+Same answer on original case Lane 0 also writes column 32
+Replay before restore out[8] = 19. CPU reference = 27. Block 1 needs input[7] = 8. Its first thread stages zero instead.
+Replay after restore out[8] = 27. CPU reference = 27.

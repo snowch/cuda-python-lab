@@ -1,0 +1,484 @@
+{
+  "source_commit": "cdfb58ee009ff221bde5062154a5b3ea4319f8a6",
+  "baseline_diff": "",
+  "deployment": {
+    "commit": "cdfb58ee009ff221bde5062154a5b3ea4319f8a6",
+    "release": "827862c01870a03e4a9c496b1ce924deacedab5e0a78e0ab361cb918f53cb5d7",
+    "manifest_bytes": 63202260
+  },
+  "local_release": {
+    "id": "29500458bce282b94a99e2d501f4a4bbec5d24b25a00a8acc54ed8e28e6ef7d9",
+    "commit": null,
+    "date": null,
+    "bytes": 63202145
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "node": "v24.22.3",
+  "npm": "11.19.1",
+  "python": "3.12.14",
+  "chromium": "Chromium 156.0.8078.79 built on Debian GNU/Linux 13 (trixie)",
+  "playwright": "1.65.1",
+  "lock_sha256": "055680a4d51e582a2ac0ed7091d60aa43dadc5429d7827631a470c7e28279d21",
+  "ffmpeg": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+  "media": {
+    "stencil": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "36.533333"
+      },
+      "sha256": "24be72c5e98eedf8338dae6e3483551c1f48d8d16621e00fb552c57c16eef691"
+    },
+    "coalescing": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "61.380000"
+      },
+      "sha256": "4ba8940c67744aa90e344ab093ca7a0873c139110dcd190b29205664a038182b"
+    },
+    "precision": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "41.183000"
+      },
+      "sha256": "e4e42830822636847a68b09604c7734355fdd8f3119a062a33cecc26309ae6da"
+    },
+    "vector-add": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "51.866667"
+      },
+      "sha256": "66ebd2f189a5e8444374f6604b6b66f30a2d5f1c0bc9b628f1774b77afc61f03"
+    },
+    "scan": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "51.000000"
+      },
+      "sha256": "5d54cd389222f8f680acbff88b772a9fc81c91f486f8ba9ebd11a878a02695cd"
+    },
+    "reduction": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "50.970000"
+      },
+      "sha256": "68096cb8335a4b7058b74376c9bd0ce52e746fdcbf7e864c8dba2022e839f572"
+    },
+    "gather": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "37.937000"
+      },
+      "sha256": "f51e0e4a3528c11a746bce46dfd827aefac1b9129381c28c047067d147c5bee0"
+    },
+    "first-value": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "79.366667"
+      },
+      "sha256": "c7f7df07a61f289effc2dcd4ce28a7fdfb12fd26c69da2376746bab23ee4b255"
+    },
+    "divergence": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "50.310000"
+      },
+      "sha256": "28ee73c841d73c6dbdff82cdbd5271b6c09b3bac5b13de3a179aab01d3428b05"
+    },
+    "softmax": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "37.810000"
+      },
+      "sha256": "8e737111388e0c3a9164c9ae92f24f2bbc86092c34aea49d9b3e545ef81ec02c"
+    },
+    "tiled-transpose": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "36.103000"
+      },
+      "sha256": "dce7b6a2d85d7595937f238095ced49bd4b93abaea593425f03267090c87b246"
+    },
+    "histogram": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "47.002000"
+      },
+      "sha256": "fd4b9f6bfd97266f3cc42ff1ab88a2a90ed975f02959921c008cca8225fc1a4c"
+    },
+    "fusion": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "40.774000"
+      },
+      "sha256": "835f043c98dc6f30c56170bb7d7f154b9aeda9b92aea2733907afae42acae286"
+    },
+    "sync-debug": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "38.004000"
+      },
+      "sha256": "4daaa445814d56f647d167ff9d9fb68f0fa209dd723e3fbb7e3a506e94692b35"
+    },
+    "grid-stride": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "51.973000"
+      },
+      "sha256": "3152f3e78f0ebd054566ee87fa79920c963e8da245616ee41912e432adc44f28"
+    },
+    "matmul": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "39.900000"
+      },
+      "sha256": "25551fa5917c53d8dfe0f1c450de994049f818cf15c1af0cf52b5ef02a7cfcd2"
+    },
+    "transfers": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2160,
+          "avg_frame_rate": "30/1"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0"
+        },
+        {
+          "codec_name": "mov_text",
+          "codec_type": "subtitle",
+          "avg_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "54.342000"
+      },
+      "sha256": "d9826958b866c259c44da007e050c0dc7e9c0ef2d6a8c07cc38069af8a8d4d66"
+    }
+  }
+}

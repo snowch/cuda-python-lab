@@ -1,0 +1,21 @@
+64 8 8 resident blocks · 16 of 64 warps · 25% estimated occupancy Resource	Block limit
+Block slots	16
+Thread slots	32
+Registers	25
+Shared memory	8
+256 8 6 resident blocks · 48 of 64 warps · 75% estimated occupancy Resource	Block limit
+Block slots	16
+Thread slots	8
+Registers	6
+Shared memory	8
+256 16 4 resident blocks · 32 of 64 warps · 50% estimated occupancy Resource	Block limit
+Block slots	16
+Thread slots	8
+Registers	6
+Shared memory	4
+first-value Ran in GPGPU-Sim. out = [73.0]
+[5.0]
+scan Ran in GPGPU-Sim. out = [1, 1, 2, 3, 3, 3, 4]
+[0 1 2 3]
+precision Ran in GPGPU-Sim. out = [0.0, 1.0]
+1.0
