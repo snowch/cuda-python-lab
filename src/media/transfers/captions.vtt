@@ -1,0 +1,40 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.921
+The host copies the two input arrays to
+
+00:00:03.921 --> 00:00:06.059
+GPU memory. Each array contains
+
+00:00:06.059 --> 00:00:08.197
+thirty-three float thirty-two values, and
+
+00:00:08.197 --> 00:00:10.335
+each value occupies four bytes.
+
+00:00:14.835 --> 00:00:17.930
+The host allocates the output on the GPU.
+
+00:00:17.930 --> 00:00:20.639
+Each active GPU thread reads one value
+
+00:00:20.639 --> 00:00:23.347
+from each input and writes one output.
+
+00:00:27.847 --> 00:00:30.516
+The result comes back to the CPU. Two
+
+00:00:30.516 --> 00:00:33.184
+arrays went to the GPU, and one returns.
+
+00:00:33.184 --> 00:00:35.186
+How many bytes cross between them?
+
+00:00:43.686 --> 00:00:46.182
+Each copy moves one hundred thirty-two
+
+00:00:46.182 --> 00:00:48.678
+bytes. Together, the three copies move
+
+00:00:48.678 --> 00:00:50.342
+three hundred ninety-six bytes.
