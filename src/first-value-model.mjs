@@ -33,7 +33,7 @@ export const stages = ['Predict the values','Create the host array','Copy to the
 export function firstValueStep(program, index) {
   const {host,store,printed} = program;
   const rows = [
-    ['Host · before main()', 'def main():', firstValuePrediction(program).question],
+    ['Host · before main()', 'def main():', 'The program will start with '+host+' on the host and store '+store+' on the device. Inspect the arrays before and after each line.'],
     ['Host · initialization', 'out_host =', 'The CPU creates out_host with one float32 element. It is the original array.'],
     ['Host · copy to device', 'out = cuda.to_device(out_host)', 'The host copies the element into a separate device allocation named out. Both arrays now contain the starting value.'],
     ['Host · compilation', '@cuda.jit', 'The decorator marks kernel for compilation. At launch the browser compiler produces PTX instructions for GPGPU-Sim. A native CUDA environment loads compiled code for the physical GPU. Compilation changes no array values.'],

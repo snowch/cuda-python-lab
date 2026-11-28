@@ -1,0 +1,5096 @@
+{
+ "rows": [
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1490,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1477,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1464,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1451,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1438,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1425,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1412,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1399,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1386,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1373,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1360,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1347,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1334,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1321,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1308,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1295,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1282,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1269,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1256,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1243,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1230,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1217,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1204,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1191,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1178,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1165,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1152,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1139,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1126,
+   "overflow": 0,
+   "editor": 1030,
+   "article": 1032,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1113,
+   "overflow": 0,
+   "editor": 1023,
+   "article": 1025,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1100,
+   "overflow": 0,
+   "editor": 1010,
+   "article": 1012,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1087,
+   "overflow": 0,
+   "editor": 998,
+   "article": 1000,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1074,
+   "overflow": 0,
+   "editor": 986,
+   "article": 988,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1061,
+   "overflow": 0,
+   "editor": 974,
+   "article": 976,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1048,
+   "overflow": 0,
+   "editor": 962,
+   "article": 964,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1035,
+   "overflow": 0,
+   "editor": 950,
+   "article": 952,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1022,
+   "overflow": 0,
+   "editor": 938,
+   "article": 940,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 1009,
+   "overflow": 0,
+   "editor": 926,
+   "article": 928,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 996,
+   "overflow": 0,
+   "editor": 914,
+   "article": 916,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 983,
+   "overflow": 0,
+   "editor": 902,
+   "article": 904,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 970,
+   "overflow": 0,
+   "editor": 890,
+   "article": 892,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 957,
+   "overflow": 0,
+   "editor": 878,
+   "article": 880,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 944,
+   "overflow": 0,
+   "editor": 867,
+   "article": 869,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 931,
+   "overflow": 0,
+   "editor": 855,
+   "article": 857,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 918,
+   "overflow": 0,
+   "editor": 843,
+   "article": 845,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 905,
+   "overflow": 0,
+   "editor": 831,
+   "article": 833,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 892,
+   "overflow": 0,
+   "editor": 819,
+   "article": 821,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 879,
+   "overflow": 0,
+   "editor": 807,
+   "article": 809,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 866,
+   "overflow": 0,
+   "editor": 795,
+   "article": 797,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 853,
+   "overflow": 0,
+   "editor": 783,
+   "article": 785,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 840,
+   "overflow": 0,
+   "editor": 771,
+   "article": 773,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 827,
+   "overflow": 0,
+   "editor": 759,
+   "article": 761,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 814,
+   "overflow": 0,
+   "editor": 747,
+   "article": 749,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 801,
+   "overflow": 0,
+   "editor": 735,
+   "article": 737,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 788,
+   "overflow": 0,
+   "editor": 723,
+   "article": 725,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 775,
+   "overflow": 0,
+   "editor": 711,
+   "article": 713,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 762,
+   "overflow": 0,
+   "editor": 699,
+   "article": 701,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 749,
+   "overflow": 0,
+   "editor": 687,
+   "article": 689,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 736,
+   "overflow": 0,
+   "editor": 675,
+   "article": 677,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 723,
+   "overflow": 0,
+   "editor": 663,
+   "article": 665,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 710,
+   "overflow": 0,
+   "editor": 651,
+   "article": 653,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 697,
+   "overflow": 0,
+   "editor": 639,
+   "article": 641,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 684,
+   "overflow": 0,
+   "editor": 627,
+   "article": 629,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 671,
+   "overflow": 0,
+   "editor": 615,
+   "article": 617,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 658,
+   "overflow": 0,
+   "editor": 603,
+   "article": 605,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 645,
+   "overflow": 0,
+   "editor": 591,
+   "article": 593,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 632,
+   "overflow": 0,
+   "editor": 579,
+   "article": 581,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 619,
+   "overflow": 0,
+   "editor": 568,
+   "article": 570,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 606,
+   "overflow": 0,
+   "editor": 556,
+   "article": 558,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 593,
+   "overflow": 0,
+   "editor": 544,
+   "article": 546,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 580,
+   "overflow": 0,
+   "editor": 532,
+   "article": 534,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 567,
+   "overflow": 0,
+   "editor": 520,
+   "article": 522,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 554,
+   "overflow": 0,
+   "editor": 508,
+   "article": 510,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 541,
+   "overflow": 0,
+   "editor": 496,
+   "article": 498,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 528,
+   "overflow": 0,
+   "editor": 484,
+   "article": 486,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 515,
+   "overflow": 0,
+   "editor": 472,
+   "article": 474,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 502,
+   "overflow": 0,
+   "editor": 460,
+   "article": 462,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 489,
+   "overflow": 0,
+   "editor": 448,
+   "article": 450,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 476,
+   "overflow": 0,
+   "editor": 436,
+   "article": 438,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 463,
+   "overflow": 0,
+   "editor": 424,
+   "article": 426,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 450,
+   "overflow": 0,
+   "editor": 412,
+   "article": 414,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 437,
+   "overflow": 0,
+   "editor": 400,
+   "article": 402,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 424,
+   "overflow": 0,
+   "editor": 388,
+   "article": 390,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 411,
+   "overflow": 0,
+   "editor": 376,
+   "article": 378,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 398,
+   "overflow": 0,
+   "editor": 364,
+   "article": 366,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 385,
+   "overflow": 0,
+   "editor": 351,
+   "article": 353,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 372,
+   "overflow": 0,
+   "editor": 338,
+   "article": 340,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 359,
+   "overflow": 0,
+   "editor": 325,
+   "article": 327,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 346,
+   "overflow": 0,
+   "editor": 312,
+   "article": 314,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 333,
+   "overflow": 0,
+   "editor": 299,
+   "article": 301,
+   "focus": "prediction"
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "width": 320,
+   "overflow": 0,
+   "editor": 286,
+   "article": 288,
+   "focus": "prediction"
+  }
+ ],
+ "scans": [
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "violations": []
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "violations": []
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "violations": []
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "violations": []
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "violations": []
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "violations": []
+  }
+ ],
+ "zoom": [
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "first-value",
+   "theme": "light",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "first-value",
+   "theme": "dark",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "light",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "vector-add",
+   "theme": "dark",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "softmax",
+   "theme": "light",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "factor": 1,
+   "width": 1440,
+   "content": 1440,
+   "dpr": 1
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "factor": 1.5,
+   "width": 960,
+   "content": 960,
+   "dpr": 1.5
+  },
+  {
+   "lesson": "softmax",
+   "theme": "dark",
+   "factor": 2,
+   "width": 720,
+   "content": 720,
+   "dpr": 2
+  }
+ ]
+}

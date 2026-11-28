@@ -1,78 +1,36 @@
+// Retained narration for the retired first-value recording.
+export const firstValueTranscript = [
+  [
+    "Create the CPU array",
+    "This line creates out_host, a CPU array containing one zero."
+  ],
+  [
+    "Copy the array to GPU memory",
+    "cuda.to_device copies the array into GPU memory. The original stays on the CPU."
+  ],
+  [
+    "Compile on the CPU, load onto the GPU",
+    "Numba compiles this Python kernel on the CPU. CUDA loads the compiled code onto the GPU when needed."
+  ],
+  [
+    "Launch one GPU thread",
+    "One GPU thread runs the kernel. Its argument, out, is the array we just copied into GPU memory."
+  ],
+  [
+    "Which array will change?",
+    "Both arrays contain zero. Which array will change when this line runs?"
+  ],
+  [
+    "Write to the GPU array",
+    "The GPU thread writes 42 to the GPU array. The CPU array still holds zero."
+  ],
+  [
+    "Copy the result to CPU memory",
+    "Copy to host waits for the kernel to finish. It returns the value in a new CPU array called result."
+  ]
+];
+
 export const walkthroughs = {
-  "first-value": {
-    title: "Follow one value from CPU to GPU and back",
-    stages: [
-      {
-        title: "Create the CPU array",
-        hold: 4,
-        trace: {
-          code: "out_host = np.zeros(1, dtype=np.float32)",
-          focus: "host",
-        },
-        narration: "This line creates out_host, a CPU array containing one zero.",
-        speech: "This line creates out host, a CPU array containing one zero.",
-      },
-      {
-        title: "Copy the array to GPU memory",
-        hold: 4,
-        trace: {
-          code: "out = cuda.to_device(out_host)",
-          device: "out = [0]", arrow: "Copy ↓", focus: "device",
-        },
-        narration: "cuda.to_device copies the array into GPU memory. The original stays on the CPU.",
-        speech: "[CUDA](/kˈuːdə/) dot to device copies the array into GPU memory. [pause 0.55] The original stays on the CPU.",
-      },
-      {
-        title: "Compile on the CPU, load onto the GPU",
-        hold: 4.5,
-        trace: {
-          before: "@cuda.jit",
-          code: "def kernel(out):",
-          device: "out = [0]", arrow: "Load ↓", activity: "Compiled kernel", focus: "activity",
-        },
-        narration: "Numba compiles this Python kernel on the CPU. CUDA loads the compiled code onto the GPU when needed.",
-        speech: "[Numba](/nˈʌmbə/) compiles this Python kernel on the CPU. [pause 0.55] [CUDA](/kˈuːdə/) loads the compiled code onto the GPU when needed.",
-      },
-      {
-        title: "Launch one GPU thread",
-        hold: 4.5,
-        trace: {
-          code: "kernel[1, 1](out)",
-          device: "out = [0]", arrow: "Launch ↓", activity: "One GPU thread", focus: "activity",
-        },
-        narration: "One GPU thread runs the kernel. Its argument, out, is the array we just copied into GPU memory.",
-      },
-      {
-        title: "Which array will change?",
-        hold: 8,
-        trace: {
-          code: "out[0] = 42",
-          device: "out = [0]", activity: "One GPU thread",
-        },
-        narration: "Both arrays contain zero. Which array will change when this line runs?",
-        speech: "Both arrays contain zero. [pause 0.55] Which array will change when this line runs?",
-      },
-      {
-        title: "Write to the GPU array",
-        hold: 4,
-        trace: {
-          code: "out[0] = 42",
-          device: "out = [42]", activity: "One GPU thread", focus: "device",
-        },
-        narration: "The GPU thread writes 42 to the GPU array. The CPU array still holds zero.",
-        speech: "The GPU thread writes 42 to the GPU array. [pause 0.55] The CPU array still holds zero.",
-      },
-      {
-        title: "Copy the result to CPU memory",
-        hold: 4.5,
-        trace: {
-          code: "result = out.copy_to_host()",
-          device: "out = [42]", arrow: "Copy ↑", result: "result = [42]", focus: "result",
-        },
-        narration: "Copy to host waits for the kernel to finish. It returns the value in a new CPU array called result.",
-      },
-    ],
-  },
   "vector-add": {
     title: "Follow two threads through vector addition",
     stages: [

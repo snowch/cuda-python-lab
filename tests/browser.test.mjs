@@ -204,7 +204,7 @@ test("case changes preserve the shared kernel and the host draft for each case",
     assert.match(final, /a\[i\] \* b\[i\]/);
     assert.match(final, /kernel\[3, 16\]\(a, b, out, 33\)/);
 
-    await page.getByRole("textbox", { name: "Predict before you run" }).fill("Block 2, Thread 0");
+    await page.getByRole("textbox", { name: /^Your prediction · / }).fill("Block 2, Thread 0");
     await page.getByRole("checkbox", { name: "Mark lesson complete" }).check();
     await editorTools(page).click();
     await page.getByRole("button", { name: "Restore starter" }).click();
@@ -214,7 +214,7 @@ test("case changes preserve the shared kernel and the host draft for each case",
     await page.getByRole("button", { name: "Undo restore" }).click();
     assert.equal(await readSource(editor), final);
     assert.equal(await input.inputValue(), "0");
-    assert.equal(await page.getByRole("textbox", { name: "Predict before you run" }).inputValue(), "Block 2, Thread 0");
+    assert.equal(await page.getByRole("textbox", { name: /^Your prediction · / }).inputValue(), "Block 2, Thread 0");
     assert.equal(await page.getByRole("checkbox", { name: "Mark lesson complete" }).isChecked(),true);
   });
 });
@@ -282,6 +282,7 @@ test("architecture walkthroughs play with captions and expose transcripts by key
 
 test("the GPU appendix gives notebook setup, investigations and the occupancy worksheet", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
+    await editorTools(page).press("Enter");
     await page.getByRole("link", { name: "GPU setup instructions" }).click();
     await page.getByRole("heading", { name: "Open and run a lab notebook" }).waitFor();
     assert.ok(await page.getByRole("link", { name: "Google Colab" }).isVisible());

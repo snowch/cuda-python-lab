@@ -1,3 +1,4 @@
+import {mapperMarkup,mountThreadMapper} from './thread-mapper.mjs';
 import {traceMarkup,mountFirstValueTrace} from './first-value-trace.mjs';
 import {mountGuide, guidedMarkup} from './guided-panel.mjs';
 import {caseQuestion} from './guided-experiments.mjs';
@@ -16,7 +17,7 @@ import { mountProgramEditor } from "./editor.mjs";
 import { joinProgram, programExcerpt, splitProgram, standaloneProgram } from "./host-program.mjs";
 import notebookRuntime from "./notebook-support.mjs";
 import { makeNotebook } from "./notebook.mjs";
-import { walkthroughs } from "./walkthroughs.mjs";
+import { firstValueTranscript, walkthroughs } from "./walkthroughs.mjs";
 import { attachRunner } from "./browser-runner.mjs";
 
 const order = modules.flatMap((module) => module.lessons);
@@ -117,7 +118,11 @@ function updateSaveStatus() {
   control('work-actions').hidden = !failed && !conflict && !stale;
   control('retry-save').hidden = !failed;
   const alertLink=document.getElementById('work-recovery-link');
-  if(alertLink) alertLink.hidden = !failed && !stale && !conflict;
+  if(alertLink) {
+    alertLink.hidden = !failed && !stale && !conflict;
+    alertLink.textContent = failed ? 'Unsaved changes · Review save options'
+      : stale ? 'Saved version changed · Review your work' : 'Recovery copies available · Review your work';
+  }
   control('work-copies').hidden = !conflict;
   if (workPanel.contains(focused) && focused.closest('[hidden]')) control('work-status').focus({preventScroll:true});
   workPanel.classList.toggle('needs-attention',failed || conflict || Boolean(stale));
@@ -364,6 +369,8 @@ function showLesson(slug) {
   const index = order.indexOf(slug);
   const walkthrough = walkthroughs[slug];
   const firstValue = slug === 'first-value';
+  const vectorAdd = slug === 'vector-add';
+  const modeled = firstValue || vectorAdd;
   const defaultProgram = standaloneProgram(starters[slug], lesson.cases[0]);
   main.innerHTML = `<article>
     <header class="lesson-heading">
@@ -371,33 +378,36 @@ function showLesson(slug) {
       <p class="lead">${escape(lesson.summary)}</p>
       <div class="reading lesson-context">
         ${formatLessonIntro(lesson.intro.slice(0,1), defaultProgram)}
+        ${modeled?'<button type="button" id="skip-to-task" class="trace-link">Go to the experiment</button>':''}
         <details id="starter-notes"><summary>Read the starter program</summary>
           ${formatLessonIntro(lesson.intro.slice(1), defaultProgram)}</details>
       </div>
     </header>
 
-    <div class="lab-layout"><div class="lab-plan">
+    ${firstValue?traceMarkup:vectorAdd?mapperMarkup:''}
+    <div class="lab-layout">
     <section class="reading experiment guided" aria-labelledby="guided-title">
       <h2 id="guided-title">Run the experiment</h2>
-      <p>Choose a task to open its case and your saved code. Use <strong>Prepare starting program</strong> when you want the supplied starting point.</p>
-      <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Starter case
+      <div class="experiment-choices">
+        <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Starter case
             <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
-          </label>
+        </label>
+        <label for="guided-task">Guided task<select id="guided-task"></select></label>
+      </div>
       ${guidedMarkup}
-      ${firstValue?'<button type="button" class="trace-link" id="goto-trace">Explore the host and device arrays</button>':''}
     </section>
     <section class="prediction">
       <label for="prediction" id="prediction-label">Predict before you run</label>
       <p id="prediction-prompt"></p>
-      ${firstValue ? '<p id="prediction-evidence"></p><p id="notes-scope">These notes stay with this case when you change the code. Include the starting value, store and print choice in each prediction.</p>' : ''}
-      <textarea id="prediction" rows="${firstValue ? 3 : 1}" aria-describedby="prediction-prompt${firstValue ? ' prediction-evidence notes-scope' : ''}"></textarea>
+      ${modeled ? '<p id="prediction-evidence"></p>' : ''}
+      <textarea id="prediction" rows="3" aria-describedby="prediction-prompt${modeled ? ' prediction-evidence notes-scope' : ''}"></textarea>
+      ${modeled ? '<p id="notes-scope">Notes stay with this case and may include earlier runs.</p>' : ''}
       <details id="earlier-prediction" hidden><summary>Earlier lesson prediction</summary>
         <p>This answer was saved for the whole lesson. Copy any part you want to use for this case.</p>
         <label>Earlier answer<textarea id="legacy-answer" readonly rows="2"></textarea></label>
       </details>
     </section>
 
-    </div><div class="lab-working">
     <section class="workbench" aria-labelledby="workbench-title">
       <div class="workbench-card">
         <div class="editor-top">
@@ -412,28 +422,23 @@ function showLesson(slug) {
               <button class="button" id="download-source" type="button">Export .py</button>
               <button class="button" id="backup-work" type="button">Export all learner work</button>
             </div>
+            <a href="#gpu">GPU setup instructions</a>
             <p class="editor-note" id="target-note" role="status" hidden></p>
           </details>
         </div>
         <div id="source" class="codebox"></div>
         <button type="button" class="button" id="editor-review" hidden>Review saved program</button>
-        <p class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</p>
+
         <div class="workbench-controls">
           <div class="actions">
             <button class="button primary" id="run" type="button">Run</button>
             <button class="button" id="stop" type="button" hidden>Stop</button>
             <button class="button" id="download-notebook" type="button">Download notebook</button>
-            <a href="#gpu">GPU setup instructions</a>
           </div>
+          <span class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</span>
         </div>
-        <details id="task-brief" open><summary>Current task · <span id="brief-title"></span></summary>
-          <p id="brief-action"></p><p id="brief-evidence"></p>${firstValue ? '' : '<p id="brief-prediction" hidden></p>'}
-          ${firstValue?'<button type="button" class="trace-link" id="brief-trace">Inspect array model</button>':''}
-          <button type="button" class="trace-link" id="change-task">Choose task or case</button>
-          <button type="button" class="trace-link" id="compare-prediction">Review prediction</button>
-        </details>
         <button type="button" class="button" id="work-recovery-link" hidden>Review save and recovery options</button>
-        ${lesson.cases.length > 1 ? '<p class="editor-note" id="case-note">Kernel edits carry across cases. The host code has a draft for each case.</p>' : ""}
+
         <p class="editor-note" id="draft-note" role="status" hidden></p>
       </div>
       <section class="workbench-card run-console" aria-labelledby="console-title">
@@ -442,17 +447,16 @@ function showLesson(slug) {
         <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
         <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error" tabindex="0" role="region" aria-label="Runner file error"></pre></details></div>
-        ${firstValue ? `<section class="prediction-comparison" aria-labelledby="comparison-title">
-          <h3 id="comparison-title">Compare your prediction</h3>
-          <p id="comparison-question"></p><p id="comparison-evidence"></p>
-          <p id="brief-prediction" hidden></p>
-        </section>` : ''}
+        <div class="result-links" role="group" aria-label="Experiment context">
+          <button type="button" class="trace-link" id="compare-prediction" aria-controls="prediction">Review prediction</button>
+          <button type="button" class="trace-link" id="change-task" aria-controls="guided-task">Task · <span id="brief-title"></span></button>
+          ${modeled?'<button type="button" class="trace-link" id="brief-trace" aria-controls="trace-title">'+(firstValue?'Revisit the arrays':'Revisit the thread map')+'</button>':''}
+        </div>
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0" role="region" aria-label="Compiled PTX instructions"></pre></details>
       </section>
     </section>
 
-    </div></div>
-    ${firstValue?traceMarkup:''}
+    </div>
     <section class="reading lesson-explanation">
       <h2>Explain the authored examples</h2>
       <p>${escape(lesson.explain)}</p>
@@ -460,6 +464,10 @@ function showLesson(slug) {
       ${hardwareLocation(slug)}
     </section>
     <section class="lesson-resources" aria-label="Optional lesson resources">
+      ${firstValue ? `<details id="walkthrough" class="resource-details resource-row">
+        ${resourceSummary("menu_book","Follow one value from CPU to GPU and back","Read the starter walkthrough")}
+        <div id="walkthrough-transcript" class="resource-body">${firstValueTranscript.map(([title,text])=>`<h3>${escape(title)}</h3><p>${escape(text)}</p>`).join('')}</div>
+      </details>` : ''}
       ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details resource-row">
         ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Starter walkthrough, captions and transcript`)}<div class="resource-body">
         <video data-walkthrough="${slug}" controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
@@ -486,7 +494,7 @@ function showLesson(slug) {
   </article>`;
   const find = (id) => main.querySelector(`#${id}`);
   find("walkthrough")?.addEventListener("toggle", ({ currentTarget }) => {
-    if (!currentTarget.open) currentTarget.querySelector("video").pause();
+    if (!currentTarget.open) currentTarget.querySelector("video")?.pause();
   });
   const input = find("case");
   const draftNote = find("draft-note");
@@ -556,16 +564,13 @@ function showLesson(slug) {
     return record.caseAnswers?.[slug]?.[fixture.id] ?? (lesson.cases.length === 1 ? record.predictions[slug] : '') ?? '';
   }
   function syncPrediction() {
-    const brief=find('brief-prediction');
-    brief.hidden=!prediction.value;
-    const label=firstValue ? 'Case notes (may include earlier runs) · ' : 'Your prediction · ';
-    brief.textContent=prediction.value ? label+prediction.value : '';
+    find('compare-prediction').textContent = prediction.value ? 'Compare with my case notes' : 'Review prediction';
   }
   function openPrediction() {
     prediction.value = caseAnswer(state);
     syncPrediction();
-    find('prediction-label').textContent = firstValue ? 'Prediction notes · '+fixture.label : 'Predict before you run · Starter case: '+fixture.label;
-    if (!firstValue) find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
+    find('prediction-label').textContent = (modeled?'Your prediction · ':'Your prediction · Starter case: ')+fixture.label;
+    if (!modeled) find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
     const earlier = state.predictions[slug];
     find('earlier-prediction').hidden = !earlier || (lesson.cases.length === 1 && !Object.hasOwn(state.caseAnswers?.[slug] ?? {},fixture.id));
     find('legacy-answer').value = earlier ?? '';
@@ -665,21 +670,40 @@ function showLesson(slug) {
   });
 
   find('change-task').onclick=()=>find('guided-task').focus();
-  find('compare-prediction').onclick=()=>prediction.focus();
+  // Keep the question and its evidence in view if a soft keyboard shrinks the viewport.
+  function alignPrediction() {
+    if(document.activeElement!==prediction)return;
+    const viewport=window.visualViewport;
+    const labelTop=find('prediction-label').getBoundingClientRect().top;
+    const answerTop=prediction.getBoundingClientRect().top;
+    const room=viewport?.height ?? window.innerHeight;
+    const top=answerTop-labelTop+64<=room ? labelTop : find('prediction-prompt').getBoundingClientRect().top;
+    window.scrollBy(0,top-(viewport?.offsetTop ?? 0)-8);
+  }
+  function focusPrediction() {
+    prediction.focus({preventScroll:true});
+    alignPrediction();
+    window.visualViewport?.addEventListener('resize',alignPrediction);
+  }
+  const releasePrediction=()=>window.visualViewport?.removeEventListener('resize',alignPrediction);
+  prediction.addEventListener('blur',releasePrediction);
+  window.addEventListener('cuda-python-lab:lesson-changed',releasePrediction,{once:true});
+  find('compare-prediction').onclick=focusPrediction;
   find('work-recovery-link').onclick=()=>control('work-status').focus();
-  if(firstValue) {
-    viewTrace=mountFirstValueTrace({root:find('trace-title').closest('section'),starter,
-      source:()=>editor.source,fixture:()=>fixture.id,runState:runner.read,
+  if(modeled) {
+    find('skip-to-task').onclick=()=>find('guided-task').focus();
+    const mount=firstValue ? mountFirstValueTrace : mountThreadMapper;
+    viewTrace=mount({root:find('trace-title').closest('section'),starter:()=>starter,
+      source:()=>editor.source,fixture:()=>fixture,runState:runner.read,
       canApply:view.guide.canApply,apply:view.guide.applyProgram,undoControl:find('undo-prepare'),
+      reviewUndo:()=>{find('program-options').open=true;find('undo-prepare').focus();},
       onPredictionContext({question,evidence}) {
         find('prediction-prompt').textContent = question;
-        find('comparison-question').textContent = question;
         find('prediction-evidence').textContent = evidence;
-        find('comparison-evidence').textContent = evidence;
       },
-      reveal:line=>editor.reveal(line),predict:()=>prediction.focus(),consoleFocus:()=>find('console-title').focus()});
+      reveal:line=>editor.reveal(line),predict:focusPrediction,consoleFocus:()=>find('console-title').focus()});
     view.trace=viewTrace;
-    find('goto-trace').onclick=find('brief-trace').onclick=()=>{find('trace-title').focus();find('trace-title').scrollIntoView({block:'start'});};
+    find('brief-trace').onclick=()=>{find('trace-title').focus();find('trace-title').scrollIntoView({block:'start'});};
   }
   find("download-notebook").addEventListener("click", () => {
     const source = editor.source;

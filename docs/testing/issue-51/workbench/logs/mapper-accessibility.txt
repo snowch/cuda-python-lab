@@ -1,0 +1,146 @@
+- region "Which thread writes this element?":
+  - heading "Which thread writes this element?" [level=2]
+  - paragraph: A launch groups threads into blocks. A block is a group in your code. A streaming multiprocessor (SM) is hardware that can run a block. This map shows logical indices. It cannot tell which SM ran a block or how long it took.
+  - paragraph: Starter case · 33 elements · 32 threads per block | Open Python · 33 elements · 2 × 32 · initial output 0
+  - text: Investigation step
+  - combobox "Investigation step":
+    - option "1 / 4 · Predict the last element"
+    - option "2 / 4 · Find its owner"
+    - option "3 / 4 · Test the bounds check"
+    - option "4 / 4 · Follow the write" [selected]
+  - paragraph: Trace both reads and the output cell. Compare your prediction with a run of this program.
+  - text: Inspect a launched thread
+  - combobox "Inspect a launched thread":
+    - option "No launched owner" [disabled]
+    - option "Block 0 · thread 0"
+    - option "Block 0 · thread 1"
+    - option "Block 0 · thread 2"
+    - option "Block 0 · thread 3"
+    - option "Block 0 · thread 4"
+    - option "Block 0 · thread 5"
+    - option "Block 0 · thread 6"
+    - option "Block 0 · thread 7"
+    - option "Block 0 · thread 8"
+    - option "Block 0 · thread 9"
+    - option "Block 0 · thread 10"
+    - option "Block 0 · thread 11"
+    - option "Block 0 · thread 12"
+    - option "Block 0 · thread 13"
+    - option "Block 0 · thread 14"
+    - option "Block 0 · thread 15"
+    - option "Block 0 · thread 16"
+    - option "Block 0 · thread 17"
+    - option "Block 0 · thread 18"
+    - option "Block 0 · thread 19"
+    - option "Block 0 · thread 20"
+    - option "Block 0 · thread 21"
+    - option "Block 0 · thread 22"
+    - option "Block 0 · thread 23"
+    - option "Block 0 · thread 24"
+    - option "Block 0 · thread 25"
+    - option "Block 0 · thread 26"
+    - option "Block 0 · thread 27"
+    - option "Block 0 · thread 28"
+    - option "Block 0 · thread 29"
+    - option "Block 0 · thread 30"
+    - option "Block 0 · thread 31"
+    - option "Block 1 · thread 0" [selected]
+    - option "Block 1 · thread 1"
+    - option "Block 1 · thread 2"
+    - option "Block 1 · thread 3"
+    - option "Block 1 · thread 4"
+    - option "Block 1 · thread 5"
+    - option "Block 1 · thread 6"
+    - option "Block 1 · thread 7"
+    - option "Block 1 · thread 8"
+    - option "Block 1 · thread 9"
+    - option "Block 1 · thread 10"
+    - option "Block 1 · thread 11"
+    - option "Block 1 · thread 12"
+    - option "Block 1 · thread 13"
+    - option "Block 1 · thread 14"
+    - option "Block 1 · thread 15"
+    - option "Block 1 · thread 16"
+    - option "Block 1 · thread 17"
+    - option "Block 1 · thread 18"
+    - option "Block 1 · thread 19"
+    - option "Block 1 · thread 20"
+    - option "Block 1 · thread 21"
+    - option "Block 1 · thread 22"
+    - option "Block 1 · thread 23"
+    - option "Block 1 · thread 24"
+    - option "Block 1 · thread 25"
+    - option "Block 1 · thread 26"
+    - option "Block 1 · thread 27"
+    - option "Block 1 · thread 28"
+    - option "Block 1 · thread 29"
+    - option "Block 1 · thread 30"
+    - option "Block 1 · thread 31"
+  - text: Inspect an array element
+  - combobox "Inspect an array element":
+    - option "Outside the array" [disabled]
+    - option "out[0]"
+    - option "out[1]"
+    - option "out[2]"
+    - option "out[3]"
+    - option "out[4]"
+    - option "out[5]"
+    - option "out[6]"
+    - option "out[7]"
+    - option "out[8]"
+    - option "out[9]"
+    - option "out[10]"
+    - option "out[11]"
+    - option "out[12]"
+    - option "out[13]"
+    - option "out[14]"
+    - option "out[15]"
+    - option "out[16]"
+    - option "out[17]"
+    - option "out[18]"
+    - option "out[19]"
+    - option "out[20]"
+    - option "out[21]"
+    - option "out[22]"
+    - option "out[23]"
+    - option "out[24]"
+    - option "out[25]"
+    - option "out[26]"
+    - option "out[27]"
+    - option "out[28]"
+    - option "out[29]"
+    - option "out[30]"
+    - option "out[31]"
+    - option "out[32]" [selected]
+  - paragraph: Each slot is one launched thread. The outline marks your selection. At the guard step, striped slots skip the write.
+  - group "Launch grid by block":
+    - button "Block 0 i = 0–31":
+      - strong: Block 0
+      - text: i = 0–31
+    - button "Block 1 i = 32–63" [pressed]:
+      - strong: Block 1
+      - text: i = 32–63
+  - paragraph: 64 launched · 33 active · 31 skip the store · 33 elements covered · 0 uncovered
+  - paragraph: cuda.grid(1) = blockIdx.x × blockDim.x + threadIdx.x = 1 × 32 + 0 = 32. Dividing 32 by 32 gives block 1 and remainder 0 (the local thread).
+  - paragraph: 32 < 33 is true. This thread enters the if block.
+  - table "Selected element · source-level model":
+    - caption: Selected element · source-level model
+    - rowgroup:
+      - row "Input a Input b Output":
+        - columnheader "Input a"
+        - columnheader "Input b"
+        - columnheader "Output"
+    - rowgroup:
+      - row "a[32] = 33 · read b[32] = 66 · read out[32] ← 99":
+        - cell "a[32] = 33 · read"
+        - cell "b[32] = 66 · read"
+        - cell "out[32] ← 99"
+  - button "Show source · out[i] = a[i] + b[i]"
+  - button "Previous step"
+  - button "Next step" [disabled]
+  - button "Restart steps"
+  - button "Write a prediction"
+  - group: Change the launch and test a missing write
+  - strong: Execution evidence
+  - paragraph: Run the open Python to inspect its printed array.
+  - button "Inspect Console"

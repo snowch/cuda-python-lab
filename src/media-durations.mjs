@@ -14,7 +14,6 @@ export const mediaDurations={
   "fusion": 40.774,
   "scan": 51.0,
   "sync-debug": 38.0,
-  "first-value": 79.366667,
   "reduction": 51.0,
   "coalescing": 61.4
 };

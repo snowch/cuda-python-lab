@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
@@ -26,60 +26,6 @@ function skill(script, directory, ...args) {
 }
 
 const escape = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-function traceSlide(stage, program) {
-  const { before, code, device, arrow, activity, result, focus } = stage.trace;
-  const active = (target) => focus === target ? " active" : "";
-  const source = (text) => text.split("\n").filter(line => line.trim()).map(line => {
-    const highlighted = line.trim() === code || line.trim() === before;
-    return `<code class="${highlighted ? "current" : ""}">${escape(line)}</code>`;
-  }).join("");
-  return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
-    * { box-sizing: border-box; }
-    body { margin: 0; background: #142326; color: #effaf3; font: 19px system-ui, sans-serif; }
-    main { padding: 26px 38px 0; }
-    h1 { margin: 0 0 16px; font-size: 30px; line-height: 1.1; }
-    h2 { margin: 0 0 3px; font-size: 21px; }
-    code { font: 21px/1.3 monospace; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px; }
-    .source { min-width: 0; padding: 10px 0; background: #101e21; border-radius: 7px; }
-    .source div + div { margin-top: 4px; }
-    .source code {
-      display: block;
-      padding: 0 10px;
-      border-left: 3px solid transparent;
-      color: #b7d9ce;
-      font: 19px/21px monospace;
-      white-space: pre;
-    }
-    .source .current { border-color: #b5ed8d; background: #365340; color: #effaf3; }
-    .hardware { display: grid; grid-template-rows: 1fr 38px 1fr; }
-    .hardware section { padding: 12px 16px; border-radius: 6px; background: #24393b; }
-    .value { display: table; padding: 0 6px; border: 2px solid transparent; border-radius: 5px; }
-    .activity { font-size: 17px; }
-    .active { border-color: #b5ed8d; background: #365340; }
-    .arrow { align-self: center; text-align: center; font-weight: 650; color: #b7d9ce; }
-  </style><main><div class="trace">
-    <h1>${escape(stage.title)}</h1>
-    <div class="layout">
-      <div class="source">
-        <div>${source(program.kernel)}</div>
-        <div>${source(program.main)}</div>
-      </div>
-      <div class="hardware">
-        <section><h2>CPU memory</h2>
-          <code class="value${active("host")}">out_host = [0]</code>
-          ${result ? `<code class="value${active("result")}">${escape(result)}</code>` : ""}
-        </section>
-        <div class="arrow">${escape(arrow ?? "")}</div>
-        <section><h2>GPU</h2>
-          ${device ? `<code class="value${active("device")}">${escape(device)}</code>` : '<span class="value activity">No device array yet</span>'}
-          ${activity ? `<span class="value activity${active("activity")}">${escape(activity)}</span>` : ""}
-        </section>
-      </div>
-    </div>
-  </div></main></html>`;
-}
-
 function coalescingSlide(stage, kernel) {
   const code = kernel.split("\n").filter(line => line.trim()).map(line =>
     `<code class="${line.trim() === "out[col, row] = values[row, col]" ? "current" : ""}">${escape(line)}</code>`
@@ -272,7 +218,6 @@ function vectorSlide(stage, kernel) {
 }
 
 function slide(walkthrough, stage, program) {
-  if (stage.trace) return traceSlide(stage, program);
   if (stage.rows) return statesSlide(stage, program.kernel);
   if (stage.sceneKind) return patternSlide(stage, program.kernel);
   if (stage.lines) return transferSlide(stage, program);
@@ -350,7 +295,7 @@ if (action === "prepare") {
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
     for (const { slug, directory, walkthrough, scenes } of recordings) {
-      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines) ? {
+      const program = walkthrough.stages.some(stage => stage.highlight || stage.mode || stage.phase || stage.lines) ? {
         kernel: await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8"),
         main: hostProgram(lessons[slug].cases[0]).split("\nif __name__")[0],
       } : undefined;
@@ -359,8 +304,8 @@ if (action === "prepare") {
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage, program));
-        const content = await page.locator(stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines ? ".trace" : "ol").boundingBox();
-        if (content.y + content.height > (stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
+        const content = await page.locator(stage.highlight || stage.mode || stage.phase || stage.lines ? ".trace" : "ol").boundingBox();
+        if (content.y + content.height > (stage.highlight || stage.mode || stage.phase || stage.lines ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
@@ -387,28 +332,6 @@ if (action === "prepare") {
         skill("deck.py", directory, slug, walkthrough.title);
         const video = join(directory, "out", `${slug}-4k-narrated.mp4`);
         const srt = join(directory, "out", `${slug}.srt`);
-        if (slug === "first-value") {
-          const durations = JSON.parse(await readFile(join(directory, "audio", "durations.json"), "utf8")).durations;
-          let start = 0;
-          const movements = [];
-          for (const scene of scenes) {
-            const stage = walkthrough.stages[Number(scene.id.slice(1)) - 1];
-            if (stage.trace.arrow) movements.push({ start, up: stage.trace.arrow.includes("↑") });
-            start += .5 + durations[scene.id] + (scene.hold ?? 1);
-          }
-          const input = join(directory, "out", "before-motion.mp4");
-          await rename(video, input);
-          const filters = movements.map(({ start, up }, index) => {
-            const progress = `min(max((t-${(start + .5).toFixed(3)})/2,0),1)`;
-            const y = up ? `(236-28*${progress})*4` : `(208+28*${progress})*4`;
-            const previous = index ? `[v${index - 1}]` : "[0:v]";
-            return `${previous}[1:v]overlay=x=815*4:y='${y}':enable='between(t,${(start + .5).toFixed(3)},${(start + 2.5).toFixed(3)})'[v${index}]`;
-          });
-          ffmpeg("-i", input, "-f", "lavfi", "-i", "color=c=0xb5ed8d:s=24x24:r=30",
-            "-filter_complex", filters.join(";"), "-map", `[v${movements.length - 1}]`,
-            "-map", "0:a", "-map", "0:s", "-c:v", "libx264", "-preset", "veryfast",
-            "-crf", "18", "-threads", "4", "-c:a", "copy", "-c:s", "copy", "-t", start.toFixed(3), "-movflags", "+faststart", video);
-        }
         const [picture, sound, captions] = inspect(video, "stream=codec_name,width,height,r_frame_rate").streams;
         if (picture.codec_name !== "h264" || picture.width !== 3840 || picture.height !== 2160 ||
             picture.r_frame_rate !== "30/1" || sound?.codec_name !== "aac" || captions?.codec_name !== "mov_text") {

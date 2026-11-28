@@ -39,3 +39,8 @@ export async function launchChromium(t) {
   t.after(() => browser.close());
   return browser;
 }
+
+export async function reviewPreparation(page) {
+  const panel=page.locator('#program-options');
+  if (!await panel.evaluate(element=>element.open)) await panel.locator('summary').click();
+}
