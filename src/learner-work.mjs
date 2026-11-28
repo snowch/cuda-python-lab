@@ -107,24 +107,31 @@ export function openLearnerWork(onChange) {
       failed(cause);
       old = {data:{}, exists:false};
     }
-    const latest = checkpoint && (!old.transactional || checkpoint.workRevision >= old.data.workRevision)
-      ? structuredClone(checkpoint) : old.data;
+    const latest = checkpoint ? structuredClone(checkpoint) : old.data;
     const record = {...empty(), recoveryCopies:[], ...latest};
-    saved = Boolean(checkpoint || old.exists);
+    saved = Boolean(checkpoint || (old.exists && !old.transactional));
     copies = record.recoveryCopies;
     return record;
   }
 
+  async function readCheckpoint() {
+    const db = await connect();
+    const record = await new Promise((resolve, reject) => {
+      const request = db.transaction('work').objectStore('work').get('current');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    if (record && (!checkpoint || record.workRevision >= checkpoint.workRevision)) checkpoint = record;
+  }
+
   async function load() {
     try {
-      const db = await connect();
-      checkpoint = await new Promise((resolve, reject) => {
-        const request = db.transaction('work').objectStore('work').get('current');
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+      await readCheckpoint();
       const old = mirror();
-      if (checkpoint && old.exists && !old.transactional) await flush();
+      // The mirror can survive an interrupted final database commit. Reconcile
+      // it just like an older release, keeping any competing values recoverable.
+      const interrupted = old.transactional && old.data.workRevision > (checkpoint?.workRevision ?? 0);
+      if (old.exists && ((checkpoint && !old.transactional) || interrupted)) await flush();
       refresh();
     } catch (cause) { failed(cause); }
   }
@@ -234,7 +241,11 @@ export function openLearnerWork(onChange) {
 
   return {
     state, load, refresh, change, flush, removeCopy,
-    observe() { refresh(['completed']); onChange(); },
+    async observe() {
+      try { await readCheckpoint(); } catch (cause) { failed(cause); }
+      refresh(['completed']);
+      onChange();
+    },
     migrate(work, done) { if (work) { legacy = {work, done}; refresh(); flush(); } },
     get copies() { return copies; },
     get error() { return error; },

@@ -31,8 +31,8 @@ function unlock(){clearTimeout(timer);lock=null;document.querySelector('main').i
 addEventListener('compositionstart',()=>{composing=true;});addEventListener('compositionend',()=>{composing=false;});
 navigator.serviceWorker?.addEventListener('message',async ({data,ports})=>{
   if(data?.type==='PREPARE_RESTART') {
+    if(lock){ports[0].postMessage({ready:false,error:'This window is already restarting.'});return;}
     try {
-      if(lock)throw new Error('This window is already restarting.');
       lock=data.token;
       for(const el of document.querySelectorAll('main,.site-header,.course-navigation'))el.inert=true;
       timer=setTimeout(unlock,12000);
@@ -50,7 +50,7 @@ export function restoreReadingState() {
   for(const [id,text] of value.controls){if(id==="prediction"||id==="case")continue;const el=document.getElementById(id);if(el&&el.value!==text){el.value=text;el.dispatchEvent(new Event('input'));}}
   requestAnimationFrame(()=>scrollTo(...value.scroll));
   position = null;
-  sessionStorage.removeItem(key);
+  try { sessionStorage.removeItem(key); } catch { /* Reading the saved position already succeeded. */ }
 }
 
 addEventListener('pagehide',event=>{if(!lock&&!event.persisted)try{snapshot();}catch{/* Durable drafts remain when a per-tab reading snapshot is unavailable. */}});

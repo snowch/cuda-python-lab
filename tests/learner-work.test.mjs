@@ -357,3 +357,24 @@ test('a previous release writing the v1 record cannot erase a transactional save
   assert.equal(record.recoveryCopies.find(copy => copy.path[0] === 'predictions').value,'Legacy answer');
   await context.close();
 });
+
+test('interruption between the v1 mirror and the final database commit retains both answers', async t => {
+  const url = await serveBuild(t), browser = await launchChromium(t), context = await browser.newContext();
+  const a = await open(context,url);
+  await answer(a).fill('Committed answer'); await saved(a);
+  await a.evaluate(key => {
+    const set = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(item,value) {
+      set.call(this,item,value);
+      if (item === key) throw Error('Interrupted after mirror write.');
+    };
+  },workKey);
+  await answer(a).fill('Interrupted answer');
+  await status(a).filter({hasText:'could not be saved'}).waitFor();
+  const reopened = await open(context,url);
+  assert.equal(await answer(reopened).inputValue(),'Committed answer');
+  await reopened.locator('#work-copies summary').click();
+  assert.equal(await reopened.locator('#work-copy-text').inputValue(),'Interrupted answer');
+  assert.equal(await answer(a).inputValue(),'Interrupted answer');
+  await context.close();
+});

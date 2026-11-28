@@ -619,9 +619,9 @@ try {
   main.textContent = error.message;
 }
 
-addEventListener('storage',event=>{
+addEventListener('storage',async event=>{
   if (event.key !== workKey && event.key !== null) return;
-  work.observe();
+  await work.observe();
   if (activePage) updateNav(activePage);
   const mark=main.querySelector('#complete');
   if(mark)mark.checked=Boolean(state.completed[activePage]);
