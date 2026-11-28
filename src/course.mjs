@@ -145,7 +145,7 @@ export const lessons = {
     summary: "Launch one GPU thread, write one value, and copy the result back to the CPU.",
     intro: [
       "A GPU (graphics processing unit) can run many copies of the same function in parallel. A function launched on the GPU is called a kernel. Each thread executes one copy of the kernel.",
-      "Numba-CUDA-MLIR is a library for writing GPU kernels in Python. It compiles a kernel into machine code for an NVIDIA GPU. This course teaches the CUDA features you need as you go; no previous Numba knowledge is needed.",
+      "Numba-CUDA-MLIR is a library for writing GPU kernels in Python. On a native GPU, its compiler prepares the kernel for the device. Here the bundled compiler translates your kernel to PTX instructions and GPGPU-Sim executes them in your browser.",
       { label: "Import the CUDA tools", from: "from numba_cuda_mlir import cuda" },
       "The import makes the library’s kernel and GPU memory tools available as cuda in this program.",
       { label: "Define the kernel", from: "@cuda.jit", through: "out[0] = 42" },

@@ -1,0 +1,371 @@
+> cuda-python-lab@0.1.0 test
+> npm run build && node --test --test-concurrency=1 --test-timeout=180000 tests/deployment-assets.test.mjs tests/shared-style.test.mjs tests/code-runner.test.mjs tests/offline.test.mjs tests/browser.test.mjs tests/lifecycle.test.mjs tests/learner-work.test.mjs tests/workbench.test.mjs
+
+
+> cuda-python-lab@0.1.0 build
+> node scripts/build.mjs
+
+Built 17 lessons in /home/runner/work/cuda-python-lab/cuda-python-lab/dist/
+TAP version 13
+# Subtest: course location shares the outline row across routes, sizes and themes
+ok 1 - course location shares the outline row across routes, sizes and themes
+  ---
+  duration_ms: 9273.755182
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: every case exports a CUDA notebook containing its complete program
+ok 2 - every case exports a CUDA notebook containing its complete program
+  ---
+  duration_ms: 12836.023783
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: the full first program is keyboard accessible and edits reach both exports
+ok 3 - the full first program is keyboard accessible and edits reach both exports
+  ---
+  duration_ms: 1146.867278
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: notebook and whole-work backup preserve independent and shared programs
+ok 4 - notebook and whole-work backup preserve independent and shared programs
+  ---
+  duration_ms: 1430.147218
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: case changes preserve the shared kernel and the host draft for each case
+ok 5 - case changes preserve the shared kernel and the host draft for each case
+  ---
+  duration_ms: 1154.220457
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: kernel-only drafts reopen with main and can still be restored
+ok 6 - kernel-only drafts reopen with main and can still be restored
+  ---
+  duration_ms: 1071.818231
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: architecture walkthroughs play with captions and expose transcripts by keyboard
+ok 7 - architecture walkthroughs play with captions and expose transcripts by keyboard
+  ---
+  duration_ms: 5028.272728
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: the GPU appendix gives notebook setup, investigations and the occupancy worksheet
+ok 8 - the GPU appendix gives notebook setup, investigations and the occupancy worksheet
+  ---
+  duration_ms: 838.600873
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: optional compiler lab exports an MLIR notebook and names the quantities to compare
+ok 9 - optional compiler lab exports an MLIR notebook and names the quantities to compare
+  ---
+  duration_ms: 661.830784
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: reuses one worker across clients, while messages/results belong to each current run
+ok 10 - reuses one worker across clients, while messages/results belong to each current run
+  ---
+  duration_ms: 1.785129
+  type: 'test'
+  ...
+# Subtest: idle release counts from completion and never interrupts a running job
+ok 11 - idle release counts from completion and never interrupts a running job
+  ---
+  duration_ms: 0.394729
+  type: 'test'
+  ...
+# Subtest: explicit stop cancels the owner, ignores late replies and allows a fresh worker
+ok 12 - explicit stop cancels the owner, ignores late replies and allows a fresh worker
+  ---
+  duration_ms: 0.195642
+  type: 'test'
+  ...
+# Subtest: timeout and crashes release memory and next run can start again
+ok 13 - timeout and crashes release memory and next run can start again
+  ---
+  duration_ms: 0.255444
+  type: 'test'
+  ...
+# Subtest: a second client cannot replace the busy job, and detaching another client cannot cancel it
+ok 14 - a second client cannot replace the busy job, and detaching another client cannot cancel it
+  ---
+  duration_ms: 0.221442
+  type: 'test'
+  ...
+# Subtest: manual startup prepares without running code, and compile errors keep the toolchain ready
+ok 15 - manual startup prepares without running code, and compile errors keep the toolchain ready
+  ---
+  duration_ms: 0.230212
+  type: 'test'
+  ...
+# Subtest: Compile during manual startup waits, then runs automatically on the same worker
+ok 16 - Compile during manual startup waits, then runs automatically on the same worker
+  ---
+  duration_ms: 0.210986
+  type: 'test'
+  ...
+# Subtest: stopping or detaching a queued compile cancels startup without running that code
+ok 17 - stopping or detaching a queued compile cancels startup without running that code
+  ---
+  duration_ms: 0.154623
+  type: 'test'
+  ...
+# Subtest: startup errors reach the queued compile without leaving an editor waiting
+ok 18 - startup errors reach the queued compile without leaving an editor waiting
+  ---
+  duration_ms: 0.230707
+  type: 'test'
+  ...
+# Subtest: default idle policy is thirty minutes and settings keep the last completion as the deadline origin
+ok 19 - default idle policy is thirty minutes and settings keep the last completion as the deadline origin
+  ---
+  duration_ms: 0.3401
+  type: 'test'
+  ...
+# Subtest: shortening an expired idle policy releases memory; changing it during a run does not interrupt code
+ok 20 - shortening an expired idle policy releases memory; changing it during a run does not interrupt code
+  ---
+  duration_ms: 0.153596
+  type: 'test'
+  ...
+# Subtest: telemetry updates allocation without completing a job; elapsed time includes queued startup and survives memory release
+ok 21 - telemetry updates allocation without completing a job; elapsed time includes queued startup and survives memory release
+  ---
+  duration_ms: 0.141022
+  type: 'test'
+  ...
+# Subtest: Python program errors keep the toolchain and do not count as completed runs
+ok 22 - Python program errors keep the toolchain and do not count as completed runs
+  ---
+  duration_ms: 0.094734
+  type: 'test'
+  ...
+# Subtest: only infrastructure download failures emit runtime recovery
+ok 23 - only infrastructure download failures emit runtime recovery
+  ---
+  duration_ms: 0.124411
+  type: 'test'
+  ...
+# Subtest: a worker import failure during startup opens infrastructure recovery
+ok 24 - a worker import failure during startup opens infrastructure recovery
+  ---
+  duration_ms: 0.091004
+  type: 'test'
+  ...
+# Subtest: unchanged builds keep compiler and GPU archive bytes stable across build times
+ok 25 - unchanged builds keep compiler and GPU archive bytes stable across build times
+  ---
+  duration_ms: 2667.010673
+  type: 'test'
+  ...
+# Subtest: retention verifies prior bytes, keeps a bounded history and rejects corruption
+ok 26 - retention verifies prior bytes, keeps a bounded history and rejects corruption
+  ---
+  duration_ms: 12.037947
+  type: 'test'
+  ...
+# Subtest: an open lesson runs after deployment; an expired runtime recovers without losing 43 or the prior result
+ok 27 - an open lesson runs after deployment; an expired runtime recovers without losing 43 or the prior result
+  ---
+  duration_ms: 17963.829108
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: stale lessons survive both write and close orders in a fresh third tab
+ok 28 - stale lessons survive both write and close orders in a fresh third tab
+  ---
+  duration_ms: 3144.440062
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# {"reverse":false,"marker":"\# Original vector marker","caseAnswers":{"vector-add":{"partial-32":"Index 32 belongs to block 1"},"stencil":{"direct":"Boundary reads the halo"}}}
+# {"reverse":true,"marker":"\# Original vector marker","caseAnswers":{"stencil":{"direct":"Boundary reads the halo"},"vector-add":{"partial-32":"Index 32 belongs to block 1"}}}
+# Subtest: contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips
+ok 29 - contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips
+  ---
+  duration_ms: 32710.59266
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Vector export matched the executed source byte for byte; GPGPU-Sim output: [3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99]
+# Vector export matched the executed source byte for byte; GPGPU-Sim output: [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,-29,-30,-31,-32,-33]
+# Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+# Subtest: same draft and prediction retain both versions, including a keyboard-accessible recovery copy
+ok 30 - same draft and prediction retain both versions, including a keyboard-accessible recovery copy
+  ---
+  duration_ms: 2249.734171
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Second full program and answer reopened. Export retained first full program and answer. Review, copy and removal controls reached by keyboard.
+# Subtest: quota and denied writes retain in-memory work, allow export, warn before unload and retry
+ok 31 - quota and denied writes retain in-memory work, allow export, warn before unload and retry
+  ---
+  duration_ms: 3216.400804
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# QuotaExceededError: tab export contained complete code and prediction; fresh tab was empty before retry and exact after retry.
+# SecurityError: tab export contained complete code and prediction; fresh tab was empty before retry and exact after retry.
+# Subtest: legacy v1 work and stale per-window handoff import once without replacing newer work
+ok 32 - legacy v1 work and stale per-window handoff import once without replacing newer work
+  ---
+  duration_ms: 742.062241
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Legacy-only answer, result and undo retained. Durable code, answer and completion retained. Stale answer available once in recovery.
+# Subtest: full history leaves the next edit pending until a learner frees space
+ok 33 - full history leaves the next edit pending until a learner frees space
+  ---
+  duration_ms: 928.10526
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: a stale tab preserves actual GPGPU-Sim outputs for both cases
+ok 34 - a stale tab preserves actual GPGPU-Sim outputs for both cases
+  ---
+  duration_ms: 10185.585229
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# GPGPU-Sim · 33 elements · 32 threads per block · out = [3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0, 63.0, 66.0, 69.0, 72.0, 75.0, 78.0, 81.0, 84.0, 87.0, 90.0, 93.0, 96.0, 99.0]
+# GPGPU-Sim · 33 elements · 16 threads per block · out = [3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0, 63.0, 66.0, 69.0, 72.0, 75.0, 78.0, 81.0, 84.0, 87.0, 90.0, 93.0, 96.0, 99.0]
+# Subtest: a previous release writing the v1 record cannot erase a transactional save
+ok 35 - a previous release writing the v1 record cannot erase a transactional save
+  ---
+  duration_ms: 1030.08248
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: interruption between the v1 mirror and the final database commit retains both answers
+ok 36 - interruption between the v1 mirror and the final database commit retains both answers
+  ---
+  duration_ms: 844.411884
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: review tracks the effective case and prediction, leaves focus intact and validates the preview
+ok 37 - review tracks the effective case and prediction, leaves focus intact and validates the preview
+  ---
+  duration_ms: 10158.353225
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: loading a reviewed version cannot replace edits made while its database read waits or fails
+ok 38 - loading a reviewed version cannot replace edits made while its database read waits or fails
+  ---
+  duration_ms: 1033.812698
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: guided preparation preserves dirty work across contention, storage denial, undo and reopen
+ok 39 - guided preparation preserves dirty work across contention, storage denial, undo and reopen
+  ---
+  duration_ms: 30677.487406
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: case answers remain separate and an ambiguous legacy answer stays available
+ok 40 - case answers remain separate and an ambiguous legacy answer stays available
+  ---
+  duration_ms: 1092.903866
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: undo restores the independent complete program and the displaced shared kernel as one transaction
+ok 41 - undo restores the independent complete program and the displaced shared kernel as one transaction
+  ---
+  duration_ms: 35531.940979
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# After failed undo the checkpoint retained both prepared fields. Retry restored the original shared draft and both serialized complete programs byte for byte; both fresh case exports matched.
+# A stale Undo was blocked. After explicit review/load, Undo disclosed its cross-case scope, restored both original effective sources and retained the exact newer kernel in the recovery archive and swap slot.
+# Subtest: an earlier text-only preparation slot reopens a markerless file without guessing a shared kernel
+ok 42 - an earlier text-only preparation slot reopens a markerless file without guessing a shared kernel
+  ---
+  duration_ms: 1450.523319
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Both a complete markerless file and an empty legacy program reopened byte for byte, preserved the current shared kernel and swapped back to the inherited program.
+# Subtest: undo of an older split program discloses and archives a different current shared kernel
+ok 43 - undo of an older split program discloses and archives a different current shared kernel
+  ---
+  duration_ms: 770.063311
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# The older split slot identified its unknown installation history, restored the earlier kernel across cases and archived the exact displaced kernel.
+# Subtest: manual startup introduces the runner once, retains it between lessons, and releases memory without losing work
+ok 44 - manual startup introduces the runner once, retains it between lessons, and releases memory without losing work
+  ---
+  duration_ms: 6921.207143
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: verified offline course survives a new tab, lesson navigation, two-tab update/restart and removal
+ok 45 - verified offline course survives a new tab, lesson navigation, two-tab update/restart and removal
+  ---
+  duration_ms: 33019.58405
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: release pins the SPA assets and verifies every offline resource
+ok 46 - release pins the SPA assets and verifies every offline resource
+  ---
+  duration_ms: 23.165357
+  type: 'test'
+  ...
+# Subtest: the bare homepage orients visitors and the start link preserves saved lesson work
+ok 47 - the bare homepage orients visitors and the start link preserves saved lesson work
+  ---
+  duration_ms: 820.410135
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: all lesson topic references and shared ending components are present
+ok 48 - all lesson topic references and shared ending components are present
+  ---
+  duration_ms: 3676.379899
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: completion survives stale snapshots and concurrent edits in another tab
+ok 49 - completion survives stale snapshots and concurrent edits in another tab
+  ---
+  duration_ms: 5923.071942
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+# Subtest: each supported complete program models three separate arrays at each source line
+ok 50 - each supported complete program models three separate arrays at each source line
+  ---
+  duration_ms: 1.72221
+  type: 'test'
+  ...
+# Subtest: the task, source, prediction, patch and undo stay connected on a phone
+ok 51 - the task, source, prediction, patch and undo stay connected on a phone
+  ---
+  duration_ms: 1173.05618
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 243392.673247

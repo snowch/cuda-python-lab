@@ -1,0 +1,16 @@
+test_all_exports_and_complete_starting_sources (__main__.NotebookTests.test_all_exports_and_complete_starting_sources) ... ok
+test_all_starting_sources_against_simulator_observations (__main__.NotebookTests.test_all_starting_sources_against_simulator_observations) ... ok
+test_all_task_contracts_against_archived_simulator_observations (__main__.NotebookTests.test_all_task_contracts_against_archived_simulator_observations) ... ok
+test_hardware_verifier_requires_current_structured_verdict (__main__.NotebookTests.test_hardware_verifier_requires_current_structured_verdict) ... ok
+test_isolation_failure_case_switch_and_reset (__main__.NotebookTests.test_isolation_failure_case_switch_and_reset) ... ok
+test_numerical_policies (__main__.NotebookTests.test_numerical_policies) ... ok
+test_prerequisite_outputs_and_starting_race (__main__.NotebookTests.test_prerequisite_outputs_and_starting_race) ... ok
+test_wrong_dimensions_dtype_values_and_custom_source (__main__.NotebookTests.test_wrong_dimensions_dtype_values_and_custom_source) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 5.275s
+
+OK
+38/38 exports validated with nbformat; each exact selected program and every authored start compiled as Python.
+40 distinct starting sources matched archived simulator runs across 58 phases. Checked all 46 runnable starts, including 20 with a different target.
+CPU checker consumed 38 pristine and 46 authored target results from the archived GPGPU-Sim ledger; 12 tasks are source reasoning.

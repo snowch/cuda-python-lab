@@ -26,8 +26,8 @@ function undoTarget(view, slot) {
 
 function affected(view, target) {
   const units = [];
-  if (target.sharedKernel !== view.sharedKernel) units.push('the shared kernel used across this lesson’s cases');
-  if (target.caseProgram !== view.caseProgram) units.push('this case’s program, including its host code');
+  if (target.sharedKernel !== view.sharedKernel) units.push('the shared kernel across cases');
+  if (target.caseProgram !== view.caseProgram) units.push('this case’s program and host code');
   return units.join(' and ');
 }
 
@@ -67,6 +67,10 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     find('task-action').textContent = task ? task.instruction ?? lesson.exercise[task.step - 1]
       : 'Edit and run freely. Switching cases keeps your kernel and opens that case’s host draft.';
     find('task-evidence').textContent = task?.evidence ?? '';
+    find('brief-title').textContent = task?.title ?? 'Free exploration';
+    find('brief-action').textContent = find('task-action').textContent;
+    find('brief-evidence').textContent = task?.evidence ?? '';
+
     find('task-evidence').hidden = !task || (task.kind === 'run' && !task.instruction && !task.after.length);
     awaitingSave = '';
     operationSource = undefined;
@@ -106,7 +110,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     let note = !task ? '' : v.source === start ? 'The editor matches ' + where + '.'
       : v.source === end ? 'The editor contains the edit for this task.'
       : 'The open program differs from ' + where + '.';
-    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + '. It keeps the open program for Undo.';
+    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + '. Undo keeps your current version.';
     if (!undo.hidden) {
       note += ' Undo restores ' + (affected(v,savedUndo) || 'the earlier program') + '.';
       if (changedSharedKernel(v,savedUndo,slot)) {
@@ -118,16 +122,19 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
         }
       }
     }
-    if ((!prepare.hidden || !undo.hidden) && blocked) note += v.source !== v.saved && !work.dirty && !work.saving && !work.error
-      ? ' Review the saved program before preparing or undoing.' : ' Wait for a confirmed save before replacing code.';
+    if ((!prepare.hidden || !undo.hidden) && blocked) {
+      if (work.error) note += ' Export your work or retry the save before replacing code.';
+      else if (v.source !== v.saved && !work.dirty && !work.saving) note += ' Review the saved program before preparing or undoing.';
+      else note += ' Wait for a confirmed save before replacing code.';
+    }
     find('setup-status').textContent = note.trim();
   }
-  async function exchange(undo) {
+  async function exchange(undo, proposed) {
     const before = snapshot(), selected = select.value;
     const path = ['preparations',slug,before.fixture.id];
     const previous = work.confirmed.preparations?.[slug]?.[before.fixture.id];
     if (checking || work.dirty || work.saving || work.error) return;
-    const target = undo ? undoTarget(before,previous) : task && replacement(before,start);
+    const target = undo ? undoTarget(before,previous) : proposed !== undefined ? replacement(before,proposed) : task && replacement(before,start);
     if (!target || matches(before,target)) return;
     checking = true; update();
     try {
@@ -148,11 +155,13 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
         installedKernel:target.sharedKernel,
       },{retainPrevious:!undo});
       const intervening = undo && changedSharedKernel(before,target,previous);
-      replace(target,intervening);
+      replace(target,intervening,{focus:proposed === undefined});
       operationSource = target.program;
       awaitingSave = undo ? 'Previous program reopened. Undo again to return to the program you just left.'
+        : proposed !== undefined ? 'Program edits applied. Your previous program is available in Undo preparation.'
         : 'Starting program prepared. Your previous program is available in Undo preparation.';
       feedback('Saving the open program and its undo copy…');
+      return true;
     } finally { checking = false; if (active()) update(); }
   }
   select.onchange = () => {
@@ -168,5 +177,6 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     find('console-title').focus();
   };
   forCase(readingTask);
-  return {update,forCase};
+  return {update,forCase, applyProgram:program=>exchange(false,program),
+    canApply:()=>!checking && !work.dirty && !work.saving && !work.error && snapshot().source===snapshot().saved};
 }

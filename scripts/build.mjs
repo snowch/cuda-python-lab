@@ -23,7 +23,7 @@ for (const directory of ["", "gpu/", "runtime/"]) {
 }
 await Promise.all(
   ["index.html", "app.mjs", "styles.css", "runtime-recovery.mjs", "runtime-recovery.css", "home-architecture.mjs", "home-architecture.css", "course.mjs", "diagrams.mjs", "host-program.mjs", "notebook.mjs", "walkthroughs.mjs",
-    "code-runner.mjs", "code-runner-host.mjs", "code-runner-settings.mjs", "code-runner.css", "app-status.css", "offline.mjs", "header-controls.mjs", "header-controls.LICENSE.txt", "release-contract.mjs", "release-metadata.mjs", "media-range.mjs", "experiment-state.mjs", "learner-work.mjs", "saved-version.mjs", "guided-experiments.mjs", "guided-panel.mjs", "source-migration.mjs", "compiler-lab.mjs", "material-symbols.mjs", "material-symbols.css", "lesson-resources.mjs", "media-durations.mjs", "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
+    "code-runner.mjs", "code-runner-host.mjs", "code-runner-settings.mjs", "code-runner.css", "app-status.css", "offline.mjs", "header-controls.mjs", "header-controls.LICENSE.txt", "release-contract.mjs", "release-metadata.mjs", "media-range.mjs", "experiment-state.mjs", "learner-work.mjs", "saved-version.mjs", "guided-experiments.mjs", "guided-panel.mjs", "first-value-model.mjs", "first-value-trace.mjs", "step-controller.mjs", "source-migration.mjs", "compiler-lab.mjs", "material-symbols.mjs", "material-symbols.css", "lesson-resources.mjs", "media-durations.mjs", "browser-runner.mjs", "run-worker.mjs", "wasm-compiler.mjs", "wasm-numba.py", "gpgpu-device.mjs", "runner_host.py"]
     .map((name) => cp(new URL(name, src), new URL(name, dist))),
 );
 await cp(new URL("fonts/",src),new URL("fonts/",dist),{recursive:true});

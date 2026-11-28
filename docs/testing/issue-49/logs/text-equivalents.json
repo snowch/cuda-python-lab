@@ -1,0 +1,122 @@
+[
+  {
+    "step": 1,
+    "narrative": "Host · before main() · The host starts at 0 and the kernel stores 42. After copy-back, what will the original host (out_host), device (out) and copied host (result) arrays each contain?",
+    "source": "Show line 10 · def main():",
+    "values": [
+      "Not created",
+      "Not created",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. It does not exist at this step.",
+      "out is the device allocation. The kernel receives this allocation as its argument. It does not exist at this step.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 2,
+    "narrative": "Host · initialization · The CPU creates out_host with one float32 element. It is the original array.",
+    "source": "Show line 14 · out_host = np.zeros(1, dtype=np.float32)",
+    "values": [
+      "[0]",
+      "Not created",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. It does not exist at this step.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 3,
+    "narrative": "Host · copy to device · The host copies the element into a separate device allocation named out. Both arrays now contain the starting value.",
+    "source": "Show line 15 · out = cuda.to_device(out_host)",
+    "values": [
+      "[0]",
+      "[0]",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 0.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 4,
+    "narrative": "Host · compilation · The decorator marks kernel for compilation. At launch the browser compiler produces PTX instructions for GPGPU-Sim. A native CUDA environment loads compiled code for the physical GPU. Compilation changes no array values.",
+    "source": "Show line 4 · @cuda.jit",
+    "values": [
+      "[0]",
+      "[0]",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 0.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 5,
+    "narrative": "Host · launch · The host launches one block of one thread with out as its argument. Before the thread writes, which of the two existing arrays can this kernel change?",
+    "source": "Show line 17 · kernel[1, 1](out)",
+    "values": [
+      "[0]",
+      "[0]",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 0.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 6,
+    "narrative": "Device · kernel · The device thread writes 42 into element 0 of out. It has no argument pointing to the original host array.",
+    "source": "Show line 6 · out[0] = 42",
+    "values": [
+      "[0]",
+      "[42]",
+      "Not created"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 42.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. It does not exist at this step."
+    ]
+  },
+  {
+    "step": 7,
+    "narrative": "Host · copy from device · The host waits for the store and copies out into a new CPU array, result. The original out_host still contains 0.",
+    "source": "Show line 18 · result = out.copy_to_host()",
+    "values": [
+      "[0]",
+      "[42]",
+      "[42]"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 42.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. Its element at index 0 is 42."
+    ]
+  },
+  {
+    "step": 8,
+    "narrative": "Host · return · main() prints the copied result and returns result. Compare the real prints in the Console with your prediction.",
+    "source": "Show line 20 · return result",
+    "values": [
+      "[0]",
+      "[42]",
+      "[42]"
+    ],
+    "alternatives": [
+      "out_host is the original CPU array. Copying from it leaves its element intact. Its element at index 0 is 0.",
+      "out is the device allocation. The kernel receives this allocation as its argument. Its element at index 0 is 42.",
+      "result is a second CPU array. The copy from out creates it. The host then prints and returns it. Its element at index 0 is 42."
+    ]
+  }
+]

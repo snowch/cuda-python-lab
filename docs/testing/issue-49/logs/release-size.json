@@ -1,0 +1,82 @@
+{
+  "baseline": {
+    "id": "663b2d7a08d3ca8a901af6f0caff3bfa2f598512a693dc54b199128d183b2f2c",
+    "commit": "25eca9769098e0f71ae78553307881668ef06c16",
+    "bytes": 63275671
+  },
+  "release": {
+    "id": "6aa5107f07b3b564d2be41bbfa4836d5a5ed6f3880f57a6b49892e0132c190f5",
+    "commit": "4ad384e2437ec0d7d1d56ed8e672613c2ea7d867",
+    "bytes": 63297297
+  },
+  "changeBytes": 21626,
+  "changedFiles": [
+    {
+      "path": "app.mjs",
+      "old": 43354,
+      "new": 47252
+    },
+    {
+      "path": "browser-runner.mjs",
+      "old": 2856,
+      "new": 3082
+    },
+    {
+      "path": "course.mjs",
+      "old": 44074,
+      "new": 44099
+    },
+    {
+      "path": "editor.mjs",
+      "old": 468258,
+      "new": 468271
+    },
+    {
+      "path": "first-value-model.mjs",
+      "old": 0,
+      "new": 3802
+    },
+    {
+      "path": "first-value-trace.mjs",
+      "old": 0,
+      "new": 8109
+    },
+    {
+      "path": "guided-panel.mjs",
+      "old": 8783,
+      "new": 9461
+    },
+    {
+      "path": "index.html",
+      "old": 6330,
+      "new": 6287
+    },
+    {
+      "path": "step-controller.mjs",
+      "old": 0,
+      "new": 1004
+    },
+    {
+      "path": "styles.css",
+      "old": 23323,
+      "new": 27237
+    }
+  ],
+  "unchangedFirstRecording": [
+    {
+      "path": "media/first-value/captions.vtt",
+      "bytes": 1118,
+      "sha256": "ca498c1f9c085128b463d528f4ffdd44b4cf418938c24eb21b7760c4c3e1a10d"
+    },
+    {
+      "path": "media/first-value/poster.webp",
+      "bytes": 20908,
+      "sha256": "4b05b462c4477f505b591c5020b873b25fbf701d70d03d766b757a9a0df29352"
+    },
+    {
+      "path": "media/first-value/walkthrough.mp4",
+      "bytes": 2992665,
+      "sha256": "c7f7df07a61f289effc2dcd4ce28a7fdfb12fd26c69da2376746bab23ee4b255"
+    }
+  ]
+}

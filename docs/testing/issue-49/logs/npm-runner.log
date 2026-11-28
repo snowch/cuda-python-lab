@@ -1,0 +1,25 @@
+> cuda-python-lab@0.1.0 test:runner
+> npm run build && node --test tests/runner.test.mjs
+
+
+> cuda-python-lab@0.1.0 build
+> node scripts/build.mjs
+
+Built 17 lessons in /home/runner/work/cuda-python-lab/cuda-python-lab/dist/
+TAP version 13
+# Subtest: Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim
+ok 1 - Numba compiles the edited kernel and the browser runs the program in GPGPU-Sim
+  ---
+  duration_ms: 43115.320489
+  type: 'test'
+  ...
+# Browser: 159.0.8154.6
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 43425.048323

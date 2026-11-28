@@ -1,0 +1,2456 @@
+[
+ {
+  "slug": "course",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1878,
+  "editor": 2518,
+  "run": 2984,
+  "console": 3088,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1334,
+  "editor": 2142,
+  "run": 2608,
+  "console": 2765,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1355,
+  "editor": 2272,
+  "run": 2737,
+  "console": 2894,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1618,
+  "editor": 2371,
+  "run": 2836,
+  "console": 2994,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1720,
+  "editor": 2351,
+  "run": 2817,
+  "console": 2974,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1501,
+  "editor": 2197,
+  "run": 2663,
+  "console": 2820,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1508,
+  "editor": 2111,
+  "run": 2577,
+  "console": 2734,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1290,
+  "editor": 2042,
+  "run": 2508,
+  "console": 2665,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1496,
+  "editor": 2127,
+  "run": 2593,
+  "console": 2750,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1458,
+  "editor": 2033,
+  "run": 2499,
+  "console": 2656,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1536,
+  "editor": 2111,
+  "run": 2577,
+  "console": 2734,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1458,
+  "editor": 2090,
+  "run": 2555,
+  "console": 2712,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1328,
+  "editor": 2024,
+  "run": 2489,
+  "console": 2647,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1543,
+  "editor": 2267,
+  "run": 2733,
+  "console": 2890,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1297,
+  "editor": 1844,
+  "run": 2310,
+  "console": 2467,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1452,
+  "editor": 2092,
+  "run": 2558,
+  "console": 2715,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1446,
+  "editor": 2170,
+  "run": 2636,
+  "console": 2793,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "course",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1878,
+  "editor": 2518,
+  "run": 2984,
+  "console": 3088,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1334,
+  "editor": 2142,
+  "run": 2608,
+  "console": 2765,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1355,
+  "editor": 2272,
+  "run": 2737,
+  "console": 2894,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1618,
+  "editor": 2371,
+  "run": 2836,
+  "console": 2994,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1720,
+  "editor": 2351,
+  "run": 2817,
+  "console": 2974,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1501,
+  "editor": 2197,
+  "run": 2663,
+  "console": 2820,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1508,
+  "editor": 2111,
+  "run": 2577,
+  "console": 2734,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1290,
+  "editor": 2042,
+  "run": 2508,
+  "console": 2665,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1496,
+  "editor": 2127,
+  "run": 2593,
+  "console": 2750,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1458,
+  "editor": 2033,
+  "run": 2499,
+  "console": 2656,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1536,
+  "editor": 2111,
+  "run": 2577,
+  "console": 2734,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1458,
+  "editor": 2090,
+  "run": 2555,
+  "console": 2712,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1328,
+  "editor": 2024,
+  "run": 2489,
+  "console": 2647,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1543,
+  "editor": 2267,
+  "run": 2733,
+  "console": 2890,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1297,
+  "editor": 1844,
+  "run": 2310,
+  "console": 2467,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1452,
+  "editor": 2092,
+  "run": 2558,
+  "console": 2715,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1446,
+  "editor": 2170,
+  "run": 2636,
+  "console": 2793,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "course",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "first-value",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1680,
+  "editor": 2264,
+  "run": 2730,
+  "console": 2834,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "vector-add",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1224,
+  "editor": 1920,
+  "run": 2386,
+  "console": 2543,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "grid-stride",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1246,
+  "editor": 2078,
+  "run": 2544,
+  "console": 2701,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "transfers",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1511,
+  "editor": 2207,
+  "run": 2673,
+  "console": 2830,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "coalescing",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1607,
+  "editor": 2182,
+  "run": 2648,
+  "console": 2805,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "divergence",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1325,
+  "editor": 1965,
+  "run": 2431,
+  "console": 2588,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "reduction",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1366,
+  "editor": 1941,
+  "run": 2407,
+  "console": 2564,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "histogram",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1176,
+  "editor": 1872,
+  "run": 2338,
+  "console": 2495,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "scan",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1399,
+  "editor": 1974,
+  "run": 2439,
+  "console": 2597,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1310,
+  "editor": 1829,
+  "run": 2295,
+  "console": 2452,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "matmul",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1355,
+  "editor": 1874,
+  "run": 2340,
+  "console": 2497,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "softmax",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1374,
+  "editor": 1977,
+  "run": 2443,
+  "console": 2600,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "gather",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1180,
+  "editor": 1820,
+  "run": 2285,
+  "console": 2443,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "stencil",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1349,
+  "editor": 2017,
+  "run": 2483,
+  "console": 2640,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "precision",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1177,
+  "editor": 1724,
+  "run": 2189,
+  "console": 2346,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "sync-debug",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1327,
+  "editor": 1911,
+  "run": 2377,
+  "console": 2534,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "fusion",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1349,
+  "editor": 1989,
+  "run": 2455,
+  "console": 2612,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "gpu",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".reading:nth-child(6) > pre"
+     ],
+     [
+      ".reading:nth-child(9) > pre"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "compiler",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "course",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "first-value",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1680,
+  "editor": 2264,
+  "run": 2730,
+  "console": 2834,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "vector-add",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1224,
+  "editor": 1920,
+  "run": 2386,
+  "console": 2543,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "grid-stride",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1246,
+  "editor": 2078,
+  "run": 2544,
+  "console": 2701,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "transfers",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1511,
+  "editor": 2207,
+  "run": 2673,
+  "console": 2830,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "coalescing",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1607,
+  "editor": 2182,
+  "run": 2648,
+  "console": 2805,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "divergence",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1325,
+  "editor": 1965,
+  "run": 2431,
+  "console": 2588,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "reduction",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1366,
+  "editor": 1941,
+  "run": 2407,
+  "console": 2564,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "histogram",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1176,
+  "editor": 1872,
+  "run": 2338,
+  "console": 2495,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "scan",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1399,
+  "editor": 1974,
+  "run": 2439,
+  "console": 2597,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1310,
+  "editor": 1829,
+  "run": 2295,
+  "console": 2452,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "matmul",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1355,
+  "editor": 1874,
+  "run": 2340,
+  "console": 2497,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "softmax",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1374,
+  "editor": 1977,
+  "run": 2443,
+  "console": 2600,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "gather",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1180,
+  "editor": 1820,
+  "run": 2285,
+  "console": 2443,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "stencil",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1349,
+  "editor": 2017,
+  "run": 2483,
+  "console": 2640,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "precision",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1177,
+  "editor": 1724,
+  "run": 2189,
+  "console": 2346,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "sync-debug",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1327,
+  "editor": 1911,
+  "run": 2377,
+  "console": 2534,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "fusion",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1349,
+  "editor": 1989,
+  "run": 2455,
+  "console": 2612,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".cm-scroller"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "gpu",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "nodes": [
+     [
+      ".reading:nth-child(6) > pre"
+     ],
+     [
+      ".reading:nth-child(9) > pre"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "compiler",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null,
+  "violations": [
+   {
+    "id": "label-content-name-mismatch",
+    "nodes": [
+     [
+      ".brand"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "course",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1156,
+  "editor": 1632,
+  "run": 2079,
+  "console": 2156,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 869,
+  "editor": 1400,
+  "run": 1847,
+  "console": 1955,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 862,
+  "editor": 1394,
+  "run": 1841,
+  "console": 1949,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1010,
+  "editor": 1542,
+  "run": 1989,
+  "console": 2096,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1017,
+  "editor": 1484,
+  "run": 1931,
+  "console": 2039,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1415,
+  "run": 1862,
+  "console": 1970,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 903,
+  "editor": 1342,
+  "run": 1789,
+  "console": 1896,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 825,
+  "editor": 1329,
+  "run": 1776,
+  "console": 1883,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 934,
+  "editor": 1372,
+  "run": 1820,
+  "console": 1927,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1351,
+  "run": 1798,
+  "console": 1906,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 962,
+  "editor": 1401,
+  "run": 1848,
+  "console": 1956,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 881,
+  "editor": 1348,
+  "run": 1795,
+  "console": 1903,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 794,
+  "editor": 1298,
+  "run": 1745,
+  "console": 1852,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 956,
+  "editor": 1488,
+  "run": 1935,
+  "console": 2042,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 791,
+  "editor": 1230,
+  "run": 1677,
+  "console": 1784,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 890,
+  "editor": 1394,
+  "run": 1841,
+  "console": 1949,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1416,
+  "run": 1863,
+  "console": 1970,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "course",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1156,
+  "editor": 1632,
+  "run": 2079,
+  "console": 2156,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 869,
+  "editor": 1400,
+  "run": 1847,
+  "console": 1955,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 862,
+  "editor": 1394,
+  "run": 1841,
+  "console": 1949,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1010,
+  "editor": 1542,
+  "run": 1989,
+  "console": 2096,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1017,
+  "editor": 1484,
+  "run": 1931,
+  "console": 2039,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1415,
+  "run": 1862,
+  "console": 1970,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 903,
+  "editor": 1342,
+  "run": 1789,
+  "console": 1896,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 825,
+  "editor": 1329,
+  "run": 1776,
+  "console": 1883,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 934,
+  "editor": 1372,
+  "run": 1820,
+  "console": 1927,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1351,
+  "run": 1798,
+  "console": 1906,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 962,
+  "editor": 1401,
+  "run": 1848,
+  "console": 1956,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 881,
+  "editor": 1348,
+  "run": 1795,
+  "console": 1903,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 794,
+  "editor": 1298,
+  "run": 1745,
+  "console": 1852,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 956,
+  "editor": 1488,
+  "run": 1935,
+  "console": 2042,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 791,
+  "editor": 1230,
+  "run": 1677,
+  "console": 1784,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 890,
+  "editor": 1394,
+  "run": 1841,
+  "console": 1949,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 912,
+  "editor": 1416,
+  "run": 1863,
+  "console": 1970,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "course",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1189,
+  "editor": 1665,
+  "run": 2112,
+  "console": 2189,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 902,
+  "editor": 1434,
+  "run": 1881,
+  "console": 1988,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 895,
+  "editor": 1427,
+  "run": 1874,
+  "console": 1982,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1043,
+  "editor": 1547,
+  "run": 1994,
+  "console": 2101,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1054,
+  "editor": 1493,
+  "run": 1940,
+  "console": 2048,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 949,
+  "editor": 1453,
+  "run": 1900,
+  "console": 2007,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 936,
+  "editor": 1375,
+  "run": 1822,
+  "console": 1930,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 862,
+  "editor": 1366,
+  "run": 1813,
+  "console": 1920,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 967,
+  "editor": 1406,
+  "run": 1853,
+  "console": 1960,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 905,
+  "editor": 1344,
+  "run": 1791,
+  "console": 1899,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 952,
+  "editor": 1390,
+  "run": 1837,
+  "console": 1945,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 915,
+  "editor": 1353,
+  "run": 1800,
+  "console": 1908,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 827,
+  "editor": 1303,
+  "run": 1750,
+  "console": 1857,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 945,
+  "editor": 1449,
+  "run": 1896,
+  "console": 2003,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 824,
+  "editor": 1263,
+  "run": 1710,
+  "console": 1817,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 924,
+  "editor": 1399,
+  "run": 1846,
+  "console": 1954,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 945,
+  "editor": 1421,
+  "run": 1868,
+  "console": 1975,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "course",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1189,
+  "editor": 1665,
+  "run": 2112,
+  "console": 2189,
+  "brief": null
+ },
+ {
+  "slug": "vector-add",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 902,
+  "editor": 1434,
+  "run": 1881,
+  "console": 1988,
+  "brief": null
+ },
+ {
+  "slug": "grid-stride",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 895,
+  "editor": 1427,
+  "run": 1874,
+  "console": 1982,
+  "brief": null
+ },
+ {
+  "slug": "transfers",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1043,
+  "editor": 1547,
+  "run": 1994,
+  "console": 2101,
+  "brief": null
+ },
+ {
+  "slug": "coalescing",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1054,
+  "editor": 1493,
+  "run": 1940,
+  "console": 2048,
+  "brief": null
+ },
+ {
+  "slug": "divergence",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 949,
+  "editor": 1453,
+  "run": 1900,
+  "console": 2007,
+  "brief": null
+ },
+ {
+  "slug": "reduction",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 936,
+  "editor": 1375,
+  "run": 1822,
+  "console": 1930,
+  "brief": null
+ },
+ {
+  "slug": "histogram",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 862,
+  "editor": 1366,
+  "run": 1813,
+  "console": 1920,
+  "brief": null
+ },
+ {
+  "slug": "scan",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 967,
+  "editor": 1406,
+  "run": 1853,
+  "console": 1960,
+  "brief": null
+ },
+ {
+  "slug": "tiled-transpose",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 905,
+  "editor": 1344,
+  "run": 1791,
+  "console": 1899,
+  "brief": null
+ },
+ {
+  "slug": "matmul",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 952,
+  "editor": 1390,
+  "run": 1837,
+  "console": 1945,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 915,
+  "editor": 1353,
+  "run": 1800,
+  "console": 1908,
+  "brief": null
+ },
+ {
+  "slug": "gather",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 827,
+  "editor": 1303,
+  "run": 1750,
+  "console": 1857,
+  "brief": null
+ },
+ {
+  "slug": "stencil",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 945,
+  "editor": 1449,
+  "run": 1896,
+  "console": 2003,
+  "brief": null
+ },
+ {
+  "slug": "precision",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 824,
+  "editor": 1263,
+  "run": 1710,
+  "console": 1817,
+  "brief": null
+ },
+ {
+  "slug": "sync-debug",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 924,
+  "editor": 1399,
+  "run": 1846,
+  "console": 1954,
+  "brief": null
+ },
+ {
+  "slug": "fusion",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 945,
+  "editor": 1421,
+  "run": 1868,
+  "console": 1975,
+  "brief": null
+ },
+ {
+  "slug": "gpu",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ },
+ {
+  "slug": "compiler",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": null,
+  "editor": null,
+  "run": null,
+  "console": null,
+  "brief": null
+ }
+]

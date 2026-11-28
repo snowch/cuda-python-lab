@@ -1,0 +1,178 @@
+[
+ {
+  "slug": "first-value",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1898,
+  "editor": 2554,
+  "run": 3076,
+  "console": 3180,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 320,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1478,
+  "editor": 2126,
+  "run": 2647,
+  "console": 2805,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1898,
+  "editor": 2554,
+  "run": 3076,
+  "console": 3180,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 320,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1478,
+  "editor": 2126,
+  "run": 2647,
+  "console": 2805,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1700,
+  "editor": 2300,
+  "run": 2822,
+  "console": 2926,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 390,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1394,
+  "editor": 2013,
+  "run": 2535,
+  "console": 2692,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1700,
+  "editor": 2300,
+  "run": 2822,
+  "console": 2926,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 390,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1394,
+  "editor": 2013,
+  "run": 2535,
+  "console": 2692,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1232,
+  "editor": 1045,
+  "run": 1536,
+  "console": 1613,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 820,
+  "theme": "light",
+  "overflow": 0,
+  "action": 957,
+  "editor": 691,
+  "run": 1183,
+  "console": 1290,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1232,
+  "editor": 1045,
+  "run": 1536,
+  "console": 1613,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 820,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 957,
+  "editor": 691,
+  "run": 1183,
+  "console": 1290,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 1237,
+  "editor": 1079,
+  "run": 1570,
+  "console": 1647,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 1440,
+  "theme": "light",
+  "overflow": 0,
+  "action": 963,
+  "editor": 725,
+  "run": 1216,
+  "console": 1323,
+  "brief": null
+ },
+ {
+  "slug": "first-value",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 1237,
+  "editor": 1079,
+  "run": 1570,
+  "console": 1647,
+  "brief": null
+ },
+ {
+  "slug": "softmax",
+  "width": 1440,
+  "theme": "dark",
+  "overflow": 0,
+  "action": 963,
+  "editor": 725,
+  "run": 1216,
+  "console": 1323,
+  "brief": null
+ }
+]

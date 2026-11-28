@@ -80,7 +80,9 @@ try{
    const tasks=guides[slug];assert.equal(new Set(tasks.map(t=>t.step)).size,l.exercise.length);
    for(const [i,fixture] of l.cases.entries()){
      if(l.cases.length>1)await page.locator('#case').selectOption(String(i));
-     assert.equal(await page.locator('#prediction-prompt').innerText(),caseQuestion(slug,l,fixture));
+     const prompt=await page.locator('#prediction-prompt').innerText();
+     if(slug==='first-value') assert.match(prompt,/host starts at 0.*kernel stores 42.*out_host.*out.*result/);
+     else assert.equal(prompt,caseQuestion(slug,l,fixture));
      const starter=standaloneProgram(kernel,fixture);
      const r=await run(starter,fixture,slug,'pristine');
      checks.push({slug,fixture:fixture.id,task:'pristine',...r});
@@ -111,7 +113,13 @@ try{
        }
        const notebook=JSON.parse(await download('#download-notebook'));
        assert.ok(notebook.cells.some(c=>c.metadata.cuda_lab?.task==='exported' && c.source===`%%experiment ${slug} ${fixture.id} exported\n`+intended));
-       assert.ok(notebook.cells[0].source.includes(await page.locator('#prediction-prompt').innerText()));
+       assert.ok(notebook.cells[0].source.includes(caseQuestion(slug,l,fixture)));
+       const prompt=await page.locator('#prediction-prompt').innerText();
+       if(slug==='first-value'){
+         const match=intended.match(/out\[0\] = (\d+)/);
+         assert.ok(prompt.includes('host starts at 0 and the kernel stores '+match[1]));
+         assert.equal(await page.locator('#comparison-question').innerText(),prompt);
+       } else assert.ok(notebook.cells[0].source.includes(prompt));
      }
      checks.push(record); console.log(slug,task.step,task.id,record.reasoning??record.runs.map(r=>r.auditRow).join(','));
    }

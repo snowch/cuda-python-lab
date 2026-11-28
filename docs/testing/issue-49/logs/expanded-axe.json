@@ -1,0 +1,88 @@
+[
+  {
+    "route": "lesson/first-value",
+    "theme": "light",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "route": "lesson/softmax",
+    "theme": "light",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "theme": "light",
+    "region": "Local Python setup commands",
+    "keyboardScroll": 5
+  },
+  {
+    "theme": "light",
+    "region": "Hardware profiling commands",
+    "keyboardScroll": 18
+  },
+  {
+    "theme": "light",
+    "region": "Fusion profiling command",
+    "keyboardScroll": 3
+  },
+  {
+    "route": "gpu",
+    "theme": "light",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "route": "compiler",
+    "theme": "light",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "route": "lesson/first-value",
+    "theme": "dark",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "route": "lesson/softmax",
+    "theme": "dark",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "theme": "dark",
+    "region": "Local Python setup commands",
+    "keyboardScroll": 24
+  },
+  {
+    "theme": "dark",
+    "region": "Hardware profiling commands",
+    "keyboardScroll": 12
+  },
+  {
+    "theme": "dark",
+    "region": "Fusion profiling command",
+    "keyboardScroll": 10
+  },
+  {
+    "route": "gpu",
+    "theme": "dark",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  },
+  {
+    "route": "compiler",
+    "theme": "dark",
+    "axe": "4.14.1",
+    "violations": [],
+    "overflow": 0
+  }
+]
