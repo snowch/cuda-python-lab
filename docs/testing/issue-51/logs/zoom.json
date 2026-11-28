@@ -1,0 +1,13 @@
+{
+  "browser": "159.0.8154.6",
+  "before": {
+    "viewport": 1280,
+    "pageWidth": 1280,
+    "dpr": 1
+  },
+  "after": {
+    "viewport": 640,
+    "pageWidth": 640,
+    "dpr": 2
+  }
+}

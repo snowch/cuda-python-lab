@@ -1,0 +1,383 @@
+{
+ "scans": [
+  {
+   "name": "skipped",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "skipped",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "owner",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "owner",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "owner",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "owner",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "owner",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "owner",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "owner",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "owner",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "proposal",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "proposal",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "proposal",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "proposal",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "proposal",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "proposal",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0,
+   "violations": []
+  },
+  {
+   "name": "proposal",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "proposal",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "uncovered",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "comparison",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 320,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 320,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 390,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 390,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 820,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 820,
+   "theme": "dark",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 1440,
+   "theme": "light",
+   "overflow": 0
+  },
+  {
+   "name": "repair",
+   "width": 1440,
+   "theme": "dark",
+   "overflow": 0
+  }
+ ],
+ "events": [
+  {
+   "route": "course",
+   "title": "CUDA Python Lab",
+   "headings": [
+    "Before you start",
+    "CUDA foundations",
+    "Memory and execution",
+    "Parallel patterns",
+    "Reusing data and computing probabilities",
+    "Design, debug, and tune kernels"
+   ]
+  },
+  {
+   "route": "lesson/first-value",
+   "title": "Write your first GPU value",
+   "headings": [
+    "Run the experiment",
+    "Python source",
+    "Console\nGPGPU-Sim",
+    "Follow the value",
+    "Explain the authored examples",
+    "Choose a lesson",
+    "One thread, one element"
+   ]
+  },
+  {
+   "route": "lesson/vector-add",
+   "title": "One thread, one element",
+   "headings": [
+    "Run the experiment",
+    "Python source",
+    "Console\nGPGPU-Sim",
+    "Which thread writes this element?",
+    "Explain the authored examples",
+    "Write your first GPU value",
+    "Let each thread do more work"
+   ]
+  },
+  {
+   "route": "lesson/grid-stride",
+   "title": "Let each thread do more work",
+   "headings": [
+    "Run the experiment",
+    "Python source",
+    "Console\nGPGPU-Sim",
+    "Explain the authored examples",
+    "One thread, one element",
+    "Count bytes moved between host and GPU"
+   ]
+  },
+  {
+   "keyboard": [
+    "map-step",
+    "map-thread",
+    "map-element",
+    "map-line",
+    "brief-trace",
+    "map-predict",
+    "run"
+   ],
+   "actualStarter": "out = [3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0, 63.0, 66.0, 69.0, 72.0, 75.0, 78.0, 81.0, 84.0, 87.0, 90.0, 93.0, 96.0, 99.0]"
+  },
+  {
+   "under": "GPGPU-Sim printed out[32] = -1. The input sum is 0. No thread covers this index in the open launch. The unchanged initial value differs from the sum.",
+   "note": "1 x 32, opposite inputs, initial -1: element 32 stays -1."
+  },
+  {
+   "repair": "GPGPU-Sim printed out[32] = 0. The input sum is 0. The source maps this element to block 1, thread 0."
+  },
+  {
+   "malformed": "Traceback (most recent call last):\n  File \"<exec>\", line 117, in run_program\n  File \"/lib/python312.zip/ast.py\", line 52, in parse\n    return compile(source, filename, mode, flags,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"vector-add.py\", line 8\n    out[i] =\n            ^\nSyntaxError: invalid syntax\n",
+   "prompt": "What do you expect your edited vector program to print?"
+  },
+  {
+   "custom": "out = [-1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0, -9.0, -10.0, -11.0, -12.0, -13.0, -14.0, -15.0, -16.0, -17.0, -18.0, -19.0, -20.0, -21.0, -22.0, -23.0, -24.0, -25.0, -26.0, -27.0, -28.0, -29.0, -30.0, -31.0, -32.0, -1.0]",
+   "prompt": "What do you expect your edited vector program to print?"
+  },
+  {
+   "recovered": true,
+   "openAnswer": "Export my open edited program and this unsaved note."
+  }
+ ]
+}
