@@ -14,10 +14,14 @@ export const guidedMarkup = `
 
 // Older undo slots contained only the visible text. A markerless legacy slot
 // has no historical shared kernel, so reopening it leaves today's kernel alone.
-function replacement(view, program, slot) {
-  if (slot && typeof slot === 'object') return slot;
+function replacement(view, program) {
   const parts = splitProgram(program);
   return {program, caseProgram:program, sharedKernel:parts?.kernel ?? view.sharedKernel};
+}
+
+function undoTarget(view, slot) {
+  if (typeof slot === 'string') return replacement(view,slot);
+  if (typeof slot?.program === 'string') return slot;
 }
 
 function affected(view, target) {
@@ -88,7 +92,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
       feedback('The open program is in this tab. Export learner work or retry the save before leaving.');
     }
     const slot = work.confirmed.preparations?.[slug]?.[v.fixture.id];
-    const savedUndo = slot && replacement(v,slot.program ?? slot,slot);
+    const savedUndo = undoTarget(v,slot);
     const blocked = Boolean(work.error || work.dirty || work.saving || checking || v.source !== v.saved);
     const prepare = find('prepare-task'), undo = find('undo-prepare');
     prepare.hidden = !task || v.source === start;
@@ -122,9 +126,9 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     const before = snapshot(), selected = select.value;
     const path = ['preparations',slug,before.fixture.id];
     const previous = work.confirmed.preparations?.[slug]?.[before.fixture.id];
-    if (checking || work.dirty || work.saving || work.error || (undo ? !previous : !task)) return;
-    const target = undo ? replacement(before,previous.program ?? previous,previous) : replacement(before,start);
-    if (matches(before,target)) return;
+    if (checking || work.dirty || work.saving || work.error) return;
+    const target = undo ? undoTarget(before,previous) : task && replacement(before,start);
+    if (!target || matches(before,target)) return;
     checking = true; update();
     try {
       await work.observe();

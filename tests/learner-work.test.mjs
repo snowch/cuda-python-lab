@@ -633,25 +633,28 @@ test('undo restores the independent complete program and the displaced shared ke
 });
 
 test('an earlier text-only preparation slot reopens a markerless file without guessing a shared kernel', async t=>{
-  const url=await serveBuild(t),browser=await launchChromium(t),context=await browser.newContext();
-  const custom=original(1).replace('# Host code','# my independent launch');
+  const url=await serveBuild(t),browser=await launchChromium(t);
+  const markerless=original(1).replace('# Host code','# my independent launch');
   const shared='# keep the present shared kernel\n'+kernel;
-  await context.addInitScript(({key,custom,shared})=>{
-    if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify({drafts:{'vector-add':shared},
-      cases:{'vector-add':1},preparations:{'vector-add':{'partial-16':custom}}}));
-  },{key:workKey,custom,shared});
-  const p=await open(context,url);
-  await p.locator('#undo-prepare').click();
-  await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
-  assert.equal(await source(p),custom);
-  assert.equal((await durable(p)).drafts['vector-add'],shared);
-  const record=await durable(p);
-  assert.equal(record.preparations['vector-add']['partial-16'].caseProgram,null);
-  await p.locator('#undo-prepare').click();
-  await p.waitForFunction(key=>!Object.hasOwn(JSON.parse(localStorage.getItem(key)).programs['vector-add'],'1'),workKey);
-  assert.equal(await source(p),'# keep the present shared kernel\n'+original(1));
-  t.diagnostic('The legacy text slot restored its independent file and preserved the current shared kernel. Swapping back removed the synthetic case draft and reopened the inherited program.');
-  await context.close();
+  for (const custom of [markerless,'']) {
+    const context=await browser.newContext();
+    await context.addInitScript(({key,custom,shared})=>{
+      if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify({drafts:{'vector-add':shared},
+        cases:{'vector-add':1},preparations:{'vector-add':{'partial-16':custom}}}));
+    },{key:workKey,custom,shared});
+    const p=await open(context,url);
+    await p.locator('#undo-prepare').click();
+    await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
+    assert.equal(await source(p),custom);
+    assert.equal((await durable(p)).drafts['vector-add'],shared);
+    const record=await durable(p);
+    assert.equal(record.preparations['vector-add']['partial-16'].caseProgram,null);
+    await p.locator('#undo-prepare').click();
+    await p.waitForFunction(key=>!Object.hasOwn(JSON.parse(localStorage.getItem(key)).programs['vector-add'],'1'),workKey);
+    assert.equal(await source(p),'# keep the present shared kernel\n'+original(1));
+    await context.close();
+  }
+  t.diagnostic('Both a complete markerless file and an empty legacy program reopened byte for byte, preserved the current shared kernel and swapped back to the inherited program.');
 });
 
 test('undo of an older split program discloses and archives a different current shared kernel', async t => {
