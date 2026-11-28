@@ -31,6 +31,12 @@ function sameOwnership(a, b) {
   return a.caseProgram === b.caseProgram && a.sharedKernel === b.sharedKernel;
 }
 
+// A text-only slot did not record what it installed. Protect a different
+// current kernel in that case too, since another case may have saved it.
+function changedSharedKernel(view, target, slot) {
+  return view.sharedKernel !== target.sharedKernel && view.sharedKernel !== slot.installedKernel;
+}
+
 function matches(view, target) {
   return view.source === target.program && sameOwnership(view,target);
 }
@@ -43,7 +49,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     option.title = lesson.cases.find(c => c.id === t.fixture).label;
     select.add(option);
   }
-  let task, start, end, checking = false, awaitingSave = '';
+  let task, start, end, checking = false, awaitingSave = '', operationSource;
   const feedback = message => {
     find('setup-feedback').textContent = message;
     find('setup-feedback').hidden = !message;
@@ -59,6 +65,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     find('task-evidence').textContent = task?.evidence ?? '';
     find('task-evidence').hidden = !task || (task.kind === 'run' && !task.instruction && !task.after.length);
     awaitingSave = '';
+    operationSource = undefined;
     feedback('');
     update();
   }
@@ -69,6 +76,11 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
   }
   function update() {
     const v = snapshot();
+    if (operationSource !== undefined && operationSource !== v.source) {
+      operationSource = undefined;
+      awaitingSave = '';
+      feedback('');
+    }
     if (awaitingSave && !work.dirty && !work.saving && !work.error) {
       feedback(awaitingSave);
       awaitingSave = '';
@@ -90,11 +102,17 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     let note = !task ? '' : v.source === start ? 'The editor matches ' + where + '.'
       : v.source === end ? 'The editor contains the edit for this task.'
       : 'The open program differs from ' + where + '.';
-    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + ' and keeps the open program for Undo.';
+    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + '. It keeps the open program for Undo.';
     if (!undo.hidden) {
       note += ' Undo restores ' + (affected(v,savedUndo) || 'the earlier program') + '.';
-      if (slot.installedKernel !== undefined && v.sharedKernel !== slot.installedKernel && v.sharedKernel !== savedUndo.sharedKernel)
-        note += ' The shared kernel changed since preparation. Undo keeps its current version in recovery copies.';
+      if (changedSharedKernel(v,savedUndo,slot)) {
+        if (v.sharedKernel === null) note += ' There is currently no shared draft. Undo again to return to that state.';
+        else {
+          note += typeof slot === 'string' ? ' This older undo copy did not record which shared kernel it installed.'
+            : ' The shared kernel changed since preparation.';
+          note += ' Undo keeps its current version in recovery copies.';
+        }
+      }
     }
     if ((!prepare.hidden || !undo.hidden) && blocked) note += v.source !== v.saved && !work.dirty && !work.saving && !work.error
       ? ' Review the saved program before preparing or undoing.' : ' Wait for a confirmed save before replacing code.';
@@ -125,8 +143,9 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
         program:before.source, caseProgram:before.caseProgram, sharedKernel:before.sharedKernel,
         installedKernel:target.sharedKernel,
       },{retainPrevious:!undo});
-      const intervening = undo && previous.installedKernel !== undefined && before.sharedKernel !== previous.installedKernel;
+      const intervening = undo && changedSharedKernel(before,target,previous);
       replace(target,intervening);
+      operationSource = target.program;
       awaitingSave = undo ? 'Previous program reopened. Undo again to return to the program you just left.'
         : 'Starting program prepared. Your previous program is available in Undo preparation.';
       feedback('Saving the open program and its undo copy…');

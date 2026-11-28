@@ -619,6 +619,8 @@ test('undo restores the independent complete program and the displaced shared ke
   assert.ok(await a.locator('#undo-prepare').isDisabled());
   await a.locator('#latest-version summary').click();await a.locator('[data-load]').click();
   await a.locator('#setup-status').filter({hasText:'shared kernel changed since preparation'}).waitFor();
+  await a.locator('#setup-feedback').waitFor({state:'hidden'});
+  assert.equal(await source(a),'# A later kernel from another tab\n'+wide);
   await a.locator('#undo-prepare').click();
   await a.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
   await twoExports(unstable);
@@ -649,5 +651,28 @@ test('an earlier text-only preparation slot reopens a markerless file without gu
   await p.waitForFunction(key=>!Object.hasOwn(JSON.parse(localStorage.getItem(key)).programs['vector-add'],'1'),workKey);
   assert.equal(await source(p),'# keep the present shared kernel\n'+original(1));
   t.diagnostic('The legacy text slot restored its independent file and preserved the current shared kernel. Swapping back removed the synthetic case draft and reopened the inherited program.');
+  await context.close();
+});
+
+test('undo of an older split program discloses and archives a different current shared kernel', async t => {
+  const url=await serveBuild(t),browser=await launchChromium(t),context=await browser.newContext();
+  const later='# saved after the old preparation\n'+kernel;
+  const earlier='# my earlier kernel\n'+original(1);
+  await context.addInitScript(({key,later,earlier})=>{
+    if (!localStorage.getItem(key)) localStorage.setItem(key,JSON.stringify({
+      drafts:{'vector-add':later},cases:{'vector-add':1},preparations:{'vector-add':{'partial-16':earlier}},
+    }));
+  },{key:workKey,later,earlier});
+  const p=await open(context,url);
+  assert.match(await p.locator('#setup-status').innerText(),/older undo copy.*recovery copies/);
+  await p.locator('#undo-prepare').click();
+  await p.locator('#setup-feedback').filter({hasText:'Previous program reopened'}).waitFor();
+  assert.equal(await source(p),earlier);
+  const record=await durable(p);
+  assert.ok(record.recoveryCopies.some(copy=>copy.path.join('/')==='drafts/vector-add' && copy.value===later));
+  assert.equal(record.preparations['vector-add']['partial-16'].sharedKernel,later);
+  await p.locator('#case').selectOption('0');
+  assert.equal(await source(p),'# my earlier kernel\n'+original(0));
+  t.diagnostic('The older split slot identified its unknown installation history, restored the earlier kernel across cases and archived the exact displaced kernel.');
   await context.close();
 });

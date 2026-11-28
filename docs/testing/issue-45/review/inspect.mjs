@@ -31,6 +31,7 @@ try {
  await type(b,'# new remote kernel\n'+first);
  await a.locator('#latest-version summary').click();await a.locator('[data-load]').click();
  await a.locator('#setup-status').filter({hasText:'shared kernel changed since preparation'}).waitFor();
+ await a.locator('#setup-feedback').waitFor({state:'hidden'});
  await capture('undo-scope'); console.log('Cross-case undo:',await a.locator('#setup-status').innerText());
  for(const [lesson,id,from,to] of [['vector-add','narrow','kernel[2, 32]','kernel[3, 16]'],['grid-stride','eight','kernel[2, 8]','kernel[2, 4]']]){
   await a.goto(url+'#lesson/'+lesson);await a.locator('#guided-task').selectOption(id);
