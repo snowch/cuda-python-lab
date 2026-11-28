@@ -111,6 +111,38 @@ function coalescingSlide(stage, kernel) {
   </div></div></main></html>`;
 }
 
+function reductionSlide(stage, kernel) {
+  const lines = kernel.split("\n");
+  const position = lines.findIndex(line => line.trim() === stage.highlight);
+  if (position < 0) throw new Error(`Highlighted code not found: ${stage.highlight}`);
+  const code = lines.slice(Math.max(0, position - 2), Math.min(lines.length, position + 3))
+    .filter(line => line.trim()).map(line =>
+      `<code class="${line.trim() === stage.highlight ? "current" : ""}">${escape(line)}</code>`
+    ).join("");
+  const values = stage.phase === "after" ? [6,8,10,12,5,6,7,8] : [1,2,3,4,5,6,7,8];
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
+    * { box-sizing:border-box; } body { margin:0; background:#142326; color:#effaf3; font:19px system-ui,sans-serif; }
+    main { padding:22px 36px; } h1 { margin:0 0 12px; font-size:29px; }
+    .layout { display:grid; grid-template-columns:0.9fr 1.25fr; gap:20px; }
+    .code { background:#101e21; border-radius:7px; padding:12px 0; align-self:start; }
+    code { display:block; white-space:pre-wrap; overflow-wrap:anywhere; font:16px/1.45 monospace; padding:0 9px; color:#b7d9ce; border-left:3px solid transparent; }
+    .current { background:#365340; border-color:#b5ed8d; color:#effaf3; }
+    .visual { background:#24393b; border-radius:7px; padding:13px 15px; }
+    h2 { font-size:20px; margin:0 0 8px; }
+    .slots { display:grid; grid-template-columns:repeat(8,1fr); gap:3px; }
+    .slot { text-align:center; padding:5px 0; background:#142326; border:1px solid #527071; border-radius:3px; }
+    .slot span { display:block; color:#b7d9ce; font-size:13px; }
+    .slot strong { display:block; font: 20px/1.5 monospace; }
+    .chosen { border-color:#b5ed8d; background:#365340; }
+    .note { margin:10px 0 0; font-size:17px; color:#d4e7df; }
+  </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout">
+    <div class="code">${code}</div>
+    <div class="visual"><h2>Block 0 · shared scratch</h2><div class="slots">${values.map((value,index) =>
+      `<div class="slot ${stage.phase !== "start" && (index === 1 || index === 5) ? "chosen" : ""}"><span>${index}</span><strong>${value}</strong></div>`
+    ).join("")}</div><p class="note">${escape(stage.note)}</p></div>
+  </div></div></main></html>`;
+}
+
 function vectorSlide(stage, kernel) {
   const highlighted = stage.highlight ?? "";
   const lines = kernel.split("\n");
@@ -142,6 +174,7 @@ function vectorSlide(stage, kernel) {
 
 function slide(walkthrough, stage, program) {
   if (stage.trace) return traceSlide(stage, program);
+  if (stage.phase) return reductionSlide(stage, program.kernel);
   if (stage.mode) return coalescingSlide(stage, program.kernel);
   if (stage.highlight) return vectorSlide(stage, program.kernel);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${escape(stage.title)}</title><style>
@@ -215,7 +248,7 @@ if (action === "prepare") {
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
     for (const { slug, directory, walkthrough, scenes } of recordings) {
-      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight || stage.mode) ? {
+      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight || stage.mode || stage.phase) ? {
         kernel: await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8"),
         main: hostProgram(lessons[slug].cases[0]).split("\nif __name__")[0],
       } : undefined;
@@ -224,8 +257,8 @@ if (action === "prepare") {
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage, program));
-        const content = await page.locator(stage.trace || stage.highlight || stage.mode ? ".trace" : "ol").boundingBox();
-        if (content.y + content.height > (stage.trace || stage.highlight || stage.mode ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
+        const content = await page.locator(stage.trace || stage.highlight || stage.mode || stage.phase ? ".trace" : "ol").boundingBox();
+        if (content.y + content.height > (stage.trace || stage.highlight || stage.mode || stage.phase ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
