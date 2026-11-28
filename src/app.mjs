@@ -1,3 +1,4 @@
+import {traceMarkup,mountFirstValueTrace} from './first-value-trace.mjs';
 import {mountGuide, guidedMarkup} from './guided-panel.mjs';
 import {caseQuestion} from './guided-experiments.mjs';
 import {materialSymbol} from "./material-symbols.mjs";
@@ -98,6 +99,7 @@ function displayCopy() {
 function warnUnload(event) { event.preventDefault(); event.returnValue = ''; }
 function updateSaveStatus() {
   lessonView?.guide?.update();
+  lessonView?.trace?.update();
   const failed = Boolean(work.error);
   const conflict = work.copies.length > 0;
   const focused = document.activeElement;
@@ -114,6 +116,8 @@ function updateSaveStatus() {
   else if (!warning && announcement.textContent && announcement.textContent !== 'Learner work saved.' && !work.saving) announcement.textContent = 'Learner work saved.';
   control('work-actions').hidden = !failed && !conflict && !stale;
   control('retry-save').hidden = !failed;
+  const alertLink=document.getElementById('work-recovery-link');
+  if(alertLink) alertLink.hidden = !failed && !stale && !conflict;
   control('work-copies').hidden = !conflict;
   if (workPanel.contains(focused) && focused.closest('[hidden]')) control('work-status').focus({preventScroll:true});
   workPanel.classList.toggle('needs-attention',failed || conflict || Boolean(stale));
@@ -266,7 +270,7 @@ function showGpu() {
     <section class="reading">
       <h2>Set up Python locally</h2>
       <p>Use Python 3.12, an NVIDIA GPU with compute capability 7.0 or later, and a driver compatible with CUDA 12. Download <a href="${new URL("./gpu/requirements.txt",import.meta.url).href}" download>requirements.txt</a>, open a terminal in its directory, and run these commands in a compatible Linux environment. On Jetson, check your JetPack release, Python version and ARM64 wheel plan first. Select the environment in Jupyter after installation.</p>
-      <pre><code>python -m venv .venv
+      <pre tabindex="0" role="region" aria-label="Local Python setup commands"><code>python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt</code></pre>
       <p><a href="https://nvidia.github.io/numba-cuda-mlir/">Numba-CUDA-MLIR documentation</a></p>
@@ -274,7 +278,7 @@ python -m pip install -r requirements.txt</code></pre>
     <section class="reading">
       <h2>Profile larger workloads on hardware</h2>
       <p><a href="${new URL("./gpu/cuda-python-investigations.zip",import.meta.url).href}" download>Download the native investigations</a>, extract the archive, and open a terminal in the extracted directory. The included INVESTIGATIONS.md explains what to compare for each workload. For the softmax investigation, install a CUDA-enabled build of PyTorch for your GPU.</p>
-      <pre><code>python profile_workloads.py affine --sizes 4096 1048576
+      <pre tabindex="0" role="region" aria-label="Hardware profiling commands"><code>python profile_workloads.py affine --sizes 4096 1048576
 python profile_workloads.py transpose --rows 2049 --cols 4093
 python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
       <p>Check the output before interpreting timings. Record the GPU and input shape. Use Nsight Systems to see when copies and kernels run, or Nsight Compute to inspect kernel counters such as memory sectors.</p>
@@ -311,7 +315,7 @@ python profile_workloads.py softmax --rows 4096 --cols 129</code></pre>
     <section class="reading">
       <h2>Profiling capstone. Compare two launches with a fused kernel</h2>
       <p>In <strong>INVESTIGATIONS.md</strong>, follow the capstone to predict, check, measure, and explain the effect of keeping an intermediate value within a thread. Use identical inputs and block sizes for each pair of timings.</p>
-      <pre><code>python profile_workloads.py fusion --sizes 4096 1048583 4194304 --threads 64 128 256</code></pre>
+      <pre tabindex="0" role="region" aria-label="Fusion profiling command"><code>python profile_workloads.py fusion --sizes 4096 1048583 4194304 --threads 64 128 256</code></pre>
       <p>Use the fusion lab to predict changes in array accesses. The GPU investigation supplies launch timings, register counts, and profiler evidence. Record the conditions for a conclusion that another developer can check.</p>
     </section>
   </div>`;
@@ -365,17 +369,21 @@ function showLesson(slug) {
       <h1>${escape(lesson.title)}</h1>
       <p class="lead">${escape(lesson.summary)}</p>
       <div class="reading lesson-context">
-        ${formatLessonIntro(lesson.intro, defaultProgram)}
+        ${formatLessonIntro(lesson.intro.slice(0,1), defaultProgram)}
+        <details id="starter-notes"><summary>Read the starter program</summary>
+          ${formatLessonIntro(lesson.intro.slice(1), defaultProgram)}</details>
       </div>
     </header>
 
+    <div class="lab-layout"><div class="lab-plan">
     <section class="reading experiment guided" aria-labelledby="guided-title">
       <h2 id="guided-title">Run the experiment</h2>
-      <p>Choose a task to open its case and saved code. Use <strong>Run</strong> in the editor to execute the program in this browser.</p>
+      <p>Choose a task to open its case and your saved code. Use <strong>Prepare starting program</strong> when you want the supplied starting point.</p>
       <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Starter case
             <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
           </label>
       ${guidedMarkup}
+      ${slug==='first-value'?'<button type="button" class="trace-link" id="goto-trace">Explore the host and device arrays</button>':''}
     </section>
     <section class="prediction">
       <label for="prediction" id="prediction-label">Predict before you run</label>
@@ -387,6 +395,7 @@ function showLesson(slug) {
       </details>
     </section>
 
+    </div><div class="lab-working">
     <section class="workbench" aria-labelledby="workbench-title">
       <div class="workbench-card">
         <div class="editor-top">
@@ -415,6 +424,13 @@ function showLesson(slug) {
             <a href="#gpu">GPU setup instructions</a>
           </div>
         </div>
+        <details id="task-brief" open><summary>Current task · <span id="brief-title"></span></summary>
+          <p id="brief-action"></p><p id="brief-evidence"></p><p id="brief-prediction" hidden></p>
+          ${slug==='first-value'?'<button type="button" class="trace-link" id="brief-trace">Inspect array model</button>':''}
+          <button type="button" class="trace-link" id="change-task">Choose task or case</button>
+          <button type="button" class="trace-link" id="compare-prediction">Review prediction</button>
+        </details>
+        <button type="button" class="button" id="work-recovery-link" hidden>Review save and recovery options</button>
         ${lesson.cases.length > 1 ? '<p class="editor-note" id="case-note">Kernel edits carry across cases. The host code has a draft for each case.</p>' : ""}
         <p class="editor-note" id="draft-note" role="status" hidden></p>
       </div>
@@ -423,15 +439,17 @@ function showLesson(slug) {
         <p class="editor-note" id="run-status" role="status"></p>
         <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
-        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error"></pre></details></div>
-        <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0"></pre></details>
+        <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error" tabindex="0" role="region" aria-label="Runner file error"></pre></details></div>
+        <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0" role="region" aria-label="Compiled PTX instructions"></pre></details>
       </section>
     </section>
 
+    </div></div>
+    ${slug==='first-value'?traceMarkup:''}
     <section class="reading lesson-explanation">
       <h2>Explain the authored examples</h2>
       <p>${escape(lesson.explain)}</p>
-      ${diagrams[slug] ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
+      ${diagrams[slug] && slug!=='first-value' ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
       ${hardwareLocation(slug)}
     </section>
     <section class="lesson-resources" aria-label="Optional lesson resources">
@@ -512,8 +530,10 @@ function showLesson(slug) {
     runner.reset();
   }
 
+  let viewTrace;
   const editor = mountProgramEditor(find("source"), caseSource(), () => saveEditor(), () => runner.start());
   const runner = attachRunner(main, {
+    onDisplay: () => viewTrace?.update(),
     getSource: () => editor.source,
     getCase: () => fixture.id,
     filename: `${slug}.py`,
@@ -528,8 +548,14 @@ function showLesson(slug) {
   function caseAnswer(record) {
     return record.caseAnswers?.[slug]?.[fixture.id] ?? (lesson.cases.length === 1 ? record.predictions[slug] : '') ?? '';
   }
+  function syncPrediction() {
+    const brief=find('brief-prediction');
+    brief.hidden=!prediction.value;
+    brief.textContent=prediction.value?'Your prediction · '+prediction.value:'';
+  }
   function openPrediction() {
     prediction.value = caseAnswer(state);
+    syncPrediction();
     find('prediction-label').textContent = 'Predict before you run · Starter case: ' + fixture.label;
     find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
     const earlier = state.predictions[slug];
@@ -538,6 +564,7 @@ function showLesson(slug) {
   }
   openPrediction();
   prediction.oninput = () => {
+    syncPrediction();
     work.change(['caseAnswers',slug,fixture.id],prediction.value);
     if (state.predictions[slug]) find('earlier-prediction').hidden = false;
   };
@@ -551,7 +578,7 @@ function showLesson(slug) {
     apply(version) {
       work.refresh(['drafts','programs','predictions','caseAnswers','restoredDrafts','restoredPrograms','results']);
       if (work.dirty || work.saving || work.error) return;
-      if (version.answer !== version.savedAnswer) prediction.value = version.savedAnswer;
+      if (version.answer !== version.savedAnswer) { prediction.value = version.savedAnswer; syncPrediction(); }
       if (version.program !== version.savedProgram) {
         shownSource = version.savedProgram;
         editor.reset(shownSource);
@@ -617,11 +644,11 @@ function showLesson(slug) {
       caseProgram:work.confirmed.programs[slug]?.[caseIndex] ?? null,
       sharedKernel:work.confirmed.drafts[slug] ?? null}),
     active:()=>lessonView === view,
-    replace:(target,retainKernel)=>{
+    replace:(target,retainKernel,options)=>{
       work.change(['drafts',slug],target.sharedKernel ?? undefined,{retainPrevious:retainKernel});
       work.change(['programs',slug,String(caseIndex)],target.caseProgram ?? undefined,{exactProgram:true,hostChanged:true});
       shownSource = target.program;
-      editor.reset(shownSource);
+      editor.reset(shownSource,options);
       updateRestore();
       runner.reset();
     },
@@ -629,6 +656,17 @@ function showLesson(slug) {
     readingTask:savedReadingState()?.controls.find(([id])=>id==='guided-task')?.[1],
   });
 
+  find('change-task').onclick=()=>find('guided-task').focus();
+  find('compare-prediction').onclick=()=>prediction.focus();
+  find('work-recovery-link').onclick=()=>control('work-status').focus();
+  if(slug==='first-value') {
+    viewTrace=mountFirstValueTrace({root:find('trace-title').closest('section'),starter,
+      source:()=>editor.source,fixture:()=>fixture.id,runState:runner.read,
+      canApply:view.guide.canApply,apply:view.guide.applyProgram,undoControl:find('undo-prepare'),
+      reveal:line=>editor.reveal(line),predict:()=>prediction.focus(),consoleFocus:()=>find('console-title').focus()});
+    view.trace=viewTrace;
+    find('goto-trace').onclick=find('brief-trace').onclick=()=>{find('trace-title').focus();find('trace-title').scrollIntoView({block:'start'});};
+  }
   find("download-notebook").addEventListener("click", () => {
     const source = editor.source;
     const notebook = makeNotebook({slug, lesson, kernel:starters[slug], source, fixture, selectedTask:find("guided-task").value, runtime:notebookRuntime});

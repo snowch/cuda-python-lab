@@ -336,3 +336,49 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 .guided .actions a { display: inline-flex; align-items: center; min-height: 44px; }
 #setup-status, #task-evidence { color: var(--muted); }
 #console-title { scroll-margin-top: 12rem; }
+
+/* Keep one set of editable controls. The read-only task brief travels with Run. */
+.lab-layout { display:grid; gap:1rem; align-items:start; margin-block:1.3rem; }
+.lab-plan,.lab-working { min-width:0; }
+.lab-plan .experiment { margin:0 0 1rem; }
+.lab-plan .experiment h2 { font-size:1.35rem; }
+.lab-plan .prediction { margin:0; }
+#starter-notes summary,.value-trace summary,#task-brief summary { padding-block:.55rem; color:var(--accent); font-weight:600; cursor:pointer; }
+#task-brief { margin-top:.65rem; border-top:1px solid var(--line); }
+#task-brief p { margin:.15rem 0 .4rem; }
+#brief-evidence:empty { display:none; }
+.trace-link { border:0; padding:.45rem .15rem; background:transparent; color:var(--accent); text-decoration:underline; text-underline-offset:.2em; font:inherit; cursor:pointer; }
+#task-brief .trace-link { margin-right:.8rem; }
+#goto-trace { font-weight:600; }
+#console-title,#trace-title,#prediction,#guided-task,#work-status { scroll-margin-block:.5rem 1rem; }
+@media(min-width:800px) {
+  .lab-layout { grid-template-columns:minmax(15rem,.86fr) minmax(0,1.8fr); gap:clamp(16px,2vw,32px); }
+}
+.value-trace { background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:clamp(.85rem,3vw,2rem); margin-block:1.5rem; }
+.value-trace header { max-width:72ch; }
+.trace-context { color:var(--accent); font-weight:650; margin:0 0 .35rem; }
+.value-trace h2 { margin:0 0 .5rem; }
+.value-trace label { display:block; font-weight:650; }
+.value-trace select { max-width:100%; min-height:44px; padding:.4rem; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:5px; font:inherit; }
+.trace-buffers { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(4px,1.2vw,14px); margin:1rem 0; }
+.trace-buffers>div { display:grid; align-content:start; gap:.3rem; padding:clamp(.35rem,1.4vw,.9rem); background:var(--soft); border-top:3px solid var(--line); }
+.trace-buffers>div:nth-child(2) { border-top-color:var(--accent); }
+.trace-buffers span { font-size:.85rem; font-weight:650; }
+.trace-buffers code { font: .86rem var(--mono); overflow-wrap:anywhere; }
+.trace-buffers strong { display:block; font:.85rem/1.5 var(--mono); color:var(--muted); }
+.trace-buffers .allocated { color:var(--ink); font-size:1.12rem; font-weight:600; }
+.trace-line { max-width:100%; white-space:normal; overflow-wrap:anywhere; text-align:left; margin:.7rem 0; font-family:var(--mono); }
+.value-trace [aria-disabled="true"] { opacity:.65; cursor:default; }
+.trace-options { display:flex; gap:.8rem; flex-wrap:wrap; }
+.trace-options select { display:block; }
+#trace-diff,#trace-evidence { white-space:pre-wrap; overflow-wrap:anywhere; }
+#trace-diff { font-family:var(--mono); }
+.trace-observed { margin-top:.6rem; border-top:1px solid var(--line); padding-top:.7rem; }
+.trace-observed p { margin:.2rem 0; }
+#brief-prediction { overflow-wrap:anywhere; white-space:pre-wrap; }
+#trace-identity { font: .86rem/1.5 var(--mono); color:var(--muted); }
+
+@media(max-width:600px) {
+  body:has(.lab-layout) .site-header { position:relative; }
+  html:has(.lab-layout) { scroll-padding-top:12px; }
+}

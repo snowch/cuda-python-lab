@@ -21,6 +21,7 @@ export function mountProgramEditor(parent, source, onEdit, onRun) {
     indentUnit.of("    "),
     EditorState.tabSize.of(4),
     EditorView.contentAttributes.of({
+      tabindex: "0",
       "aria-label": "Python program source",
       "aria-describedby": "editor-shortcuts",
     }),

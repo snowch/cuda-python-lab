@@ -2,7 +2,7 @@ import "./code-runner-host.mjs";
 const manager = window.cudaPythonCodeRunner;
 
 // Lesson views own their saved results, while the reading window owns the worker.
-export function attachRunner(root, { getSource, getCase, filename, getResult=()=>null, saveResult=()=>{} }) {
+export function attachRunner(root, { getSource, getCase, filename, getResult=()=>null, saveResult=()=>{}, onDisplay=()=>{} }) {
   const run=root.querySelector('#run'), stop=root.querySelector('#stop');
   const output=root.querySelector('#run-output'), status=root.querySelector('#run-status');
   const ptx=root.querySelector('#ptx-output'), ptxPanel=root.querySelector('#ptx-panel');
@@ -18,14 +18,19 @@ export function attachRunner(root, { getSource, getCase, filename, getResult=()=
     recovery.hidden=!loadFailure;run.classList.toggle('primary',!loadFailure);
     root.querySelector('#runtime-error').textContent=loadFailure?.output??'';
     root.querySelector('#runtime-previous-note').hidden=!loadFailure||!saved?.output;
+    onDisplay();
   }
   function setBusy(value) {
-    busy=value;run.disabled=value;stop.hidden=!value;
-    if (!value&&document.activeElement===stop) run.focus();
+    const focused=document.activeElement;
+    busy=value;
+    stop.hidden=!value;
+    run.disabled=value;
+    if (value && focused===run) stop.focus({preventScroll:true});
+    if (!value && focused===stop) run.focus({preventScroll:true});
   }
   function start() {
     if(busy)return;
-    const source=getSource(), caseId=getCase();loadFailure=null;recovery.hidden=true;run.classList.add('primary');setBusy(true);status.classList.remove('error');status.textContent='Starting…';
+    const source=getSource(), caseId=getCase();loadFailure=null;recovery.hidden=true;run.classList.add('primary');setBusy(true);status.classList.remove('error');status.textContent='Starting…';onDisplay();
     manager.execute(client,'',{source,filename},reply=>{
       if(reply.stage&&!reply.cancelled){status.textContent=reply.stage;return;}
       setBusy(false);
@@ -39,5 +44,5 @@ export function attachRunner(root, { getSource, getCase, filename, getResult=()=
   stop.addEventListener('click',()=>manager.detach(client));
   reload.addEventListener('click',()=>manager.reloadLesson());
   display();
-  return {start,reset,dispose:()=>manager.detach(client)};
+  return {start,reset,read:()=>({busy,failure:Boolean(loadFailure),result}),dispose:()=>manager.detach(client)};
 }
