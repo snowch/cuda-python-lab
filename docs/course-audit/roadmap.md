@@ -12,6 +12,18 @@ Priorities are ordered by learner consequence, then dependency. Preserve stable 
 | M5. Expand by capability (P2) | Offer H runtime, I compiler/ISA, J AI kernels, K system scale, L projects. Teach plain GEMM and stable softmax before attention and KV caching. Gate low-precision/tensor operations, asynchronous movement, graphs and multi-GPU by device and binding support. Add optional comparative architecture reading. | A browser-only reader can explain the model and limits. Each native lab runs on an identified configuration or has an explicit external/reference label. Budget documentation/testing effort for each additional backend. |
 | Release and reassess | Pilot with at least five Python-capable GPU novices and three intermediate learners, as the issue proposes. Novices perform first store, unseen thread ownership and coalescing tasks. Intermediate learners diagnose the race and choose a stencil optimization without coaching. Repeat with new cases after changes. | Capture independent completion, hints, misclicks, time to recover, teach-back and counterexamples. Collect accessibility feedback from people using assistive technology. Record failures and uncertainty; small formative samples support design decisions, not universal success claims. |
 
+## Post-foundation architecture decision
+
+Once M1 and M2 are stable, the curriculum architect should reconcile the existing A–L pathways and M3–M5 dependencies with the owner-approved five parts. Part 1 remains a substantial browser-only route. Parts 2 and 3 cover native performance engineering and GPU computing for AI. Parts 4 and 5 are optional embedded and advanced systems branches. The course owner and independent reviewer should review the proposed chapter map, route migration and environment requirements before restructuring. [Owner decision](https://github.com/snowch/cuda-python-lab/issues/43#issuecomment-7237213779)
+
+| Open release gate | Who supplies evidence | What the independent reviewer checks |
+| --- | --- | --- |
+| Native output and performance | A hardware tester runs the specified cases on the named GPU. A platform tester provisions Colab and a supported Jetson and records setup, versions and capabilities. | Correct outputs, reproducible measurements, tool availability and clear documented capability limits. |
+| Walkthrough audio | A human listener reviews every cue alongside the captions, code and stage timings. | Pronunciation, timing, legibility and a resolved record of flagged cues. |
+| Mobile and assistive technology | Device and accessibility testers exercise real touch browsers, input methods and assistive technology on the learner tasks. | The tester can reach, read and operate every required step, including save recovery. |
+| Learning transfer | A study facilitator observes novice and intermediate learners attempting held-out tasks independently. | Predictions, explanations, correctness and measurement choices meet the outcome rubric. The course owner decides whether the evidence warrants release. |
+
+
 ## Baseline reconciliation
 
 | Baseline recommendation | Decision and evidence |

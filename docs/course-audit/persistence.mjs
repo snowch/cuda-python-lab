@@ -28,11 +28,23 @@ console.log(
   "Fresh third tab shows code marker:",
   (await fresh.locator(".cm-content").innerText()).includes("# audit marker"),
 );
+async function originalTab() {
+  return {
+    prediction: await a.locator("#prediction").inputValue(),
+    codeMarker: (await a.locator(".cm-content").innerText()).includes("# audit marker"),
+  };
+}
+console.log("Original vector tab before reload:", await originalTab());
 await a.reload();
-console.log(
-  "After another tab edits a different lesson, original vector prediction:",
-  JSON.stringify(await a.locator("#prediction").inputValue()),
-);
+await editor.waitFor();
+console.log("Original vector tab after reload:", await originalTab());
+console.log("Durable predictions after original tab reload:", await a.evaluate(
+  () => JSON.parse(localStorage.getItem("cuda-python-lab-v1")).predictions,
+));
+const reopenedStencil = await c.newPage();
+await reopenedStencil.goto(base + "stencil");
+console.log("Fresh stencil tab after original vector reload:",
+  JSON.stringify(await reopenedStencil.locator("#prediction").inputValue()));
 const q = await b.newPage();
 await q.addInitScript(() => {
   const orig = Storage.prototype.setItem;

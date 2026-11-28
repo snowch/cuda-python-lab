@@ -25,6 +25,7 @@
     }
     label {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 4px;
       margin: 1em 0;
     }
@@ -62,7 +63,7 @@
   <article>
     <code id="line"></code>
     <p id="context"></p>
-    <div id="cells" aria-label="Select output index"></div>
+    <div id="cells" role="group" aria-label="Select output index"></div>
     <output id="reading" aria-live="polite"></output>
   </article>
   <p>
@@ -122,6 +123,7 @@
       const s = states[+select.value],
         bad = s.kernel === "Missing left halo",
         n = s.values.length;
+      index = Math.min(index, n - 1);
       document.querySelector("#line").textContent = bad
         ? "tile[0] = 0.0"
         : s.kernel === "Direct reads"
