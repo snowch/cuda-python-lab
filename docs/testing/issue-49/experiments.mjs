@@ -75,9 +75,9 @@ try{
   await page.setViewportSize({width:390,height:850});
  }
  await editor.waitFor();
+ const starterNote='Host 0, store 42, copied result only. I predict original 0, device 42 and result 42.';
+ await field('trace-predict').tap();await page.keyboard.type(starterNote);await saved();
  await run(0,42,false,'unmodified one-element starter');
- await field('trace-predict').tap();await page.keyboard.type('The original stays at 5 when the thread stores 73.');
- await saved();
  const stageEvidence = [];
  const expectedStages = [[null,null,null],[0,null,null],[0,0,null],[0,0,null],[0,0,null],[0,42,null],[0,42,42],[0,42,42]];
  for (const [index,expected] of expectedStages.entries()) {
@@ -103,6 +103,12 @@ try{
  for(const [host,store] of [[0,42],[0,73],[5,42],[5,73]]){
   await patch(host,store,true);
   assert.match(await field('trace-evidence').textContent(),/earlier program/);
+  if(host===5 && store===73){
+   await field('trace-predict').tap();
+   assert.match(await field('prediction-prompt').innerText(),/host starts at 5.*kernel stores 73/);
+   await field('prediction').fill(starterNote+'\nHost 5, store 73, print both. I predict original 5, device 73 and result 73.');
+   await saved();
+  }
   await run(host,store,true,'supported edit with original printed');
  }
  await field('trace-inputs').evaluate(el=>el.open=false);

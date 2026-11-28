@@ -14,12 +14,26 @@ export function firstValuePrograms(starter) {
   return programs;
 }
 
+export function firstValuePrediction(program) {
+  if (!program) return {
+    question: 'What do you expect the open program to print?',
+    evidence: 'These edits are outside the array model. Follow your print statements and check their output in the Console.',
+  };
+  const observation = program.printed
+    ? 'This program prints result, then out_host.'
+    : 'This program prints only result. To check out_host too, add print(out_host.tolist()) before return result.';
+  return {
+    question: 'The host starts at '+program.host+' and the kernel stores '+program.store+'. After copy-back, what will the original host (out_host), device (out) and copied host (result) arrays each contain?',
+    evidence: observation+' The intermediate device value comes from the source-level model.',
+  };
+}
+
 export const stages = ['Predict the values','Create the host array','Copy to the device','Compile the kernel','Launch one thread','Store on the device','Copy back','Return the result'];
 
 export function firstValueStep(program, index) {
   const {host,store,printed} = program;
   const rows = [
-    ['Host · before main()', 'def main():', 'After the store and copy back, what will the original host array, device array and returned result each contain? Record your prediction before stepping.'],
+    ['Host · before main()', 'def main():', firstValuePrediction(program).question],
     ['Host · initialization', 'out_host =', 'The CPU creates out_host with one float32 element. It is the original array.'],
     ['Host · copy to device', 'out = cuda.to_device(out_host)', 'The host copies the element into a separate device allocation named out. Both arrays now contain the starting value.'],
     ['Host · compilation', '@cuda.jit', 'The decorator marks kernel for compilation. At launch the browser compiler produces PTX instructions for GPGPU-Sim. A native CUDA environment loads compiled code for the physical GPU. Compilation changes no array values.'],

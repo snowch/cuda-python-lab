@@ -363,6 +363,7 @@ function showLesson(slug) {
   const lesson = lessons[slug];
   const index = order.indexOf(slug);
   const walkthrough = walkthroughs[slug];
+  const firstValue = slug === 'first-value';
   const defaultProgram = standaloneProgram(starters[slug], lesson.cases[0]);
   main.innerHTML = `<article>
     <header class="lesson-heading">
@@ -383,12 +384,13 @@ function showLesson(slug) {
             <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
           </label>
       ${guidedMarkup}
-      ${slug==='first-value'?'<button type="button" class="trace-link" id="goto-trace">Explore the host and device arrays</button>':''}
+      ${firstValue?'<button type="button" class="trace-link" id="goto-trace">Explore the host and device arrays</button>':''}
     </section>
     <section class="prediction">
       <label for="prediction" id="prediction-label">Predict before you run</label>
       <p id="prediction-prompt"></p>
-      <textarea id="prediction" rows="1" aria-describedby="prediction-prompt"></textarea>
+      ${firstValue ? '<p id="prediction-evidence"></p><p id="notes-scope">These notes stay with this case when you change the code. Include the starting value, store and print choice in each prediction.</p>' : ''}
+      <textarea id="prediction" rows="${firstValue ? 3 : 1}" aria-describedby="prediction-prompt${firstValue ? ' prediction-evidence notes-scope' : ''}"></textarea>
       <details id="earlier-prediction" hidden><summary>Earlier lesson prediction</summary>
         <p>This answer was saved for the whole lesson. Copy any part you want to use for this case.</p>
         <label>Earlier answer<textarea id="legacy-answer" readonly rows="2"></textarea></label>
@@ -425,8 +427,8 @@ function showLesson(slug) {
           </div>
         </div>
         <details id="task-brief" open><summary>Current task · <span id="brief-title"></span></summary>
-          <p id="brief-action"></p><p id="brief-evidence"></p><p id="brief-prediction" hidden></p>
-          ${slug==='first-value'?'<button type="button" class="trace-link" id="brief-trace">Inspect array model</button>':''}
+          <p id="brief-action"></p><p id="brief-evidence"></p>${firstValue ? '' : '<p id="brief-prediction" hidden></p>'}
+          ${firstValue?'<button type="button" class="trace-link" id="brief-trace">Inspect array model</button>':''}
           <button type="button" class="trace-link" id="change-task">Choose task or case</button>
           <button type="button" class="trace-link" id="compare-prediction">Review prediction</button>
         </details>
@@ -440,16 +442,21 @@ function showLesson(slug) {
         <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
         <div id="runtime-recovery" hidden><p class="editor-note" id="runtime-recovery-note">Choose Reload lesson while online to load the current runner files. The page saves your code and prediction first. After the lesson reloads, click Run.</p><button class="button primary" id="reload-runner-files" type="button">Reload lesson</button><details id="runtime-error-details"><summary>File download details</summary><pre id="runtime-error" tabindex="0" role="region" aria-label="Runner file error"></pre></details></div>
+        ${firstValue ? `<section class="prediction-comparison" aria-labelledby="comparison-title">
+          <h3 id="comparison-title">Compare your prediction</h3>
+          <p id="comparison-question"></p><p id="comparison-evidence"></p>
+          <p id="brief-prediction" hidden></p>
+        </section>` : ''}
         <details id="ptx-panel" hidden><summary>Inspect compiled PTX</summary><pre id="ptx-output" tabindex="0" role="region" aria-label="Compiled PTX instructions"></pre></details>
       </section>
     </section>
 
     </div></div>
-    ${slug==='first-value'?traceMarkup:''}
+    ${firstValue?traceMarkup:''}
     <section class="reading lesson-explanation">
       <h2>Explain the authored examples</h2>
       <p>${escape(lesson.explain)}</p>
-      ${diagrams[slug] && slug!=='first-value' ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
+      ${diagrams[slug] && !firstValue ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
       ${hardwareLocation(slug)}
     </section>
     <section class="lesson-resources" aria-label="Optional lesson resources">
@@ -551,13 +558,14 @@ function showLesson(slug) {
   function syncPrediction() {
     const brief=find('brief-prediction');
     brief.hidden=!prediction.value;
-    brief.textContent=prediction.value?'Your prediction · '+prediction.value:'';
+    const label=firstValue ? 'Case notes (may include earlier runs) · ' : 'Your prediction · ';
+    brief.textContent=prediction.value ? label+prediction.value : '';
   }
   function openPrediction() {
     prediction.value = caseAnswer(state);
     syncPrediction();
-    find('prediction-label').textContent = 'Predict before you run · Starter case: ' + fixture.label;
-    find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
+    find('prediction-label').textContent = firstValue ? 'Prediction notes · '+fixture.label : 'Predict before you run · Starter case: '+fixture.label;
+    if (!firstValue) find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
     const earlier = state.predictions[slug];
     find('earlier-prediction').hidden = !earlier || (lesson.cases.length === 1 && !Object.hasOwn(state.caseAnswers?.[slug] ?? {},fixture.id));
     find('legacy-answer').value = earlier ?? '';
@@ -659,10 +667,16 @@ function showLesson(slug) {
   find('change-task').onclick=()=>find('guided-task').focus();
   find('compare-prediction').onclick=()=>prediction.focus();
   find('work-recovery-link').onclick=()=>control('work-status').focus();
-  if(slug==='first-value') {
+  if(firstValue) {
     viewTrace=mountFirstValueTrace({root:find('trace-title').closest('section'),starter,
       source:()=>editor.source,fixture:()=>fixture.id,runState:runner.read,
       canApply:view.guide.canApply,apply:view.guide.applyProgram,undoControl:find('undo-prepare'),
+      onPredictionContext({question,evidence}) {
+        find('prediction-prompt').textContent = question;
+        find('comparison-question').textContent = question;
+        find('prediction-evidence').textContent = evidence;
+        find('comparison-evidence').textContent = evidence;
+      },
       reveal:line=>editor.reveal(line),predict:()=>prediction.focus(),consoleFocus:()=>find('console-title').focus()});
     view.trace=viewTrace;
     find('goto-trace').onclick=find('brief-trace').onclick=()=>{find('trace-title').focus();find('trace-title').scrollIntoView({block:'start'});};

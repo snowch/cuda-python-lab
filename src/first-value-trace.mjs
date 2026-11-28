@@ -1,4 +1,4 @@
-import {firstValuePrograms, firstValueStep, stages} from './first-value-model.mjs';
+import {firstValuePrediction, firstValuePrograms, firstValueStep, stages} from './first-value-model.mjs';
 import {mountSteps} from './step-controller.mjs';
 
 export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-title">
@@ -28,7 +28,7 @@ export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-
   <div class="trace-observed"><strong>Execution evidence</strong><p id="trace-evidence"></p><button class="trace-link" id="trace-console" type="button">Inspect Console</button></div>
 </section>`;
 
-export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reveal,predict,consoleFocus}) {
+export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reveal,predict,consoleFocus,onPredictionContext}) {
   const programs=firstValuePrograms(starter), el=id=>root.querySelector('#'+id);
   let current, observedSource, step, inspected=0;
   const buffers = [...root.querySelectorAll('[data-buffer]')];
@@ -82,6 +82,7 @@ export function mountFirstValueTrace({root,starter,source,fixture,runState,canAp
     if(text!==observedSource){
       observedSource=text;current=fixture()==='one'?programs.get(text):undefined;
       if(current){el('trace-identity').textContent='Open code · One element · host '+current.host+' · store '+current.store;host.value=String(current.host);store.value=String(current.store);printed.value=current.printed?'both':'result';}
+      onPredictionContext(firstValuePrediction(current));
       controller.reset();
     }
     el('trace-stages').hidden=!current; el('trace-unavailable').hidden=Boolean(current);

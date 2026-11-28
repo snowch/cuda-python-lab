@@ -388,3 +388,7 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 }
 #buffer-label { margin:.9rem 0 .35rem; font-size:.9rem; font-weight:600; }
 .trace-buffers { margin-top:.35rem; }
+
+.prediction-comparison { border-top:1px solid var(--line); margin-top:.8rem; padding-top:.7rem; }
+.prediction-comparison h3 { font-size:1rem; margin:0 0 .35rem; }
+.prediction-comparison p { margin:.35rem 0; }
