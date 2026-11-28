@@ -11,7 +11,7 @@ const clean=[],t={after:f=>clean.unshift(f)};
 await mkdir(out,{recursive:true});
 try {
  const base=await serveBuild(t,{directory:pathToFileURL(resolve(build)+'/')});
- const context=await chromium.launchPersistentContext(join(temp,'profile'),{headless:true,executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,viewport:null,args:['--window-size=1280,900']});
+ const context=await chromium.launchPersistentContext(join(temp,'profile'),{headless:true,executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || chromium.executablePath(),viewport:null,args:['--window-size=1280,900']});
  clean.unshift(()=>context.close());
  const settings=await context.newPage();await settings.goto('chrome://settings/appearance');
  const page=await context.newPage();

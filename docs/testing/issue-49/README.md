@@ -2,7 +2,7 @@
 
 The first lesson asks learners to predict which of three arrays changes, select a buffer at the store, follow its line into editable Python, and test their explanation in GPGPU-Sim. Across all 17 lessons the full current edit, evidence cue and saved prediction are available between Run and Console. The first recording remains available with captions and a transcript. [Implementation issue and scope clarification](https://github.com/snowch/cuda-python-lab/issues/49) · [Owner's curriculum direction](https://github.com/snowch/cuda-python-lab/issues/43#issuecomment-7239965434) · [PR #50](https://github.com/snowch/cuda-python-lab/pull/50)
 
-**Tested builds.** Baseline main was `25eca9769098e0f71ae78553307881668ef06c16`, which includes PR #48. The implementation was built and tested at `e8522c5f73d0b20369f6c578010ecc0f1894c71b`. The subsequent PR commit adds review evidence only. The release inventory includes the complete offline manifest identities. [Source CI](https://github.com/snowch/cuda-python-lab/actions/runs/46151389023) · [PR-head checks](https://github.com/snowch/cuda-python-lab/pull/50/checks) · [Both releases and byte counts](logs/release-size.json)
+**Tested builds.** Baseline main was `25eca9769098e0f71ae78553307881668ef06c16`, which includes PR #48. The implementation was built and tested at `e8522c5f73d0b20369f6c578010ecc0f1894c71b`. Subsequent commits contain only review evidence and its reproduction scripts. The release inventory includes the complete offline manifest identities. [Source CI](https://github.com/snowch/cuda-python-lab/actions/runs/46151389023) · [PR-head checks](https://github.com/snowch/cuda-python-lab/pull/50/checks) · [Both releases and byte counts](logs/release-size.json)
 
 ## Acceptance matrix
 
