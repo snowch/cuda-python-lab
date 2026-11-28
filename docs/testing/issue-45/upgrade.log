@@ -1,0 +1,3 @@
+Browser: 156.0.8078.79
+The PR #44 transactional writer preserved the new case answer when it next wrote its own lesson-wide answer. Fresh upgraded tab retained the old kernel and displayed the unassigned answer separately.
+A one-case legacy answer reopened under its matching question. Replacing it left the original accessible in a fresh tab.

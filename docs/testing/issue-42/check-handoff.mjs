@@ -39,10 +39,10 @@ try {
   await saved(fresh);
   assert.match(await fresh.locator('.cm-content').innerText(),/# retained across upgrades/);
   assert.equal(await fresh.locator('#prediction').inputValue(),'New release answer');
-  await fresh.locator('#work-copies summary').click();
-  assert.equal(await fresh.locator('#work-copy-text').inputValue(),'Old release answer');
-  console.log('Fresh release reopened the new marker and new answer. Recovery copy displayed the answer typed in the actual old release.');
-  await axe(fresh,'conflict');
+  await fresh.locator('#earlier-prediction summary').click();
+  assert.equal(await fresh.locator('#legacy-answer').inputValue(),'Old release answer');
+  console.log('Fresh release reopened the new marker and new answer. Earlier lesson prediction displayed the answer typed in the actual old release.');
+  await axe(fresh,'legacy answer');
   await fresh.evaluate(() => {
     const put = IDBObjectStore.prototype.put;
     IDBObjectStore.prototype.put = function(...args) {
@@ -110,7 +110,7 @@ try {
   assert.equal(await legacy.locator('#prediction').inputValue(),legacyAnswer);
   assert.equal(await next.locator('#prediction').inputValue(),'');
   const current = await next.evaluate(() => JSON.parse(localStorage.getItem('cuda-python-lab-v1')));
-  assert.equal(current.predictions['vector-add'],'Transactional update spanning legacy input');
+  assert.equal(current.caseAnswers['vector-add']['partial-32'],'Transactional update spanning legacy input');
   assert.ok(!JSON.stringify(current).includes(legacyAnswer));
   console.log('Deliberate mixed-release overlap: the old answer reached the mirror after the new read. The new commit replaced the mirror; no copy of the old answer reopened. Its original old tab still showed the answer.');
   await context.close();

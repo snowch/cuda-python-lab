@@ -35,7 +35,7 @@ else:
 `;
 }
 
-export function makeNotebook(lesson, source, fixture) {
+export function makeNotebook(lesson, source, fixture, question = lesson.predict) {
   return {
     nbformat: 4,
     nbformat_minor: 2,
@@ -51,7 +51,7 @@ ${lesson.summary}
 
 **Case** · ${fixture.label}
 
-${lesson.predict}
+${question}
 
 Run the cells in order on an NVIDIA GPU. In Google Colab, choose **Runtime → Change runtime type** and select a GPU. In Jupyter, use a Python environment on a machine with an NVIDIA GPU.${lesson.cases.length > 1 ? " To use another case, select it on the lesson page and download its notebook." : ""}
 

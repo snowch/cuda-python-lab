@@ -1,0 +1,3 @@
+Browser: 156.0.8078.79
+Precision / small: edited and starter runs both printed out = [1.0, 1.0]
+Preparing the starter marked the edited output as previous. Reload kept the warning. Undo restored its exact source and run status. A new starter run saved the small case ID and its exact source. An ordinary edit marked that run previous; the other case showed no result.

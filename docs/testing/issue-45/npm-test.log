@@ -1,0 +1,110 @@
+
+> cuda-python-lab@0.1.0 test
+> npm run build && node --test --test-concurrency=1 --test-timeout=180000 tests/deployment-assets.test.mjs tests/shared-style.test.mjs tests/code-runner.test.mjs tests/offline.test.mjs tests/browser.test.mjs tests/lifecycle.test.mjs tests/learner-work.test.mjs
+
+
+> cuda-python-lab@0.1.0 build
+> node scripts/build.mjs
+
+Built 17 lessons in /tmp/45/gate-tests/dist/
+✔ course location shares the outline row across routes, sizes and themes (16527.199001ms)
+ℹ Browser: 156.0.8078.79
+✔ every case exports a CUDA notebook containing its complete program (20029.126948ms)
+ℹ Browser: 156.0.8078.79
+✔ the full first program is keyboard accessible and edits reach both exports (2537.762021ms)
+ℹ Browser: 156.0.8078.79
+✔ case changes preserve the shared kernel and the host draft for each case (2969.324445ms)
+ℹ Browser: 156.0.8078.79
+✔ kernel-only drafts reopen with main and can still be restored (2215.639639ms)
+ℹ Browser: 156.0.8078.79
+✔ architecture walkthroughs play with captions and expose transcripts by keyboard (15565.73784ms)
+ℹ Browser: 156.0.8078.79
+✔ the GPU appendix gives notebook setup, investigations and the occupancy worksheet (2340.671529ms)
+ℹ Browser: 156.0.8078.79
+✔ optional compiler lab exports an MLIR notebook and names the quantities to compare (2461.222359ms)
+ℹ Browser: 156.0.8078.79
+✔ reuses one worker across clients, while messages/results belong to each current run (2.41809ms)
+✔ idle release counts from completion and never interrupts a running job (0.41971ms)
+✔ explicit stop cancels the owner, ignores late replies and allows a fresh worker (0.249008ms)
+✔ timeout and crashes release memory and next run can start again (0.360532ms)
+✔ a second client cannot replace the busy job, and detaching another client cannot cancel it (0.294054ms)
+✔ manual startup prepares without running code, and compile errors keep the toolchain ready (0.243229ms)
+✔ Compile during manual startup waits, then runs automatically on the same worker (0.263789ms)
+✔ stopping or detaching a queued compile cancels startup without running that code (0.633826ms)
+✔ startup errors reach the queued compile without leaving an editor waiting (0.249058ms)
+✔ default idle policy is thirty minutes and settings keep the last completion as the deadline origin (0.432008ms)
+✔ shortening an expired idle policy releases memory; changing it during a run does not interrupt code (0.251692ms)
+✔ telemetry updates allocation without completing a job; elapsed time includes queued startup and survives memory release (0.230169ms)
+✔ Python program errors keep the toolchain and do not count as completed runs (0.224922ms)
+✔ only infrastructure download failures emit runtime recovery (0.170722ms)
+✔ a worker import failure during startup opens infrastructure recovery (0.208838ms)
+✔ unchanged builds keep compiler and GPU archive bytes stable across build times (2933.745424ms)
+✔ retention verifies prior bytes, keeps a bounded history and rejects corruption (17.80458ms)
+✔ an open lesson runs after deployment; an expired runtime recovers without losing 43 or the prior result (38519.250736ms)
+ℹ Browser: 156.0.8078.79
+✔ stale lessons survive both write and close orders in a fresh third tab (7571.44613ms)
+ℹ Browser: 156.0.8078.79
+ℹ {"reverse":false,"marker":"# Original vector marker","caseAnswers":{"vector-add":{"partial-32":"Index 32 belongs to block 1"},"stencil":{"direct":"Boundary reads the halo"}}}
+ℹ {"reverse":true,"marker":"# Original vector marker","caseAnswers":{"stencil":{"direct":"Boundary reads the halo"},"vector-add":{"partial-32":"Index 32 belongs to block 1"}}}
+✔ contending kernel, host, prediction, completion and case writes merge and restore/undo round-trips (50872.012023ms)
+ℹ Browser: 156.0.8078.79
+ℹ Vector export matched the executed source byte for byte; GPGPU-Sim output: [3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99]
+ℹ Vector export matched the executed source byte for byte; GPGPU-Sim output: [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,-29,-30,-31,-32,-33]
+ℹ Fresh case 0 and 1 exports matched the complete expected programs byte for byte, including the shared kernel and separate case host markers.
+✔ same draft and prediction retain both versions, including a keyboard-accessible recovery copy (11935.329163ms)
+ℹ Browser: 156.0.8078.79
+ℹ Second full program and answer reopened. Export retained first full program and answer. Review, copy and removal controls reached by keyboard.
+✔ quota and denied writes retain in-memory work, allow export, warn before unload and retry (8734.463838ms)
+ℹ Browser: 156.0.8078.79
+ℹ QuotaExceededError: tab export contained complete code and prediction; fresh tab was empty before retry and exact after retry.
+ℹ SecurityError: tab export contained complete code and prediction; fresh tab was empty before retry and exact after retry.
+✔ legacy v1 work and stale per-window handoff import once without replacing newer work (3533.763912ms)
+ℹ Browser: 156.0.8078.79
+ℹ Legacy-only answer, result and undo retained. Durable code, answer and completion retained. Stale answer available once in recovery.
+✔ full history leaves the next edit pending until a learner frees space (1623.256133ms)
+ℹ Browser: 156.0.8078.79
+✔ a stale tab preserves actual GPGPU-Sim outputs for both cases (18763.254236ms)
+ℹ Browser: 156.0.8078.79
+ℹ GPGPU-Sim · 33 elements · 32 threads per block · out = [3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0, 63.0, 66.0, 69.0, 72.0, 75.0, 78.0, 81.0, 84.0, 87.0, 90.0, 93.0, 96.0, 99.0]
+ℹ GPGPU-Sim · 33 elements · 16 threads per block · out = [3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0, 48.0, 51.0, 54.0, 57.0, 60.0, 63.0, 66.0, 69.0, 72.0, 75.0, 78.0, 81.0, 84.0, 87.0, 90.0, 93.0, 96.0, 99.0]
+✔ a previous release writing the v1 record cannot erase a transactional save (1664.931621ms)
+ℹ Browser: 156.0.8078.79
+✔ interruption between the v1 mirror and the final database commit retains both answers (1646.267063ms)
+ℹ Browser: 156.0.8078.79
+✔ review tracks the effective case and prediction, leaves focus intact and validates the preview (15850.141143ms)
+ℹ Browser: 156.0.8078.79
+✔ loading a reviewed version cannot replace edits made while its database read waits or fails (4458.101571ms)
+ℹ Browser: 156.0.8078.79
+✔ guided preparation preserves dirty work across contention, storage denial, undo and reopen (41923.793481ms)
+ℹ Browser: 156.0.8078.79
+✔ case answers remain separate and an ambiguous legacy answer stays available (1997.09604ms)
+ℹ Browser: 156.0.8078.79
+✔ undo restores the independent complete program and the displaced shared kernel as one transaction (38010.268832ms)
+ℹ Browser: 156.0.8078.79
+ℹ After failed undo the checkpoint retained both prepared fields. Retry restored the original shared draft and both serialized complete programs byte for byte; both fresh case exports matched.
+ℹ A stale Undo was blocked. After explicit review/load, Undo disclosed its cross-case scope, restored both original effective sources and retained the exact newer kernel in the recovery archive and swap slot.
+✔ an earlier text-only preparation slot reopens a markerless file without guessing a shared kernel (3870.681946ms)
+ℹ Browser: 156.0.8078.79
+ℹ Both a complete markerless file and an empty legacy program reopened byte for byte, preserved the current shared kernel and swapped back to the inherited program.
+✔ undo of an older split program discloses and archives a different current shared kernel (1115.95928ms)
+ℹ Browser: 156.0.8078.79
+ℹ The older split slot identified its unknown installation history, restored the earlier kernel across cases and archived the exact displaced kernel.
+✔ manual startup introduces the runner once, retains it between lessons, and releases memory without losing work (13010.485027ms)
+ℹ Browser: 156.0.8078.79
+✔ verified offline course survives a new tab, lesson navigation, two-tab update/restart and removal (45911.153133ms)
+ℹ Browser: 156.0.8078.79
+✔ release pins the SPA assets and verifies every offline resource (31.029763ms)
+✔ the bare homepage orients visitors and the start link preserves saved lesson work (1852.67315ms)
+ℹ Browser: 156.0.8078.79
+✔ all lesson topic references and shared ending components are present (6299.837293ms)
+ℹ Browser: 156.0.8078.79
+✔ completion survives stale snapshots and concurrent edits in another tab (6810.507534ms)
+ℹ Browser: 156.0.8078.79
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 395917.39605

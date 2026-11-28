@@ -113,7 +113,7 @@ test("every case exports a CUDA notebook containing its complete program", async
         assert.ok(starter.includes(lines.map((line) => line && indent + line).join("\n")), slug);
       }
       for (const [index, fixture] of lesson.cases.entries()) {
-        if (lesson.cases.length > 1) await page.getByRole("combobox", { name: "Case", exact: true }).selectOption(String(index));
+        if (lesson.cases.length > 1) await page.getByRole("combobox", { name: "Starter case", exact: true }).selectOption(String(index));
         const file = await downloadFile(page, page.getByRole("button", { name: "Download notebook" }));
         const notebook = JSON.parse(file.contents);
         assert.equal(file.name, `${slug}.ipynb`);
@@ -155,7 +155,7 @@ test("the full first program is keyboard accessible and edits reach both exports
 test("case changes preserve the shared kernel and the host draft for each case", async (t) => {
   await runBrowser(t, { width: 390, height: 850 }, async (page) => {
     await openLesson(page, "vector-add");
-    const input = page.getByRole("combobox", { name: "Case", exact: true });
+    const input = page.getByRole("combobox", { name: "Starter case", exact: true });
     const editor = sourceEditor(page);
     const first = await readSource(editor);
     const edited = first.replace("a[i] + b[i]", "a[i] - b[i]").replace("kernel[2, 32]", "kernel[3, 16]");

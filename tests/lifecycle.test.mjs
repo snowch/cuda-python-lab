@@ -74,6 +74,7 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  for(const slug of ['vector-add','vector-add','first-value'])await lesson(page,slug);
  await page.locator('#run').click();await finished(page);assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  const tab=await context.newPage();await tab.goto(url+'#lesson/vector-add');await editor(tab).waitFor();
+ await tab.locator('#case').selectOption('1');await tab.locator('#prediction').fill('Sixteen lanes per block');
  await tab.locator('#case').selectOption('2');await tab.locator('#prediction').fill('Saved in second tab');
  await context.setOffline(false);
  await page.goto(url+'?download=1#lesson/first-value');await editor(page).waitFor();
@@ -92,7 +93,10 @@ test('verified offline course survives a new tab, lesson navigation, two-tab upd
  assert.equal(await page.locator('#prediction').inputValue(),'Changed after the second tab opened');
  assert.equal(await page.locator('#run-output').textContent(),'out = [42.0]');
  assert.equal(await tab.locator('#prediction').inputValue(),'Saved in second tab');assert.equal(await tab.locator('#case').inputValue(),'2');
- await context.setOffline(true);await tab.reload();await editor(tab).waitFor();await tab.locator('#run').click();await finished(tab);
+ await context.setOffline(true);await tab.reload();await editor(tab).waitFor();
+ await tab.locator('#case').selectOption('1');assert.equal(await tab.locator('#prediction').inputValue(),'Sixteen lanes per block');
+ await tab.locator('#case').selectOption('2');assert.equal(await tab.locator('#prediction').inputValue(),'Saved in second tab');
+ await tab.locator('#run').click();await finished(tab);
  await context.setOffline(false);await page.locator('#app-status-open').click();await page.locator('#app-status-details>summary').click();
  await page.locator('#remove-offline').click();await page.locator('#confirm-remove').click();
  await page.locator('#app-status-error').filter({hasText:'Downloaded files removed'}).waitFor();

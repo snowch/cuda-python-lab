@@ -1,0 +1,12 @@
+Browser: 156.0.8078.79
+dirty lane With 37 columns and 32 threads per row, which columns does Lane 0 write? What should each stable probability row sum to? The open program differs from the case starter. Prepare replaces the shared kernel used across this lesson’s cases and this case’s program, including its host code. It keeps the open program for Undo.
+axe dirty [] []
+prepared lane With 37 columns and 32 threads per row, which columns does Lane 0 write? What should each stable probability row sum to? The editor matches the case starter. Undo restores the shared kernel used across this lesson’s cases and this case’s program, including its host code.
+axe prepared [] []
+undone lane With 37 columns and 32 threads per row, which columns does Lane 0 write? What should each stable probability row sum to? The open program differs from the case starter. Prepare replaces the shared kernel used across this lesson’s cases and this case’s program, including its host code. It keeps the open program for Undo. Undo restores the shared kernel used across this lesson’s cases and this case’s program, including its host code.
+axe undone [] []
+wide-answer lane With 37 columns and 32 threads per row, which columns does Lane 0 write? What should each stable probability row sum to? The open program differs from the case starter. Prepare replaces the shared kernel used across this lesson’s cases and this case’s program, including its host code. It keeps the open program for Undo. Undo restores the shared kernel used across this lesson’s cases and this case’s program, including its host code.
+axe wide-answer [] [ 'color-contrast' ]
+extreme-answer sums Row 0 is [1000, 999, 1000, 997, −1000]. What is the exponential of the largest score after subtracting the row maximum? Which two columns should have equal probabilities? The open program differs from the case starter. Prepare replaces the shared kernel used across this lesson’s cases and this case’s program, including its host code. It keeps the open program for Undo.
+axe extreme-answer [] [ 'color-contrast' ]
+Keyboard prepare, undo, independent answers, and Console focus verified.

@@ -2,8 +2,8 @@
 import {joinProgram, splitProgram} from './host-program.mjs';
 
 export const workKey = 'cuda-python-lab-v1';
-const fields = ['drafts', 'programs', 'restoredDrafts', 'restoredPrograms', 'results', 'predictions', 'completed', 'cases'];
-const perCase = new Set(['programs', 'restoredPrograms', 'results']);
+const fields = ['drafts', 'programs', 'restoredDrafts', 'restoredPrograms', 'results', 'predictions', 'caseAnswers', 'preparations', 'completed', 'cases'];
+const perCase = new Set(['programs', 'restoredPrograms', 'results', 'caseAnswers', 'preparations']);
 const preferences = new Set(['completed', 'cases']);
 const copyLimit = 16;
 const empty = () => Object.fromEntries(fields.map(key => [key, {}]));
@@ -30,8 +30,10 @@ function hostPart(program) {
   return typeof program === 'string' ? splitProgram(program)?.host ?? program : program;
 }
 
-function mergeEdit(record, {path, base, value, hostChanged}) {
+function mergeEdit(record, {path, base, value, hostChanged, retainPrevious, exactProgram}) {
   const current = get(record, path);
+  // A new preparation may displace an older undo slot. Undo itself swaps the two programs.
+  if (retainPrevious && !equal(current,value)) remember(record.recoveryCopies,path,current);
   const program = path[0] === 'programs';
   const keepHost = program && !hostChanged && typeof current === 'string' && splitProgram(current);
   if (!preferences.has(path[0]) && !keepHost) {
@@ -40,7 +42,7 @@ function mergeEdit(record, {path, base, value, hostChanged}) {
       remember(record.recoveryCopies, path, current);
     }
   }
-  if (program && typeof value === 'string') {
+  if (program && !exactProgram && typeof value === 'string') {
     const parts = keepHost || splitProgram(value);
     if (parts) {
       const kernel = record.drafts[path[1]] ?? parts.kernel;
@@ -227,7 +229,7 @@ export function openLearnerWork(onChange) {
     const before = get(state, path);
     if (equal(before, value)) return;
     pending.set(key, {path, value, base:previous ? previous.base : before ?? options.displayed,
-      hostChanged:previous?.hostChanged || options.hostChanged});
+      exactProgram:options.exactProgram, retainPrevious:previous?.retainPrevious || options.retainPrevious, hostChanged:previous?.hostChanged || options.hostChanged});
     put(state, path, value);
     if (saving) onChange();
     else flush();

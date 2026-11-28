@@ -1,0 +1,10 @@
+Browser: 156.0.8078.79
+saved save panel accessibility scan {"version":"4.14.1","failures":[],"incomplete":[]}
+Fresh release reopened the new marker and new answer. Earlier lesson prediction displayed the answer typed in the actual old release.
+legacy answer save panel accessibility scan {"version":"4.14.1","failures":[],"incomplete":[]}
+Chromium displayed beforeunload on an actual reload. Dismissing the prompt retained the unsaved answer. The observer still had the previous commit.
+failed save panel accessibility scan {"version":"4.14.1","failures":[],"incomplete":[]}
+Retry after the IndexedDB failure committed the exact edited answer in the observer.
+stale prediction save panel accessibility scan {"version":"4.14.1","failures":[],"incomplete":[]}
+saved version preview save panel accessibility scan {"version":"4.14.1","failures":[],"incomplete":[]}
+Deliberate mixed-release overlap: the old answer reached the mirror after the new read. The new commit replaced the mirror; no copy of the old answer reopened. Its original old tab still showed the answer.

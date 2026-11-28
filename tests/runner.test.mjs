@@ -42,7 +42,7 @@ test("Numba compiles the edited kernel and the browser runs the program in GPGPU
     else await page.goto(`${url}#lesson/${slug}`);
     await page.getByRole("heading", { name: lesson.title, exact: true }).waitFor();
     for (const [index, fixture] of lesson.cases.entries()) {
-      if (index) await page.getByRole("combobox", { name: "Case" }).selectOption(String(index));
+      if (index) await page.getByRole("combobox", { name: "Starter case", exact:true }).selectOption(String(index));
       const { status, output } = await runProgram(page);
       assert.equal(status, "Ran in GPGPU-Sim.", `${slug} / ${fixture.label}\n${output}`);
       const line = output.split("\n").find((row) => row.startsWith(fixture.output + " = "));
