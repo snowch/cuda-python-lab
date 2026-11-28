@@ -26,8 +26,8 @@ function undoTarget(view, slot) {
 
 function affected(view, target) {
   const units = [];
-  if (target.sharedKernel !== view.sharedKernel) units.push('the shared kernel used across this lesson’s cases');
-  if (target.caseProgram !== view.caseProgram) units.push('this case’s program, including its host code');
+  if (target.sharedKernel !== view.sharedKernel) units.push('the shared kernel across cases');
+  if (target.caseProgram !== view.caseProgram) units.push('this case’s program and host code');
   return units.join(' and ');
 }
 
@@ -110,7 +110,7 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
     let note = !task ? '' : v.source === start ? 'The editor matches ' + where + '.'
       : v.source === end ? 'The editor contains the edit for this task.'
       : 'The open program differs from ' + where + '.';
-    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + '. It keeps the open program for Undo.';
+    if (!prepare.hidden) note += ' Prepare replaces ' + (affected(v,replacement(v,start)) || 'the open program') + '. Undo keeps your current version.';
     if (!undo.hidden) {
       note += ' Undo restores ' + (affected(v,savedUndo) || 'the earlier program') + '.';
       if (changedSharedKernel(v,savedUndo,slot)) {
@@ -122,8 +122,11 @@ export function mountGuide({slug, lesson, work, find, snapshot, selectCase, repl
         }
       }
     }
-    if ((!prepare.hidden || !undo.hidden) && blocked) note += v.source !== v.saved && !work.dirty && !work.saving && !work.error
-      ? ' Review the saved program before preparing or undoing.' : ' Wait for a confirmed save before replacing code.';
+    if ((!prepare.hidden || !undo.hidden) && blocked) {
+      if (work.error) note += ' Export your work or retry the save before replacing code.';
+      else if (v.source !== v.saved && !work.dirty && !work.saving) note += ' Review the saved program before preparing or undoing.';
+      else note += ' Wait for a confirmed save before replacing code.';
+    }
     find('setup-status').textContent = note.trim();
   }
   async function exchange(undo, proposed) {

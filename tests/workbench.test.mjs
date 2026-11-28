@@ -49,6 +49,12 @@ test('the task, source, prediction, patch and undo stay connected on a phone',as
   await page.locator('#trace-identity').filter({hasText:'host 5 · store 73'}).waitFor();
   await page.locator('#trace-step').selectOption('6');
   assert.deepEqual(await page.locator('[data-value]').allTextContents(),['[5]','[73]','[73]']);
+  await page.locator('[data-buffer="2"]').press('Enter');
+  assert.match(await page.locator('#trace-inspection').innerText(),/second CPU array.*index 0 is 73/);
+  assert.equal(await page.locator('[data-buffer="2"] [data-role]').innerText(),'Created');
+  await page.locator('[data-prev]').press('Enter');
+  assert.match(await page.locator('#trace-inspection').innerText(),/does not exist/);
+  await page.locator('[data-next]').press('Enter');
   await page.locator('#trace-line').press('Enter');
   assert.equal(await page.evaluate(()=>getSelection().toString()),'result = out.copy_to_host()');
   await page.keyboard.press('Escape');await page.keyboard.press('Tab');

@@ -9,7 +9,8 @@ export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-
   <div id="trace-stages">
     <p id="trace-identity"></p>
     <label for="trace-step">Program step</label><select data-step-select id="trace-step"></select>
-    <div class="trace-buffers">${[['Original host','out_host'],['Device','out'],['Copied host','result']].map(([label,name])=>`<div><span>${label}</span><code>${name}</code><strong data-value></strong></div>`).join('')}</div>
+    <p id="buffer-label">Select an array to inspect element 0.</p><div class="trace-buffers" role="group" aria-labelledby="buffer-label">${[['Original host','out_host'],['Device','out'],['Copied host','result']].map(([label,name],i)=>`<button type="button" data-buffer="${i}" aria-pressed="${i===0}"><span>${label}</span><code>${name}</code><strong data-value></strong><small data-role></small></button>`).join('')}</div>
+    <p id="trace-inspection"></p>
     <div id="trace-narrative" aria-live="polite" aria-atomic="true"></div>
     <button class="button trace-line" id="trace-line" type="button"></button>
     <div class="actions"><button class="button" data-prev type="button">Previous step</button><button class="button primary" data-next type="button">Next step</button><button class="button" data-restart type="button">Restart steps</button></div>
@@ -29,7 +30,24 @@ export const traceMarkup = `<section class="value-trace" aria-labelledby="trace-
 
 export function mountFirstValueTrace({root,starter,source,fixture,runState,canApply,apply,undoControl,reveal,predict,consoleFocus}) {
   const programs=firstValuePrograms(starter), el=id=>root.querySelector('#'+id);
-  let current, observedSource, step;
+  let current, observedSource, step, inspected=0;
+  const buffers = [...root.querySelectorAll('[data-buffer]')];
+  const descriptions = [
+    'out_host is the original CPU array. Copying from it leaves its element intact.',
+    'out is the device allocation. The kernel receives this allocation as its argument.',
+    'result is a second CPU array. The copy from out creates it. The host then prints and returns it.',
+  ];
+  function inspectBuffer(index) {
+    inspected=index;
+    buffers.forEach((button,i)=>{
+      button.setAttribute('aria-pressed',String(i===index));
+      if(i===index)button.setAttribute('aria-describedby','trace-inspection');
+      else button.removeAttribute('aria-describedby');
+    });
+    const value=step.values[index];
+    el('trace-inspection').textContent=descriptions[index]+' '+(value===null?'It does not exist at this step.':'Its element at index 0 is '+value+'.');
+  }
+  for(const [i,button] of buffers.entries()) button.onclick=()=>inspectBuffer(i);
   const host=el('trace-host'), store=el('trace-store'), printed=el('trace-print');
   const proposal=()=>[...programs.values()].find(p=>p.host===Number(host.value)&&p.store===Number(store.value)&&p.printed===(printed.value==='both'));
   function preview() {
@@ -51,7 +69,10 @@ export function mountFirstValueTrace({root,starter,source,fixture,runState,canAp
     root.querySelectorAll('[data-value]').forEach((node,k)=>{
       node.textContent=step.values[k]===null?'Not created':'['+step.values[k]+']';
       node.classList.toggle('allocated',step.values[k]!==null);
+      buffers[k].querySelector('[data-role]').textContent=step.roles[k] ?? '';
+      buffers[k].classList.toggle('participates',Boolean(step.roles[k]));
     });
+    inspectBuffer(inspected);
     el('trace-narrative').textContent=step.context+' · '+step.explanation;
     el('trace-line').textContent='Show line '+step.line+' · '+step.anchor;
   }

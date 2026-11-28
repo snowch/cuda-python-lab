@@ -28,8 +28,12 @@ export function firstValueStep(program, index) {
     ['Host · copy from device', 'result = out.copy_to_host()', 'The host waits for the store and copies out into a new CPU array, result. The original out_host still contains '+host+'.'],
     ['Host · return', 'return result', 'main() prints the copied result'+(printed?' and then the original host array':'')+' and returns result. Compare the real prints in the Console with your prediction.'],
   ];
+  const roles = [
+    [], ['Created'], ['Read','Created'], [], [null,'Argument'],
+    [null,'Written'], [null,'Read','Created'], [printed?'Printed':null,null,'Returned'],
+  ];
   const [context,anchor,explanation]=rows[index];
   const lines=program.source.split('\n'), line=lines.findIndex(text=>text.trim().startsWith(anchor));
-  return {context,anchor:lines[line].trim(),line:line+1,explanation,
+  return {context,anchor:lines[line].trim(),line:line+1,explanation,roles:roles[index],
     values:[index>=1?host:null,index>=2?(index>=5?store:host):null,index>=6?store:null]};
 }
