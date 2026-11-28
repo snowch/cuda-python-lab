@@ -120,11 +120,11 @@ function updateSaveStatus() {
   const completion = document.getElementById('completion-note');
   if (completion) {
     document.getElementById('complete').checked = Boolean(state.completed[activePage]);
-    if (work.isPending(['completed', activePage])) {
-      completion.textContent = failed ? 'Save unavailable. Keep this tab open and retry or export learner work.' : 'Saving progress…';
-    } else {
-      completion.textContent = Object.hasOwn(work.confirmed.completed, activePage) ? 'Progress saved in this browser.' : '';
-    }
+    const pending = work.isPending(['completed', activePage]);
+    const note = pending && failed ? 'Save unavailable. Keep this tab open and retry or export learner work.'
+      : pending ? 'Saving progress…'
+      : Object.hasOwn(work.confirmed.completed, activePage) ? 'Progress saved in this browser.' : '';
+    if (completion.textContent !== note) completion.textContent = note;
   }
   if (work.dirty) addEventListener('beforeunload',warnUnload);
   else removeEventListener('beforeunload',warnUnload);
@@ -440,7 +440,7 @@ function showLesson(slug) {
       <p><a href="#gpu">Appendix A · GPU setup and tools</a></p>
     </div></details>
     </section>
-    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note"></p></section>
+    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" aria-describedby="completion-note" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note" role="status"></p></section>
     <nav class="lesson-footer" aria-label="Lesson sequence">
       <a class="lesson-card" href="${index>0?lessonURL(order[index-1]):'#course'}"><span class="lesson-direction">${index>0?'← Previous lesson':'Course overview'}</span><strong>${index>0?escape(lessons[order[index-1]].title):'Choose a lesson'}</strong></a>
       <a class="lesson-card lesson-next" href="${index<order.length-1?lessonURL(order[index+1]):'#course'}"><span class="lesson-direction">${index<order.length-1?'Next lesson →':'Course overview'}</span><strong>${index<order.length-1?escape(lessons[order[index+1]].title):'Choose a lesson'}</strong></a>

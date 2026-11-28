@@ -112,7 +112,8 @@ test('contending kernel, host, prediction, completion and case writes merge and 
   await c.locator('#complete').check();
   await status(a).filter({hasText:'Saving learner work'}).waitFor();
   assert.equal(await source(a), editedKernel(original(0)));
-  assert.equal(await c.locator('#completion-note').innerText(), 'Saving progress…');
+  assert.equal(await c.locator('#complete').getAttribute('aria-describedby'), 'completion-note');
+  assert.equal(await c.getByRole('status').filter({hasText:'Saving progress…'}).innerText(), 'Saving progress…');
   assert.equal((await durable(c)).completed['vector-add'], undefined);
   assert.equal(await source(c), original(1) + host1);
   await a.evaluate(() => window.releaseSaveLock());

@@ -84,9 +84,13 @@ test('an open lesson runs after deployment; an expired runtime recovers without 
  assert.equal(await recover.locator('#prediction').inputValue(),'Keep this prediction and 43.');
  assert.ok(await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0].includes('out[0] = 43')));
  await recover.locator('#editor-tools > summary').click();await recover.getByRole('button',{name:'Update CUDA imports',exact:true}).click();
- assert.ok(await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0].includes('out[0] = 43')));
- assert.ok(!(await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0])).includes('from numba import cuda'));
- await editor(recover).press('ControlOrMeta+z');assert.ok((await recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0])).includes('from numba import cuda'));
+ const savedProgram=()=>recover.evaluate(()=>JSON.parse(localStorage.getItem('cuda-python-lab-v1')).programs['first-value'][0]);
+ const confirmed=recover.locator('#work-status').filter({hasText:'Learner work saved in this browser.'});
+ await confirmed.waitFor();
+ assert.equal(await savedProgram(),edited.replace('from numba import cuda','from numba_cuda_mlir import cuda'));
+ await editor(recover).press('ControlOrMeta+z');
+ await confirmed.waitFor();
+ assert.equal(await savedProgram(),edited);
  await recover.locator('#run').click();await finished(recover);assert.equal(await recover.locator('#run-output').textContent(),'out = [43.0]');
  await context.close();await recoveryContext.close();
 });

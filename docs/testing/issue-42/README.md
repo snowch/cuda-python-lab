@@ -1,5 +1,7 @@
 # Saving learner work across tabs
 
+The [independent review follow-up](review/README.md) records the stale-editor and completion corrections, the mixed-release experiment, and the revised screenshots and tests.
+
 On main at `cdfb58e`, a learner could reopen vector-add and find both their code and prediction missing after another tab saved a stencil answer. A full browser store also left an edited prediction on screen with no learner-work warning. Reloading the page lost that answer. The [baseline log](baseline.log) records both reproductions.
 
 The initial implementation was verified on source commit [890983d](https://github.com/snowch/cuda-python-lab/commit/890983d5517cbec6173ee2142926a8ac3c44e3c0). Open two lesson tabs before editing. Add a marker to the vector kernel, type a prediction there, then type a prediction in stencil. Close both tabs and reopen each lesson. The complete vector source, vector prediction and stencil prediction survived in both write and close orders. [Regression tests](../../../tests/learner-work.test.mjs) · [Browser log](npm-test.log)
@@ -33,7 +35,7 @@ A previous per-window restart snapshot is imported once its learner work can be 
 
 On a denied or full store, keep the tab open and use **Export learner work** or **Retry save**. In-course navigation retains pending edits in memory. Chromium displayed its native leave-page prompt on a real reload with unsaved work. Dismissing it retained the edited prediction. After retry, a different tab reopened the exact answer. [Handoff and permission evidence](handoff.log)
 
-## Verification
+## Initial verification at 890983d
 
 All 41 tests in the main suite passed. The separate runner suite also passed. The clean checkout, built release, browser, compiler and simulator asset hashes are recorded in the [environment manifest](environment.json). Five additional runs repeated the same three-tab workload under browser scheduling. [Repeated execution log](contention.log)
 
