@@ -1,0 +1,43 @@
+WEBVTT
+
+00:00:00.500 --> 00:00:03.321
+Each block contains one warp of thirty-two
+
+00:00:03.321 --> 00:00:04.934
+threads. With alternating signs,
+
+00:00:04.934 --> 00:00:06.949
+neighboring lanes take different paths
+
+00:00:06.949 --> 00:00:08.158
+through the kernel.
+
+00:00:12.658 --> 00:00:15.033
+Look at block zero. How many lanes will
+
+00:00:15.033 --> 00:00:16.221
+take the negative path?
+
+00:00:24.722 --> 00:00:27.174
+Sixteen lanes take the negative path and
+
+00:00:27.174 --> 00:00:29.626
+sixteen take the other path. Both warps
+
+00:00:29.626 --> 00:00:31.378
+contain a mixture of paths.
+
+00:00:35.878 --> 00:00:38.756
+In the grouped case, the first warp has
+
+00:00:38.756 --> 00:00:41.274
+only negative inputs and the second has
+
+00:00:41.274 --> 00:00:43.432
+only positive inputs. Timing depends on
+
+00:00:43.432 --> 00:00:45.950
+the compiled instructions and work on each
+
+00:00:45.950 --> 00:00:46.310
+path.

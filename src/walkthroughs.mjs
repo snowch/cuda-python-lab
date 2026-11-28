@@ -174,6 +174,72 @@ export const walkthroughs = {
       },
     ],
   },
+  divergence: {
+    title: "Follow branches across a warp",
+    stages: [
+      {
+        title: "Alternating signs split each warp",
+        sceneKind: "warp", grouped: false, highlight: "if x < 0:",
+        note: "Each colored lane represents one thread. Negative inputs take the if path.",
+        narration: "Each block contains one warp of thirty-two threads. With alternating signs, neighboring lanes take different paths through the kernel.",
+        hold: 4,
+      },
+      {
+        title: "Predict the negative lanes",
+        sceneKind: "warp", grouped: false, highlight: "if x < 0:",
+        note: "In Block 0, how many lanes take the negative path?",
+        narration: "Look at block zero. How many lanes will take the negative path?",
+        hold: 8,
+      },
+      {
+        title: "Sixteen lanes take each path",
+        sceneKind: "warp", grouped: false, highlight: "out[i] = x * 0.25",
+        note: "Each block has 16 negative lanes and 16 positive lanes.",
+        narration: "Sixteen lanes take the negative path and sixteen take the other path. Both warps contain a mixture of paths.",
+        hold: 4,
+      },
+      {
+        title: "Group the signs",
+        sceneKind: "warp", grouped: true, highlight: "if x < 0:",
+        note: "Block 0 has 32 negative lanes; Block 1 has 32 positive lanes.",
+        narration: "In the grouped case, the first warp has only negative inputs and the second has only positive inputs. Timing depends on the compiled instructions and work on each path.",
+        hold: 4,
+      },
+    ],
+  },
+  histogram: {
+    title: "Follow threads updating a histogram",
+    stages: [
+      {
+        title: "Each token selects a counter",
+        sceneKind: "counters", count: "0", highlight: "cuda.atomic.add(counts, tokens[i], 1)",
+        note: "All 32 tokens select counter 2. Each thread atomically adds one.",
+        narration: "Each thread reads a token and atomically increments its selected counter. In this case all thirty-two tokens select counter two.",
+        hold: 4,
+      },
+      {
+        title: "Predict the final count",
+        sceneKind: "counters", count: "?", highlight: "cuda.atomic.add(counts, tokens[i], 1)",
+        note: "All counters start at zero. What will counter 2 contain?",
+        narration: "All counters start at zero. What will counter two contain after all thirty-two updates?",
+        hold: 8,
+      },
+      {
+        title: "Atomic updates count every token",
+        sceneKind: "counters", count: "32", highlight: "cuda.atomic.add(counts, tokens[i], 1)",
+        note: "Every atomic update contributes one to counter 2.",
+        narration: "Counter two contains thirty-two. Every atomic update is counted.",
+        hold: 4,
+      },
+      {
+        title: "Why an ordinary increment can lose a count",
+        sceneKind: "race", highlight: "cuda.atomic.add(counts, tokens[i], 1)",
+        note: "If two threads read the same old value, both can store 1.",
+        narration: "With an ordinary increment, two threads could both read zero and both write one. Two increments would leave a count of one.",
+        hold: 4,
+      },
+    ],
+  },
   coalescing: {
     title: "Follow a warp’s addresses into memory sectors",
     stages: [
