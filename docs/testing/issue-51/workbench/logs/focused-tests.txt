@@ -1,0 +1,19 @@
+✔ logical owners agree with an independent enumeration of every block, local thread and cell (83.790622ms)
+✔ a selected observation cannot certify another cell or conceal a disagreement (0.54851ms)
+✔ the mapper protects source identity, host-only ownership and scoped predictions (7618.598041ms)
+ℹ Browser: 156.0.8078.79
+✔ the retired player leaves the first lesson, its seven text stages and every other recording available (3271.723686ms)
+ℹ Browser: 156.0.8078.79
+✔ each supported complete program models three separate arrays at each source line (3.287293ms)
+✔ the task, source, prediction, patch and undo stay connected on a phone (9128.713094ms)
+ℹ Browser: 156.0.8078.79
+✔ portrait lessons present one task and prediction before the full-width editor (4482.273647ms)
+ℹ Browser: 156.0.8078.79
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15929.580673

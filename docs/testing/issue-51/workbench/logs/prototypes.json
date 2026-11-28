@@ -1,0 +1,62 @@
+[
+  {
+    "file": "stack-first-value-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "stack-first-value-1440",
+    "code": 996,
+    "output": 1030
+  },
+  {
+    "file": "stack-vector-add-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "stack-vector-add-1440",
+    "code": 996,
+    "output": 1030
+  },
+  {
+    "file": "stack-softmax-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "stack-softmax-1440",
+    "code": 996,
+    "output": 1030
+  },
+  {
+    "file": "paired-first-value-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "paired-first-value-1440",
+    "code": 653,
+    "output": 342
+  },
+  {
+    "file": "paired-vector-add-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "paired-vector-add-1440",
+    "code": 653,
+    "output": 342
+  },
+  {
+    "file": "paired-softmax-820",
+    "code": 718,
+    "output": 752
+  },
+  {
+    "file": "paired-softmax-1440",
+    "code": 653,
+    "output": 342
+  }
+]

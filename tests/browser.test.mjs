@@ -282,6 +282,7 @@ test("architecture walkthroughs play with captions and expose transcripts by key
 
 test("the GPU appendix gives notebook setup, investigations and the occupancy worksheet", async (t) => {
   await runBrowser(t, { width: 1200, height: 900 }, async (page) => {
+    await editorTools(page).press("Enter");
     await page.getByRole("link", { name: "GPU setup instructions" }).click();
     await page.getByRole("heading", { name: "Open and run a lab notebook" }).waitFor();
     assert.ok(await page.getByRole("link", { name: "Google Colab" }).isVisible());

@@ -1,5 +1,7 @@
 # Issue 51 · Who writes the last element?
 
+**Current review package.** The owner’s portrait-tablet feedback led to a shared workbench revision. The current evidence includes full lessons, source-dependent predictions, all experiments and the new offline inventory. The remainder of this page records the original mapper submission at `26a6b1f`. [Revised design, paired screenshots and verification](workbench/README.md)
+
 In the 33-element vector-add lesson, the learner can now select an element and find its owner, select a launched thread and follow its guard, and run the same program in the editor. The investigation asks a question that output values alone cannot answer. If the last value is numerically correct, did any thread actually write it? [Issue and acceptance criteria](https://github.com/snowch/cuda-python-lab/issues/51) · [PR #52](https://github.com/snowch/cuda-python-lab/pull/52)
 
 ## What the programs did
