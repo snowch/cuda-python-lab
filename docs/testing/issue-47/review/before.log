@@ -1,0 +1,16 @@
+host float32 [42.0]
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: float32; expected float32 · match
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Starting program executed. Make the requested edit in this cell, then rerun to check its objective.
+Observed verdict: starting-point
+write int32 [42]
+Starter comparison
+  Shape: (1,); expected (1,) · match
+  Dtype: int32; expected float32 · different
+  Finiteness: 1/1 finite; expected NaNs 0 · match
+  Values: 1/1 match (rtol=0, atol=0).
+Starting program executed. Make the requested edit in this cell, then rerun to check its objective.
+Observed verdict: starting-point

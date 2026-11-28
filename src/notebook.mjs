@@ -6,8 +6,7 @@ const markdown = source => ({cell_type:"markdown", metadata:{}, source});
 const code = (source, metadata = {}) => ({cell_type:"code", metadata, source, execution_count:null, outputs:[]});
 
 // Only the authored edits have a numerical oracle. All references come from the fixture.
-function objective(slug, fixture, task) {
-  const changes = task.returnsStarter ? [] : [...task.before, ...task.after];
+function objective(slug, fixture, changes) {
   const {buffers, expected} = fixture;
   const inputs = buffers.values?.values;
   let values = expected, policy = slug === "softmax" ? "probabilities" : "values";
@@ -60,8 +59,13 @@ export function makeNotebook({slug, lesson, kernel, source, fixture, selectedTas
   }
   for (const task of phases) {
     const f = lesson.cases.find(c => c.id === task.fixture);
-    catalog.tasks[task.id] = {case:task.fixture, kind:task.kind, before:task.before, after:task.after,
-      restore:Boolean(task.returnsStarter), objective:objective(slug,f,task)};
+    const targetEdits = task.returnsStarter ? [] : [...task.before, ...task.after];
+    const entry = {case:task.fixture, kind:task.kind, before:task.before, after:task.after,
+      restore:Boolean(task.returnsStarter), objective:objective(slug, f, targetEdits)};
+    if (task.kind === "run" && (task.after.length || task.returnsStarter)) {
+      entry.startingObjective = objective(slug, f, task.before);
+    }
+    catalog.tasks[task.id] = entry;
     for (const id of [...task.before,...task.after]) catalog.edits[id] = edits[id];
   }
   function program(caseId, taskId, body) {
@@ -72,7 +76,7 @@ export function makeNotebook({slug, lesson, kernel, source, fixture, selectedTas
     ? "Float32 exponentials and parallel sums can round slightly differently. Each probability has absolute tolerance 1e-7 plus relative tolerance 1e-5 times the reference magnitude. Stable row sums must be within 2e-6 of one."
     : "These small integer or exactly representable float32 fixture results use zero absolute and relative tolerance.";
   const cells = [
-    markdown(`# ${lesson.title}\n\n${lesson.summary}\n\n**Your exported case** · ${fixture.label}\n\n${predict(fixture)}\n\nRun **Set up this notebook** once per kernel session. Then run **Your exported program**, or go straight to a numbered experiment. Each program cell contains its own kernel, inputs and launch. Shift+Enter runs that cell and checks that run’s returned array. The first line names the lesson, case and task. Leave it in place when editing Python below it.\n\nEach numbered task opens with its own starting code, including any required earlier edits. To switch cases, run the cell under that case’s heading. To keep two versions, duplicate the cell before editing. Output belongs to the last execution of that cell. Rerun after each edit.`),
+    markdown(`# ${lesson.title}\n\n${lesson.summary}\n\n**Your exported case** · ${fixture.label}\n\n${predict(fixture)}\n\nRun **Set up this notebook** once per kernel session. Then run **Your exported program**, or go straight to a numbered experiment. Each program cell contains its own kernel, inputs and launch. Shift+Enter runs that cell and checks that run’s returned array. The first line names the lesson, case and task. Leave it in place when editing Python below it.\n\nEach numbered task opens with its own starting code, including any required earlier edits. If the task calls for a change, running this code checks the starting result. Make the edit and rerun the cell to check the changed program. To switch cases, run the cell under that case’s heading. To keep two versions, duplicate the cell before editing. Output belongs to the last execution of that cell. Rerun after each edit.`),
     markdown(`## Set up this notebook\n\nUse a Python 3 IPython kernel in Jupyter or Colab. Reading the file and inspecting the references work offline. Executing CUDA programs needs an NVIDIA GPU and a working native backend. In Colab, choose **Runtime → Change runtime type → GPU** if one is available. For local Linux or Jetson, select the kernel for your CUDA environment.\n\nRun the setup cell below to see the Python, architecture, compiler, driver, runtime and device it detects. For a fresh compatible CUDA 12 environment, review the package plan first in a separate cell:\n\n\`\`\`python\n%pip install --dry-run "numba-cuda-mlir[cu12]==0.6.0" "numpy>=1.26,<2.5"\n\`\`\`\n\nIf the plan fits your environment, repeat without \`--dry-run\`, restart the kernel and rerun setup. Installation needs package access or an offline wheelhouse. On Jetson, record JetPack and check the ARM64 wheels against your Python and system CUDA versions before installing. A compatible wheel alone does not establish device support.\n\nTo recover a starting program, run \`print(lab_start("CASE", "TASK"))\` in a new cell, using the two IDs after the lesson name on its first line. Copy the printed Python into a duplicate of the program cell. Your original edits stay in place.`),
     code(`# Register the offline experiment runner and check this environment.\n${runtime.trimEnd()}\n\nLAB = json.loads(${JSON.stringify(JSON.stringify(catalog))})\nget_ipython().register_magic_function(run_experiment, "cell", "experiment")\nNATIVE_READY = lab_preflight()\n`, {jupyter:{source_hidden:true}, collapsed:true, tags:["setup"]}),
     markdown(`## Your exported program\n\n**${fixture.label}** · \`${fixture.id}\`\n\n${catalog.selectedTask ? "Selected task at export: **" + phases.find(t => t.id === catalog.selectedTask).title + "**. " : ""}This copy contains the open editor text, including host changes. Recognized legacy CUDA imports are adapted for the native backend. The numbered experiments and starter cases use course source. Other saved case edits stay in your browser. Use **Editor tools → Export all learner work** there for a full backup.\n\nThe checker compares a recognized program with its case reference. For custom code it shows a starter comparison and leaves the custom objective unassessed. Shape and dtype must match exactly. ${tolerance} To supply a result, assign the returned NumPy array to \`actual\` in the program.`),

@@ -135,8 +135,37 @@ def _check_prints(lines, references):
     return True
 
 
-def assess(case, key, source, actual, lines):
+def _check_contract(actual, lines, spec, contract, baseline):
     import numpy as np
+    policy = contract["policy"]
+    if policy == "race":
+        valid = isinstance(actual, np.ndarray) and actual.dtype == np.dtype(spec["dtype"]) and list(actual.shape) == spec["shape"]
+        if not valid:
+            print("The observed counters have the wrong shape or dtype.")
+            return "fail"
+        hot = int(np.argmax(spec["expected"]))
+        if np.any(np.delete(actual, hot) != 0) or not 1 <= actual[hot] <= spec["expected"][hot]:
+            print("Counters fall outside this hot-bin experiment: only the routed bin receives increments.")
+            return "fail"
+        if not _check_prints(lines, contract["prints"]):
+            return "fail"
+        print(f"Observed counters: {actual.tolist()}. Repeat and record bin 2. Even an exact starter match cannot establish atomicity or race safety.")
+        return "observation"
+    ok = baseline if contract["values"] == spec["expected"] else _compare(actual, contract["values"], spec)
+    if policy == "probabilities" and isinstance(actual, np.ndarray) and list(actual.shape) == spec["shape"] and actual.dtype.kind == "f":
+        sums = actual.sum(axis=1, dtype=np.float64)
+        print("  Probability row sums:", sums, "(absolute tolerance 2e-6); each probability must be in [0, 1].")
+        ok = ok and bool(((actual >= 0) & (actual <= 1)).all() and np.allclose(sums, 1, atol=2e-6, rtol=0))
+    if policy == "overflow":
+        print("  The unshifted exponential overflows or underflows on these inputs. Compare the NaN locations above.")
+    if policy == "precision" and isinstance(actual, np.ndarray) and list(actual.shape) == spec["shape"] and actual.dtype.kind in "fiu":
+        exact = np.array(contract["values"])
+        print("  Absolute error versus the mathematical sum: starter", abs(np.array(spec["expected"]) - exact), "this run", abs(actual - exact))
+    prints_ok = _check_prints(lines, contract["prints"])
+    return "pass" if ok and prints_ok else "fail"
+
+
+def assess(case, key, source, actual, lines):
     spec = LAB["cases"][case]
     # IPython may supply one fewer terminal newline to a cell magic.
     body = source.rstrip("\n")
@@ -153,6 +182,7 @@ def assess(case, key, source, actual, lines):
             task_key = "starter"
         else:
             task_key = next((k for k in candidates if body == _target(case, k).rstrip("\n")), "starter")
+    starting = False
     if task_key == "starter":
         if body != starter:
             print("Objective unassessed: this custom program has no matching authored reference.")
@@ -163,39 +193,28 @@ def assess(case, key, source, actual, lines):
         if t["kind"] == "reason":
             print("Source reasoning: explain the task using the supplied code.")
             return "reasoning"
-        if body != _target(case, task_key).rstrip("\n"):
-            if body == lab_start(case, task_key).rstrip("\n"):
-                print("Starting program executed. Make the requested edit in this cell, then rerun to check its objective.")
-                return "starting-point"
+        if body == _target(case, task_key).rstrip("\n"):
+            contract = t["objective"]
+        elif body == lab_start(case, task_key).rstrip("\n"):
+            starting = True
+            contract = t["startingObjective"]
+        else:
             print("Objective unassessed: the program differs from the authored edit for this task.")
             return "unassessed"
-        contract = t["objective"]
-    policy = contract["policy"]
-    print(f"Objective · {task_key}")
-    if policy == "race":
-        valid = isinstance(actual, np.ndarray) and actual.dtype == np.dtype(spec["dtype"]) and list(actual.shape) == spec["shape"]
-        if not valid:
-            print("The observed counters have the wrong shape or dtype.")
-            return "fail"
-        hot = int(np.argmax(spec["expected"]))
-        if np.any(np.delete(actual, hot) != 0) or not 1 <= actual[hot] <= spec["expected"][hot]:
-            print("Counters fall outside this hot-bin experiment: only the routed bin receives increments.")
-            return "fail"
-        print(f"Observed counters: {actual.tolist()}. Repeat and record bin 2. Even an exact starter match cannot establish atomicity or race safety.")
-        return "observation"
-    ok = baseline if contract["values"] == spec["expected"] else _compare(actual, contract["values"], spec)
-    if policy == "probabilities" and isinstance(actual, np.ndarray) and list(actual.shape) == spec["shape"] and actual.dtype.kind == "f":
-        sums = actual.sum(axis=1, dtype=np.float64)
-        print("  Probability row sums:", sums, "(absolute tolerance 2e-6); each probability must be in [0, 1].")
-        ok = ok and bool(((actual >= 0) & (actual <= 1)).all() and np.allclose(sums, 1, atol=2e-6, rtol=0))
-    if policy == "overflow":
-        print("  The unshifted exponential overflows or underflows on these inputs. Compare the NaN locations above.")
-    if policy == "precision" and isinstance(actual, np.ndarray) and list(actual.shape) == spec["shape"] and actual.dtype.kind in "fiu":
-        exact = np.array(contract["values"])
-        print("  Absolute error versus the mathematical sum: starter", abs(np.array(spec["expected"]) - exact), "this run", abs(actual - exact))
-    prints_ok = _check_prints(lines, contract["prints"])
-    verdict = "pass" if ok and prints_ok else "fail"
-    print(f"Numerical objective: {verdict}. Explain the source or measurements requested in the task.")
+
+    print(f"Starting result · {task_key}" if starting else f"Objective · {task_key}")
+    verdict = _check_contract(actual, lines, spec, contract, baseline)
+    if starting:
+        if verdict == "fail":
+            print("Starting result failed its check. Inspect the differences above before making the task edit.")
+            return "starting-fail"
+        if verdict == "observation":
+            print("Starting observation recorded within the experiment bounds. Make the requested edit and rerun.")
+            return "starting-observation"
+        print("Starting result verified. Make the requested edit in this cell, then rerun to check its objective.")
+        return "starting-point"
+    if verdict != "observation":
+        print(f"Numerical objective: {verdict}. Explain the source or measurements requested in the task.")
     return verdict
 
 
@@ -227,6 +246,5 @@ def run_experiment(line, cell):
         print("Program execution failed. No result was checked.")
         raise
     if actual is None:
-        print("Objective unassessed: this run did not assign a returned array to actual.")
-        return
+        print("This run did not assign a returned array to actual.")
     assess(case, key, cell, actual, lines)

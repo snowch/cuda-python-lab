@@ -29,25 +29,47 @@ def validate_notebook(case, check_tasks):
     run(setup["source"])
     if not shell.user_ns["NATIVE_READY"]:
         raise RuntimeError("Native preflight did not pass.")
-    for cell in cells:
-        binding = cell["metadata"].get("cuda_lab")
-        if not binding or (binding["task"] != "exported" and not check_tasks):
-            continue
-        case_id, task_id = binding["case"], binding["task"]
-        source = cell["source"]
-        output = run(source)
-        if task_id in ("starter", "exported"):
-            assert "Numerical objective: pass." in output, output
-            continue
-        target = shell.user_ns["_target"](case_id, task_id)
-        header, body = source.split("\n", 1)
-        if body != target:
-            assert "Starting program executed" in output, output
-            output = run(header + "\n" + target)
-        if shell.user_ns["LAB"]["tasks"][task_id]["objective"]["policy"] == "race":
-            assert "Observed counters:" in output, output
-        else:
-            assert "Numerical objective: pass." in output, output
+    verify_program_cells(cells, shell.user_ns, run, check_tasks)
+
+
+def verify_program_cells(cells, namespace, run, check_tasks):
+    # Capture the checker’s verdict from this execution. Learner stdout cannot
+    # certify a pass, and an execution that produced no verdict cannot reuse one.
+    assessor = namespace["assess"]
+    verdicts = []
+
+    def record_verdict(*args):
+        verdict = assessor(*args)
+        verdicts.append(verdict)
+        return verdict
+
+    def verify(source, expected):
+        verdicts.clear()
+        transcript = run(source)
+        if verdicts != [expected]:
+            raise AssertionError(f"{source.splitlines()[0]}: expected {expected}, received {verdicts}\n{transcript}")
+
+    namespace["assess"] = record_verdict
+    try:
+        for cell in cells:
+            binding = cell["metadata"].get("cuda_lab")
+            if not binding or (binding["task"] != "exported" and not check_tasks):
+                continue
+            case_id, task_id = binding["case"], binding["task"]
+            source = cell["source"]
+            if task_id in ("starter", "exported"):
+                verify(source, "pass")
+                continue
+            task = namespace["LAB"]["tasks"][task_id]
+            target = namespace["_target"](case_id, task_id)
+            header, body = source.split("\n", 1)
+            if body != target:
+                race_start = task["startingObjective"]["policy"] == "race"
+                verify(source, "starting-observation" if race_start else "starting-point")
+                source = header + "\n" + target
+            verify(source, "observation" if task["objective"]["policy"] == "race" else "pass")
+    finally:
+        namespace["assess"] = assessor
 
 
 def validate_program(case):
