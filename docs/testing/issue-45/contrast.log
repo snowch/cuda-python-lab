@@ -1,0 +1,3 @@
+Browser: 156.0.8078.79
+light {"text":"rgb(25, 50, 55)","background":"rgb(255, 255, 255)","opacity":"1"} text contrast 13.52:1
+dark {"text":"rgb(228, 239, 235)","background":"rgb(28, 46, 49)","opacity":"1"} text contrast 12.02:1

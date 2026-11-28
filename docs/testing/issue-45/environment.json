@@ -1,0 +1,18 @@
+{
+  "base": "3d4e7e1e79801095dd69daa6c287c646df40fac0",
+  "source": "050d47a077cf355f606a32758f97b08c6bfe8acf",
+  "release_id": "f22de0bcdd0c2b175b709cf8a84cd15fc568fda08d7cae6eb93d9e9024557243",
+  "source_tree": "b2555fee93e0b052bf023ff06b2c981585ada292",
+  "platform": "Debian 13 x86_64",
+  "node": "v24.22.3",
+  "playwright": "1.65.1",
+  "chromium": "Chromium 156.0.8078.79 built on Debian GNU/Linux 13 (trixie)",
+  "assets": {
+    "app.mjs": "d333c590aa133d945d6dd2b07855a23662d6a490f0bbb8922060b684feaf267e",
+    "guided-experiments.mjs": "723754b9557c73eb300eb84bc0fb7a6ce6c6563c78e205945d069bea7b5c78f2",
+    "guided-panel.mjs": "9cf5de3217ead3844c32d68ffcf77947158506fe6381c50dce57598e5f7e013c",
+    "runtime/gpgpu-sim.wasm": "59fa21ccd1a1f3b4e82e51a7436c925aad72e1b8f415eabee81fbac231708919",
+    "runtime/nvptx.wasm": "b0f8b20f9c9500cade2afd7925235323232f12ed821de8e0c328407c2e4f2f00"
+  },
+  "configuration": "GPT-6.2 Astra, Extra high, confirmed by the session user. No independent runtime meter."
+}
