@@ -328,3 +328,11 @@ html{scroll-padding-top:calc(var(--course-header-height,120px) + 16px)}.course-m
 .work-save select { min-height: 44px; font: inherit; color: var(--ink); background: var(--paper); }
 #latest-version [data-program] { font-family: var(--mono); font-weight: 400; white-space: pre; }
 .work-announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+.guided label { display: block; margin-top: 12px; font-weight: 600; }
+.guided select { display: block; max-width: 100%; min-height: 44px; width: 100%; }
+.guided .case-control[hidden] { display: none; }
+.guided .actions { flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.guided .actions a { display: inline-flex; align-items: center; min-height: 44px; }
+#setup-status, #task-evidence { color: var(--muted); }
+#console-title { scroll-margin-top: 12rem; }

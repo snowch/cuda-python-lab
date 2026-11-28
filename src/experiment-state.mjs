@@ -47,7 +47,7 @@ navigator.serviceWorker?.addEventListener('message',async ({data,ports})=>{
 export function restoreReadingState() {
   const value=savedReadingState();if(!value)return;
   for(const [id,open] of value.details){const el=document.getElementById(id);if(el)el.open=open;}
-  for(const [id,text] of value.controls){if(id==="prediction"||id==="case")continue;const el=document.getElementById(id);if(el&&el.value!==text){el.value=text;el.dispatchEvent(new Event('input'));}}
+  for(const [id,text] of value.controls){if(id==="prediction"||id==="case"||id==="guided-task")continue;const el=document.getElementById(id);if(el&&el.value!==text){el.value=text;el.dispatchEvent(new Event('input'));}}
   requestAnimationFrame(()=>scrollTo(...value.scroll));
   position = null;
   try { sessionStorage.removeItem(key); } catch { /* Reading the saved position already succeeded. */ }

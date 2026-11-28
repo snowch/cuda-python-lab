@@ -1,3 +1,5 @@
+import {mountGuide, guidedMarkup} from './guided-panel.mjs';
+import {caseQuestion} from './guided-experiments.mjs';
 import {materialSymbol} from "./material-symbols.mjs";
 import {homeArchitecture} from "./home-architecture.mjs";
 import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from "./lesson-resources.mjs";
@@ -66,9 +68,9 @@ const versions = control('work-version');
 const latestReview = mountSavedReview(workPanel, work, () => lessonView);
 function versionLabel(copy) {
   const [field, slug, index] = copy.path;
-  const kind = {legacy:'Saved collection', drafts:'Kernel', programs:'Program', predictions:'Prediction', restoredPrograms:'Undo restore', restoredDrafts:'Undo kernel restore', results:'Run result'};
+  const kind = {legacy:'Saved collection', drafts:'Kernel', programs:'Program', predictions:'Earlier lesson prediction', caseAnswers:'Case prediction', preparations:'Previous program', restoredPrograms:'Undo restore', restoredDrafts:'Undo kernel restore', results:'Run result'};
   const lesson = lessons[slug];
-  const parts = [kind[field] ?? field, lesson?.title ?? slug, lesson?.cases[index]?.label, new Date(copy.savedAt).toLocaleString()];
+  const parts = [kind[field] ?? field, lesson?.title ?? slug, lesson?.cases.find(c=>c.id===index)?.label ?? lesson?.cases[index]?.label, new Date(copy.savedAt).toLocaleString()];
   return parts.filter(Boolean).join(' · ');
 }
 function displayCopy() {
@@ -76,9 +78,11 @@ function displayCopy() {
   if (!copy) return;
   const [field, slug, index] = copy.path;
   const lesson = lessons[slug];
-  const where = [lesson?.title ?? slug, lesson?.cases[index]?.label].filter(Boolean).join(' · ');
+  const where = [lesson?.title ?? slug, lesson?.cases.find(c=>c.id===index)?.label ?? lesson?.cases[index]?.label].filter(Boolean).join(' · ');
   const actions = {
-    predictions:'Paste this answer into the prediction box.',
+    predictions:'This answer came from an earlier lesson-wide question.',
+    caseAnswers:'Paste this answer into the prediction box for this case.',
+    preparations:'Paste this complete program into the editor to recover it.',
     drafts:'Replace the kernel above “# Host code” in the editor.',
     restoredDrafts:'Replace the kernel above “# Host code” in the editor.',
     legacy:'Choose Export learner work to keep the complete earlier collection as JSON.',
@@ -91,6 +95,7 @@ function displayCopy() {
 }
 function warnUnload(event) { event.preventDefault(); event.returnValue = ''; }
 function updateSaveStatus() {
+  lessonView?.guide?.update();
   const failed = Boolean(work.error);
   const conflict = work.copies.length > 0;
   const focused = document.activeElement;
@@ -134,8 +139,8 @@ control('retry-save').onclick = () => work.flush();
 control('export-work').onclick = () => {
   const backup = work.backup();
   if (lessonView) {
-    const {slug, index, program, answer} = lessonView.snapshot();
-    backup.openLesson = {slug, caseIndex:index, program, prediction:answer};
+    const {slug, index, caseId, program, answer} = lessonView.snapshot();
+    backup.openLesson = {slug, caseIndex:index, caseId, program, prediction:answer};
   }
   download('cuda-python-learner-work.json',JSON.stringify(backup,null,2),'application/json');
 };
@@ -341,7 +346,7 @@ function formatLessonIntro(intro, program) {
     if (typeof part === "string") return `<p>${escape(part)}</p>`;
     const caption = `excerpt-caption-${index}`;
     return `<figure class="lesson-excerpt">
-      <figcaption id="${caption}">${escape(part.label)}</figcaption>
+      <figcaption id="${caption}">${escape(part.label)} · Starter excerpt</figcaption>
       <pre tabindex="0" aria-labelledby="${caption}"><code>${escape(programExcerpt(program, part))}</code></pre>
     </figure>`;
   }).join("");
@@ -361,16 +366,22 @@ function showLesson(slug) {
       </div>
     </header>
 
-    <section class="prediction">
-      <label for="prediction">Predict before you run</label>
-      <p id="prediction-prompt">${escape(lesson.predict)}</p>
-      <textarea id="prediction" rows="1" aria-describedby="prediction-prompt"></textarea>
+    <section class="reading experiment guided" aria-labelledby="guided-title">
+      <h2 id="guided-title">Run the experiment</h2>
+      <p>Choose a task to open its case and saved code. Use <strong>Run</strong> in the editor to execute the program in this browser.</p>
+      <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
+            <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
+          </label>
+      ${guidedMarkup}
     </section>
-
-    <section class="reading experiment">
-      <h2>Run the experiment</h2>
-      <p>${lesson.cases.length > 1 ? "Select a case in the editor." : "Use the program in the editor."} Choose <strong>Run</strong> for GPGPU-Sim or <strong>Download notebook</strong> to use an NVIDIA GPU in Colab or Jupyter. <a href="#gpu">GPU setup instructions</a></p>
-      <ol>${lesson.exercise.map((step) => `<li>${escape(step)}</li>`).join("")}</ol>
+    <section class="prediction">
+      <label for="prediction" id="prediction-label">Predict before you run</label>
+      <p id="prediction-prompt"></p>
+      <textarea id="prediction" rows="1" aria-describedby="prediction-prompt"></textarea>
+      <details id="earlier-prediction" hidden><summary>Earlier lesson prediction</summary>
+        <p>This answer was saved for the whole lesson. Copy any part you want to use for this case.</p>
+        <label>Earlier answer<textarea id="legacy-answer" readonly rows="2"></textarea></label>
+      </details>
     </section>
 
     <section class="workbench" aria-labelledby="workbench-title">
@@ -393,20 +404,18 @@ function showLesson(slug) {
         <button type="button" class="button" id="editor-review" hidden>Review saved program</button>
         <p class="editor-shortcuts" id="editor-shortcuts">Ctrl/⌘ + Enter to run · Esc then Tab to leave the editor</p>
         <div class="workbench-controls">
-          <label class="case-control" for="case" ${lesson.cases.length === 1 ? "hidden" : ""}>Case
-            <select id="case" ${lesson.cases.length > 1 ? 'aria-describedby="case-note"' : ""}>${lesson.cases.map(({ label }, i) => `<option value="${i}">${escape(label)}</option>`).join("")}</select>
-          </label>
           <div class="actions">
             <button class="button primary" id="run" type="button">Run</button>
             <button class="button" id="stop" type="button" hidden>Stop</button>
             <button class="button" id="download-notebook" type="button">Download notebook</button>
+            <a href="#gpu">GPU setup instructions</a>
           </div>
         </div>
         ${lesson.cases.length > 1 ? '<p class="editor-note" id="case-note">Kernel edits carry across cases. The host code has a draft for each case.</p>' : ""}
         <p class="editor-note" id="draft-note" role="status" hidden></p>
       </div>
       <section class="workbench-card run-console" aria-labelledby="console-title">
-        <h2 id="console-title">Console <span>GPGPU-Sim</span></h2>
+        <h2 id="console-title" tabindex="-1">Console <span>GPGPU-Sim</span></h2>
         <p class="editor-note" id="run-status" role="status"></p>
         <p class="editor-note" id="runtime-previous-note" hidden>Previous program output is shown. The current program has not run.</p>
         <pre id="run-output" tabindex="0" aria-label="Program output" hidden></pre>
@@ -418,12 +427,12 @@ function showLesson(slug) {
     <section class="reading lesson-explanation">
       <h2>Explain the result</h2>
       <p>${escape(lesson.explain)}</p>
-      ${diagrams[slug] ?? ""}
+      ${diagrams[slug] ? '<p class="editor-note">Illustration of the starter program.</p>' + diagrams[slug] : ""}
       ${hardwareLocation(slug)}
     </section>
     <section class="lesson-resources" aria-label="Optional lesson resources">
       ${walkthrough ? `<details id="walkthrough" class="walkthrough resource-details resource-row">
-        ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Video, captions and transcript`)}<div class="resource-body">
+        ${resourceSummary("smart_display",walkthrough.title,`${durationLabel(mediaDurations[slug])} · Starter walkthrough, captions and transcript`)}<div class="resource-body">
         <video data-walkthrough="${slug}" controls playsinline preload="none" width="960" height="540" aria-label="${escape(walkthrough.title)}" poster="${new URL(`./media/${slug}/poster.webp`,import.meta.url).href}">
           <source src="${new URL(`./media/${slug}/walkthrough.mp4`,import.meta.url).href}" type="video/mp4">
           <track src="${new URL(`./media/${slug}/captions.vtt`,import.meta.url).href}" kind="captions" srclang="en" label="English" default>
@@ -502,29 +511,41 @@ function showLesson(slug) {
   const editor = mountProgramEditor(find("source"), caseSource(), () => saveEditor(), () => runner.start());
   const runner = attachRunner(main, {
     getSource: () => editor.source,
+    getCase: () => fixture.id,
     filename: `${slug}.py`,
     getResult: () => state.results[slug]?.[caseIndex],
-    saveResult: result => work.change(["results",slug,String(caseIndex)],result),
+    saveResult: result => work.change(["results",slug,String(lesson.cases.findIndex(c=>c.id===result.caseId))],result),
   });
   activeRunner = runner;
   activeEditor = editor;
   updateRestore(editor.source === starter ? "" : "A saved edit is open.");
 
-  find("prediction").value = state.predictions[slug] ?? "";
-  find("prediction").addEventListener("input", (event) => {
-    work.change(["predictions",slug],event.target.value);
-  });
-
-  const prediction = find("prediction");
+  const prediction = find('prediction');
+  function caseAnswer(record) {
+    return record.caseAnswers?.[slug]?.[fixture.id] ?? (lesson.cases.length === 1 ? record.predictions[slug] : '') ?? '';
+  }
+  function openPrediction() {
+    prediction.value = caseAnswer(state);
+    find('prediction-label').textContent = 'Predict before you run · ' + fixture.label;
+    find('prediction-prompt').textContent = caseQuestion(slug,lesson,fixture);
+    const earlier = state.predictions[slug];
+    find('earlier-prediction').hidden = !earlier || (lesson.cases.length === 1 && !Object.hasOwn(state.caseAnswers?.[slug] ?? {},fixture.id));
+    find('legacy-answer').value = earlier ?? '';
+  }
+  openPrediction();
+  prediction.oninput = () => {
+    work.change(['caseAnswers',slug,fixture.id],prediction.value);
+    if (state.predictions[slug]) find('earlier-prediction').hidden = false;
+  };
   lessonView = {
     editorNotice: find("editor-review"),
     snapshot: () => ({
-      slug, index: caseIndex, context: lesson.title + ' · ' + fixture.label,
+      slug, index: caseIndex, caseId:fixture.id, context: lesson.title + ' · ' + fixture.label,
       program: editor.source, savedProgram: caseSource(work.confirmed),
-      answer: prediction.value, savedAnswer: work.confirmed.predictions[slug] ?? '',
+      answer: prediction.value, savedAnswer: caseAnswer(work.confirmed),
     }),
     apply(version) {
-      work.refresh(['drafts','programs','predictions','restoredDrafts','restoredPrograms','results']);
+      work.refresh(['drafts','programs','predictions','caseAnswers','restoredDrafts','restoredPrograms','results']);
       if (work.dirty || work.saving || work.error) return;
       if (version.answer !== version.savedAnswer) prediction.value = version.savedAnswer;
       if (version.program !== version.savedProgram) {
@@ -569,23 +590,35 @@ function showLesson(slug) {
     saveEditor("Your previous edit is open.");
   });
 
-  input.addEventListener("change", () => {
+  function selectCase(index, preferred) {
+    input.value = String(index);
     latestReview.reset();
     caseIndex = Number(input.value);
-    work.refresh(['drafts','programs','restoredDrafts','restoredPrograms','results']);
+    work.refresh(['drafts','programs','restoredDrafts','restoredPrograms','results','caseAnswers','predictions','preparations']);
     fixture = lesson.cases[caseIndex];
     starter = standaloneProgram(starters[slug], fixture);
     work.change(['cases',slug],caseIndex);
     shownSource = caseSource();
-    editor.reset(shownSource, { focus: false });
+    editor.reset(shownSource, {focus:false});
+    openPrediction();
+    lessonView.guide.forCase(preferred);
     updateSaveStatus();
     updateRestore(editor.source === starter ? "" : "A saved edit is open.");
     runner.reset();
+  }
+  input.onchange = () => selectCase(Number(input.value),find('guided-task').value === 'explore' ? 'explore' : undefined);
+  const view = lessonView;
+  lessonView.guide = mountGuide({slug,lesson,work,find,selectCase,
+    snapshot:()=>({fixture,starter,source:editor.source,saved:caseSource(work.confirmed)}),
+    active:()=>lessonView === view,
+    replace:source=>{editor.reset(source);saveEditor();},
+    reveal:line=>{if(!editor.reveal(line)) {find('editor-tools').open=true;showLine(line);}},
+    readingTask:savedReadingState()?.controls.find(([id])=>id==='guided-task')?.[1],
   });
 
   find("download-notebook").addEventListener("click", () => {
     const source = editor.source;
-    const notebook = makeNotebook(lesson, source, fixture);
+    const notebook = makeNotebook(lesson, source, fixture, caseQuestion(slug,lesson,fixture));
     download(`${slug}.ipynb`, JSON.stringify(notebook, null, 2), "application/json");
   });
   find("download-source").addEventListener("click", () => {

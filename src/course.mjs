@@ -5,7 +5,7 @@ const zeros = (shape, dtype) => buffer(Array(shape.reduce((a, b) => a * b, 1)).f
 const fixture = (buffers, output, args, scalars, blocks, threads, expected) => ({
   buffers, output, args, scalars, blocks, threads, expected,
 });
-const caseOf = (label, data) => ({ label, ...data });
+const caseOf = (id, label, data) => ({ id, label, ...data });
 const vector = (size, width) => {
   const a = range(size).map((i) => i + 1);
   const b = a.map((i) => i * 2);
@@ -161,7 +161,7 @@ export const lessons = {
     ],
     explain: "The GPU thread writes to a separate device array. The original CPU array still holds zero. copy_to_host() waits for the GPU result and returns a new CPU array, which main() prints.",
     native: "Keep both prints. In main(), replace np.zeros(1, dtype=np.float32) with np.array([5], dtype=np.float32). Check which of the two printed arrays changes.",
-    cases: [caseOf("One element", fixture({ out: zeros([1]) }, "out", ["out"], {}, [1], [1], [42]))],
+    cases: [caseOf("one", "One element", fixture({ out: zeros([1]) }, "out", ["out"], {}, [1], [1], [42]))],
   },
   "vector-add": {
     sourceTarget: "if i < n:",
@@ -180,7 +180,7 @@ export const lessons = {
     ],
     explain: "Block 1, Thread 0 writes index 32 with 32 threads per block. Block 2, Thread 0 writes the same index with 16 threads per block. Both add 33 and 66 to get 99. The bounds check excludes every thread with i ≥ 33.",
     native: "In the GPU notebook, add if i == n - 1: just below the kernel’s assignment at the same indentation, then indent print(cuda.blockIdx.x, cuda.threadIdx.x) under the condition. Run both block sizes and compare the printed indices with your calculation.",
-    cases: [caseOf("33 elements · 32 threads per block", vector(33, 32)), caseOf("33 elements · 16 threads per block", vector(33, 16)), caseOf("32 elements · exact fit", vector(32, 32))],
+    cases: [caseOf("partial-32", "33 elements · 32 threads per block", vector(33, 32)), caseOf("partial-16", "33 elements · 16 threads per block", vector(33, 16)), caseOf("exact-32", "32 elements · exact fit", vector(32, 32))],
   },
   "grid-stride": {
     sourceTarget: "cuda.gridDim.x * cuda.blockDim.x",
@@ -200,7 +200,7 @@ export const lessons = {
     ],
     explain: "Block 0, Thread 3 visits 3 and 19 with stride 16, or 3, 11, 19, and 27 with stride 8. With stride 4, both inspected threads visit index 7.",
     native: "In the GPU notebook, add if cuda.threadIdx.x == 3: below the kernel loop’s assignment and indent print(cuda.blockIdx.x, i) under the condition. CUDA may print lines from different threads in different orders.",
-    cases: [caseOf("35 elements · 16 threads total", stride(35, 8)), caseOf("35 elements · 8 threads total", stride(35, 4)), caseOf("7 elements · 16 threads total", stride(7, 8))],
+    cases: [caseOf("stride-16", "35 elements · 16 threads total", stride(35, 8)), caseOf("stride-8", "35 elements · 8 threads total", stride(35, 4)), caseOf("short-7", "7 elements · 16 threads total", stride(7, 8))],
   },
   transfers: {
     sourceTarget: "out[i] = alpha * x[i] + y[i]",
@@ -222,7 +222,7 @@ export const lessons = {
     ],
     explain: "In the 33-element case each copy moves 132 bytes, for 396 bytes total. The kernel performs 66 array reads and 33 writes. For eight elements the three copies total 96 bytes. The GPU allocation for out reserves storage.",
     native: "Run the affine investigation in Appendix A. Compare Kernel (ms) and Round trip (ms) across input sizes, then compare the measured times for one and two streams.",
-    cases: [caseOf("33 elements", affine(33)), caseOf("8 elements", affine(8))],
+    cases: [caseOf("affine-33", "33 elements", affine(33)), caseOf("affine-8", "8 elements", affine(8))],
   },
   coalescing: {
     sourceTarget: "out[col, row] = values[row, col]",
@@ -243,7 +243,7 @@ export const lessons = {
     ],
     explain: "In the 8 × 32 case the first eight lanes read one sector and write eight. Across the 32-lane warp, reads cover four sectors and writes cover 32. In the 5 × 13 edge block, consecutive offsets 60–64 cover two sectors. Hardware traffic also depends on caching and the instructions the GPU runs.",
     native: "In Appendix A, profile the direct and tiled transposes at the same shape. Compare effective bandwidth and inspect global load and store sectors in Nsight Compute.",
-    cases: [caseOf("8 rows × 32 columns", transpose(8, 32, 32, 1)), caseOf("5 rows × 13 columns", transpose(5, 13, 8, 4))],
+    cases: [caseOf("wide", "8 rows × 32 columns", transpose(8, 32, 32, 1)), caseOf("narrow", "5 rows × 13 columns", transpose(5, 13, 8, 4))],
   },
   divergence: {
     sourceTarget: "if x < 0:",
@@ -263,8 +263,8 @@ export const lessons = {
     explain: "Alternating signs puts 16 lanes on each path in both warps. Grouped signs puts all 32 negative values in Block 0 and all 32 positive values in Block 1. A timing difference on a GPU depends on the compiled instructions and the work on each path.",
     native: "For a controlled timing comparison, use equally sized inputs with the same values reordered. Inspect the compiled instructions before attributing a timing difference to the branch.",
     cases: [
-      caseOf("Alternating signs", divergence(range(64).map((i) => (i + 1) * (i % 2 ? 1 : -1)))),
-      caseOf("Grouped signs", divergence(range(64).map((i) => (i + 1) * (i < 32 ? -1 : 1)))),
+      caseOf("alternating", "Alternating signs", divergence(range(64).map((i) => (i + 1) * (i % 2 ? 1 : -1)))),
+      caseOf("grouped", "Grouped signs", divergence(range(64).map((i) => (i + 1) * (i < 32 ? -1 : 1)))),
     ],
   },
   reduction: {
@@ -285,7 +285,7 @@ export const lessons = {
     ],
     explain: "Thread 1 reads scratch[5] when it adds the value four slots away. Thread 5 stores that value before the barrier releases Thread 1. In the 19-value case, Block 2 sums 17 + 18 + 19 = 54 because the other five threads contribute zero.",
     native: "In the GPU notebook, print scratch[lane] and scratch[lane + distance] just above the addition for Block 0, Lane 1, at distance four. In Appendix A, use Compute Sanitizer to see how it detects a missing barrier.",
-    cases: [caseOf("16 values · 8 threads per block", reduction(16, 8)), caseOf("19 values · partial block", reduction(19, 8)), caseOf("39 values · 32 threads", reduction(39, 32))],
+    cases: [caseOf("full-16", "16 values · 8 threads per block", reduction(16, 8)), caseOf("tail-19", "19 values · partial block", reduction(19, 8)), caseOf("wide-39", "39 values · 32 threads", reduction(39, 32))],
   },
   histogram: {
     sourceTarget: "cuda.atomic.add(counts, tokens[i], 1)",
@@ -304,7 +304,7 @@ export const lessons = {
     ],
     explain: "In the balanced case each counter gets eight increments. When all tokens route to 2, that counter gets all 32 with the atomic update. With a plain increment, two threads can read the same value and both write the same incremented value. The count can vary with execution order.",
     native: "For a timing comparison, use equally sized, larger balanced and single-destination inputs. Reset the counters before each launch.",
-    cases: [caseOf("Balanced destinations", histogram(range(32).map((i) => i % 4))), caseOf("All tokens route to 2", histogram(Array(32).fill(2)))],
+    cases: [caseOf("balanced", "Balanced destinations", histogram(range(32).map((i) => i % 4))), caseOf("hot", "All tokens route to 2", histogram(Array(32).fill(2)))],
   },
   scan: {
     sourceTarget: "previous = scratch[lane - distance] if lane >= distance else 0\n        cuda.syncthreads()",
@@ -324,7 +324,7 @@ export const lessons = {
     ],
     explain: "Thread 6 reads scratch[5], scratch[4], and scratch[2] at distances 1, 2, and 4. The first barrier in each pass lets all threads read the previous stage before the writes begin. In the weighted case, out[12] is 26, the sum of all 13 weights.",
     native: "Extend Check the output in the flags notebook with print(actual[[0, 2, 3, 6]] - 1). Those four flags are one, and their output positions are 0, 1, 2, and 3.",
-    cases: [caseOf("Keep flags · 7 elements", scan([1, 0, 1, 1, 0, 0, 1], 8)), caseOf("Weighted counts · 13 elements", scan([2, 4, 0, 3, 1, 5, 0, 0, 1, 2, 3, 4, 1], 16))],
+    cases: [caseOf("flags", "Keep flags · 7 elements", scan([1, 0, 1, 1, 0, 0, 1], 8)), caseOf("weights", "Weighted counts · 13 elements", scan([2, 4, 0, 3, 1, 5, 0, 0, 1, 2, 3, 4, 1], 16))],
   },
   "tiled-transpose": {
     sourceTarget: "PADDING = 1",
@@ -343,7 +343,7 @@ export const lessons = {
     ],
     explain: "The shared word offset and bank change from 18 to 16 when you remove the padding. The transposed result stays the same. A bank conflict can delay lanes that request different words from the same bank. Use hardware counters to measure conflicts when comparing larger tiles.",
     native: "Run the transpose investigation in Appendix A. Compare direct, unpadded, and padded kernels for the same shape. Inspect shared-load bank conflicts.",
-    cases: [caseOf("8 rows × 8 columns", transpose(8, 8, 8, 8)), caseOf("11 rows × 13 columns", transpose(11, 13, 8, 8))],
+    cases: [caseOf("square", "8 rows × 8 columns", transpose(8, 8, 8, 8)), caseOf("edges", "11 rows × 13 columns", transpose(11, 13, 8, 8))],
   },
   matmul: {
     sourceTarget: "tile_a[ty, tx] = a[row, a_col] if row < m and a_col < k else 0",
@@ -363,7 +363,7 @@ export const lessons = {
     ],
     explain: "The second tile covers inner indices 4–7, so indices 6 and 7 contribute zero. Each loaded value can serve several output cells through shared reads. Threads outside the output can still load tiles and reach the barriers.",
     native: "Use matching input shapes when comparing timings for different matrix multiplication implementations.",
-    cases: [caseOf("5 × 6 times 6 × 7", matmul(5, 6, 7)), caseOf("4 × 4 times 4 × 4", matmul(4, 4, 4))],
+    cases: [caseOf("rectangular", "5 × 6 times 6 × 7", matmul(5, 6, 7)), caseOf("square", "4 × 4 times 4 × 4", matmul(4, 4, 4))],
   },
   softmax: {
     sourceTarget: "math.exp(values[row, col] - row_max)",
@@ -383,8 +383,8 @@ export const lessons = {
     explain: "Removing the shift makes exp(1000) overflow. Dividing an infinite exponential by an infinite total can produce NaN. Columns 0 and 2 get equal probabilities in the stable version because they start at the same score and share the divisor. With 37 columns, Lane 0 visits columns 0 and 32.",
     native: "In Appendix A, run the softmax investigation against torch.softmax on the same float32 buffers. Check the probabilities before comparing CUDA event times.",
     cases: [
-      caseOf("Extreme and equal logits", softmax([[1000, 999, 1000, 997, -1000], [-1002, -1001, -1000, -1000, -1004]])),
-      caseOf("Two rows · 37 columns", softmax([range(37).map((i) => i % 9 - 4), range(37).map((i) => 800 + i % 5)])),
+      caseOf("extreme", "Extreme and equal logits", softmax([[1000, 999, 1000, 997, -1000], [-1002, -1001, -1000, -1000, -1004]])),
+      caseOf("wide-37", "Two rows · 37 columns", softmax([range(37).map((i) => i % 9 - 4), range(37).map((i) => 800 + i % 5)])),
     ],
   },
   gather: {
@@ -404,7 +404,7 @@ export const lessons = {
     ],
     explain: "Consecutive positions touch one sector in each input array. Spaced positions still touch one sector in indices and touch eight in values. The direct edit changes which inputs the kernel reads, so the result changes.",
     native: "Profile larger gathers with matching input sizes to see how the address pattern affects GPU traffic. Compare the memory counters with your sector predictions.",
-    cases: [caseOf("Consecutive positions", gather(range(8))), caseOf("Spaced positions", gather(range(8).map((i) => i * 8)))],
+    cases: [caseOf("consecutive", "Consecutive positions", gather(range(8))), caseOf("spaced", "Spaced positions", gather(range(8).map((i) => i * 8)))],
   },
   stencil: {
     sourceTarget: "tile[0] = values[i - 1] if i > 0 else 0.0",
@@ -424,8 +424,8 @@ export const lessons = {
     ],
     explain: "The direct source reads input elements 46 times. Shared staging uses 18 reads, including the two across the block boundary. Block 1 loads input index 7 into tile[0]. Removing that halo changes out[8] from 27 to 19. Repeated reads can hit the hardware cache.",
     native: "Use equally sized, larger input arrays to time the two methods. Compare the cost of the extra reads with the cost of shared-memory staging and its barrier.",
-    cases: [caseOf("16 values · direct reads", stencil(16, 0)), caseOf("16 values · shared tile", stencil(16, 1)),
-      caseOf("13 values · partial tile", stencil(13, 1))],
+    cases: [caseOf("direct", "16 values · direct reads", stencil(16, 0)), caseOf("shared", "16 values · shared tile", stencil(16, 1)),
+      caseOf("tail", "13 values · partial tile", stencil(13, 1))],
   },
   precision: {
     sourceTarget: "float32(a[i] + b[i])",
@@ -444,7 +444,7 @@ export const lessons = {
     ],
     explain: "The first case starts with a values of 16,777,216 and 8,388,608. The original order returns 0 for the first thread and 1 for the second. Canceling a and c before adding b gives 1 for both. The starter reference follows the original float32 grouping. The exact sum is 1 for both inputs, so the edited result at index 0 is closer to the exact sum.",
     native: "In a new notebook cell, compare np.float64(16777216) + 1 - 16777216 with the first float32 output. The extra precision lets the CPU calculation retain 1.",
-    cases: [caseOf("Near the precision limit", precision([2 ** 24, 2 ** 23])), caseOf("Smaller integers", precision([100, 1000]))],
+    cases: [caseOf("near", "Near the precision limit", precision([2 ** 24, 2 ** 23])), caseOf("small", "Smaller integers", precision([100, 1000]))],
   },
   "sync-debug": {
     sourceTarget: "slot[lane] = i if i < n else -1",
@@ -464,7 +464,7 @@ export const lessons = {
     ],
     explain: "In the seven-output case, Thread 3 in Block 1 supplies the fallback for Thread 2. Returning early also skips cuda.syncthreads(), violating the block’s synchronization rule. The eight-output case has no out-of-range thread to expose that bug.",
     native: "Use the synchronization investigation in Appendix A to run the faulty version under Compute Sanitizer and interpret the report.",
-    cases: [caseOf("7 outputs · partial block", syncDebug(7)), caseOf("8 outputs · two full blocks", syncDebug(8))],
+    cases: [caseOf("partial", "7 outputs · partial block", syncDebug(7)), caseOf("full", "8 outputs · two full blocks", syncDebug(8))],
   },
   fusion: {
     sourceTarget: "if use_temp:",
@@ -484,7 +484,7 @@ export const lessons = {
     ],
     explain: "For eight elements, the temporary adds eight reads and eight writes. The local version reads x and y and writes only out, for 16 reads and eight writes. Both versions produce the same values. The access counts are a source-level prediction for the hardware capstone, since memory traffic also depends on what the compiler and caches do.",
     native: "In Appendix A, run the capstone. Compare two launches with a fused launch across input sizes and block sizes. Check whether the measured times support your access-count prediction.",
-    cases: [caseOf("8 values · store temporary", fusion(8, 1)), caseOf("8 values · keep local", fusion(8, 0)),
-      caseOf("13 values · keep local", fusion(13, 0))],
+    cases: [caseOf("temporary", "8 values · store temporary", fusion(8, 1)), caseOf("local", "8 values · keep local", fusion(8, 0)),
+      caseOf("tail", "13 values · keep local", fusion(13, 0))],
   },
 };
