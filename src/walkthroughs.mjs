@@ -139,6 +139,41 @@ export const walkthroughs = {
       },
     ],
   },
+  transfers: {
+    title: "Follow arrays between CPU and GPU",
+    stages: [
+      {
+        title: "Copy the inputs to GPU memory",
+        phase: "inputs",
+        lines: ["x = cuda.to_device(x_host)", "y = cuda.to_device(y_host)"],
+        note: "33 float32 elements per input · 4 bytes each",
+        narration: "The host copies the two input arrays to GPU memory. Each array contains thirty-three float thirty-two values, and each value occupies four bytes.",
+        hold: 4,
+      },
+      {
+        title: "Allocate and run on the GPU",
+        phase: "compute",
+        lines: ["out = cuda.device_array(33, dtype=np.float32)", "out[i] = alpha * x[i] + y[i]"],
+        note: "GPU threads read x and y, then write out.",
+        narration: "The host allocates the output on the GPU. Each active GPU thread reads one value from each input and writes one output.",
+        hold: 4,
+      },
+      {
+        title: "Predict the bytes transferred",
+        lines: ["result = out.copy_to_host()"],
+        note: "Two arrays go to the GPU; one returns. How many bytes cross?",
+        narration: "The result comes back to the CPU. Two arrays went to the GPU, and one returns. How many bytes cross between them?",
+        hold: 8,
+      },
+      {
+        title: "Count the three copies",
+        lines: ["x = cuda.to_device(x_host)", "y = cuda.to_device(y_host)", "result = out.copy_to_host()"],
+        note: "33 × 4 = 132 bytes per array · 3 × 132 = 396 bytes",
+        narration: "Each copy moves one hundred thirty-two bytes. Together, the three copies move three hundred ninety-six bytes.",
+        hold: 4,
+      },
+    ],
+  },
   coalescing: {
     title: "Follow a warp’s addresses into memory sectors",
     stages: [

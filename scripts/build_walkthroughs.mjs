@@ -111,6 +111,31 @@ function coalescingSlide(stage, kernel) {
   </div></div></main></html>`;
 }
 
+function transferSlide(stage, program) {
+  const code = stage.lines.map(line => {
+    if (!program.main.includes(line) && !program.kernel.includes(line))
+      throw new Error(`Source line not found: ${line}`);
+    return `<div class="code-line"><span>${program.main.includes(line) ? "CPU" : "GPU"}</span><code>${escape(line)}</code></div>`;
+  }).join("");
+  const path = (name, direction, bytes) => `<div class="path"><strong>${name}</strong><span>${direction}</span><strong>${bytes}</strong></div>`;
+  return `<!doctype html><html lang="en"><meta charset="utf-8"><style>
+    * { box-sizing:border-box; } body { margin:0; background:#142326; color:#effaf3; font:19px system-ui,sans-serif; }
+    main { padding:22px 36px; } h1 { margin:0 0 12px; font-size:29px; }
+    .layout { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .code { background:#101e21; border-radius:7px; padding:12px 0; align-self:start; }
+    code { display:block; white-space:pre-wrap; overflow-wrap:anywhere; font:16px/1.65 monospace; padding:0 9px; color:#effaf3; }
+    .code-line { display:grid; grid-template-columns:44px minmax(0,1fr); padding:0 9px; align-items:baseline; } .code-line span { color:#b7d9ce; font-size:14px; font-weight:700; }
+    .visual { background:#24393b; border-radius:7px; padding:13px 15px; }
+    .path { display:grid; grid-template-columns:1fr 1fr 1fr; padding:7px 0; gap:6px; align-items:center; }
+    .path + .path { border-top:1px solid #527071; } .path span { color:#b5ed8d; text-align:center; font-size:22px; }
+    .note { margin:10px 0 0; color:#b7d9ce; font-size:16px; }
+  </style><main><div class="trace"><h1>${escape(stage.title)}</h1><div class="layout">
+    <div class="code">${code}</div>
+    <div class="visual">${path("CPU · x", "→", "GPU · x")}${path("CPU · y", "→", "GPU · y")}${stage.phase === "inputs" ? "" : stage.phase === "compute" ? path("", "", "GPU · out") : path("CPU · result", "←", "GPU · out")}
+    <p class="note">${escape(stage.note)}</p></div>
+  </div></div></main></html>`;
+}
+
 function reductionSlide(stage, kernel) {
   const lines = kernel.split("\n");
   const position = lines.findIndex(line => line.trim() === stage.highlight);
@@ -174,6 +199,7 @@ function vectorSlide(stage, kernel) {
 
 function slide(walkthrough, stage, program) {
   if (stage.trace) return traceSlide(stage, program);
+  if (stage.lines) return transferSlide(stage, program);
   if (stage.phase) return reductionSlide(stage, program.kernel);
   if (stage.mode) return coalescingSlide(stage, program.kernel);
   if (stage.highlight) return vectorSlide(stage, program.kernel);
@@ -248,7 +274,7 @@ if (action === "prepare") {
   try {
     const page = await browser.newPage({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 4 });
     for (const { slug, directory, walkthrough, scenes } of recordings) {
-      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight || stage.mode || stage.phase) ? {
+      const program = walkthrough.stages.some(stage => stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines) ? {
         kernel: await readFile(new URL(`../src/kernels/${slug}.py`, import.meta.url), "utf8"),
         main: hostProgram(lessons[slug].cases[0]).split("\nif __name__")[0],
       } : undefined;
@@ -257,8 +283,8 @@ if (action === "prepare") {
       await writeFile(join(directory, "scenes.json"), formatScenes(scenes));
       for (const [index, stage] of walkthrough.stages.entries()) {
         await page.setContent(slide(walkthrough, stage, program));
-        const content = await page.locator(stage.trace || stage.highlight || stage.mode || stage.phase ? ".trace" : "ol").boundingBox();
-        if (content.y + content.height > (stage.trace || stage.highlight || stage.mode || stage.phase ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
+        const content = await page.locator(stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines ? ".trace" : "ol").boundingBox();
+        if (content.y + content.height > (stage.trace || stage.highlight || stage.mode || stage.phase || stage.lines ? 390 : 410)) throw new Error(`Caption area is obstructed at ${content.y + content.height}px on "${stage.title}".`);
         const image = join(slides, `s-${index + 1}.png`);
         await page.screenshot({ path: image });
         const [frame] = inspect(image, "stream=width,height").streams;
