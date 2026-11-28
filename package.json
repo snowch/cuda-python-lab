@@ -9,7 +9,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "npm run build && python3 -m http.server 8000 --directory dist",
-    "test": "npm run build && node --test --test-concurrency=1 --test-timeout=180000 tests/deployment-assets.test.mjs tests/shared-style.test.mjs tests/code-runner.test.mjs tests/offline.test.mjs tests/browser.test.mjs tests/lifecycle.test.mjs",
+    "test": "npm run build && node --test --test-concurrency=1 --test-timeout=180000 tests/deployment-assets.test.mjs tests/shared-style.test.mjs tests/code-runner.test.mjs tests/offline.test.mjs tests/browser.test.mjs tests/lifecycle.test.mjs tests/learner-work.test.mjs",
     "test:runner": "npm run build && node --test tests/runner.test.mjs"
   },
   "dependencies": {

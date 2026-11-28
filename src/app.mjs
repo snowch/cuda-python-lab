@@ -4,7 +4,8 @@ import {resourceSummary,lessonReferences,hardwareLocation,durationLabel} from ".
 import {mediaDurations} from "./media-durations.mjs";
 import { compilerLabHTML, compilerNotebook } from "./compiler-lab.mjs";
 import { migrateCudaImports } from "./source-migration.mjs";
-import { registerReadingState, savedReadingState, restoreReadingState } from "./experiment-state.mjs";
+import {openLearnerWork, workKey} from "./learner-work.mjs";
+import { registerReadingState, savedReadingState, legacyReadingWork, clearLegacyReadingWork, restoreReadingState } from "./experiment-state.mjs";
 import { lessons, modules } from "./course.mjs";
 import { diagrams } from "./diagrams.mjs";
 import { mountProgramEditor } from "./editor.mjs";
@@ -40,37 +41,91 @@ courseNavigation.addEventListener("keydown", (event) => {
     scrollTo({ top: scrollY + bounds.top - header - 12, behavior: "instant" });
   event.preventDefault();
 });
-const storageKey = "cuda-python-lab-v1";
 let starters;
 let activeEditor;
 let activeRunner;
 let activePage;
-let saved;
-
-try {
-  saved = savedReadingState()?.work ?? JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
-} catch {
-  saved = {};
+const work = openLearnerWork(updateSaveStatus);
+const state = work.state;
+const workPanel = document.createElement('section');
+workPanel.className = 'work-save';
+workPanel.setAttribute('aria-label','Learner work');
+workPanel.innerHTML = `<p id="work-status" tabindex="-1"></p>
+  <div id="work-actions" hidden><button type="button" class="button" id="retry-save">Retry save</button>
+  <button type="button" class="button" id="export-work">Export learner work</button></div>
+  <details id="work-copies" hidden><summary>Review recovery copies</summary>
+  <label>Saved version <select id="work-version"></select></label>
+  <p id="work-copy-help"></p>
+  <label>Copy contents <textarea id="work-copy-text" aria-describedby="work-copy-help" readonly rows="5"></textarea></label>
+  <button type="button" class="button" id="remove-copy">Remove this recovery copy</button></details>
+  <span class="work-announcement" role="status"></span>`;
+const control = id => workPanel.querySelector('#'+id);
+const versions = control('work-version');
+function versionLabel(copy) {
+  const [field, slug, index] = copy.path;
+  const kind = {legacy:'Saved collection', drafts:'Kernel', programs:'Program', predictions:'Prediction', restoredPrograms:'Undo restore', restoredDrafts:'Undo kernel restore', results:'Run result'};
+  const lesson = lessons[slug];
+  const parts = [kind[field] ?? field, lesson?.title ?? slug, lesson?.cases[index]?.label, new Date(copy.savedAt).toLocaleString()];
+  return parts.filter(Boolean).join(' · ');
 }
-const state = { results:{}, drafts: {}, restoredDrafts: {}, programs: {}, restoredPrograms: {}, predictions: {}, cases: {}, completed: {}, ...saved };
-
-const completionChanges=new Map();
-try{const durable=JSON.parse(localStorage.getItem(storageKey)||'{}');if(durable.completed)state.completed=durable.completed;}catch{}
-let storageSaved=true;
-function persist() {
-  try {
-    let durable={};try{durable=JSON.parse(localStorage.getItem(storageKey)||'{}')||{};}catch{}
-    state.completed={...(durable.completed??state.completed),...Object.fromEntries(completionChanges)};
-    const encoded=JSON.stringify(state);
-    localStorage.setItem(storageKey,encoded);
-    if(localStorage.getItem(storageKey)!==encoded)throw new Error('Work was not saved');
-    completionChanges.clear();
-    storageSaved=true;
-  } catch {
-    storageSaved=false;
-    // The workbench still functions when browser storage is unavailable.
+function displayCopy() {
+  const copy = work.copies.find(c => c.id === versions.value);
+  if (!copy) return;
+  const [field, slug, index] = copy.path;
+  const lesson = lessons[slug];
+  const where = [lesson?.title ?? slug, lesson?.cases[index]?.label].filter(Boolean).join(' · ');
+  const actions = {
+    predictions:'Paste this answer into the prediction box.',
+    drafts:'Replace the kernel above “# Host code” in the editor.',
+    restoredDrafts:'Replace the kernel above “# Host code” in the editor.',
+    legacy:'Choose Export learner work to keep the complete earlier collection as JSON.',
+    results:'Choose Export learner work to keep this run’s source, output and PTX.',
+    programs:'Paste this complete program into the editor.',
+    restoredPrograms:'Paste this complete program into the editor.',
+  };
+  control('work-copy-help').textContent = where + '. ' + (actions[field] ?? 'Export learner work to keep this copy.');
+  control('work-copy-text').value = typeof copy.value === 'string' ? copy.value : JSON.stringify(copy.value,null,2);
+}
+function warnUnload(event) { event.preventDefault(); event.returnValue = ''; }
+function updateSaveStatus() {
+  const failed = Boolean(work.error);
+  const conflict = work.copies.length > 0;
+  const failure = work.error.startsWith('Recovery copies are full') ? work.error
+    : 'Learner work could not be saved. ' + work.error + ' Keep this tab open. Export your work or retry.';
+  const message = failed ? failure : work.saving ? 'Saving learner work…'
+    : conflict ? 'Learner work saved. Recovery copies are available for overlapping edits.'
+    : work.saved ? 'Learner work saved in this browser.' : 'Your edits will save in this browser.';
+  control('work-status').textContent = message;
+  const announcement = workPanel.querySelector('[role=status]');
+  const warning = failed ? failure : conflict ? 'Recovery copies are available.' : '';
+  if (warning && announcement.textContent !== warning) announcement.textContent = warning;
+  else if (!warning && announcement.textContent && announcement.textContent !== 'Learner work saved.' && !work.saving) announcement.textContent = 'Learner work saved.';
+  const focused = document.activeElement;
+  control('work-actions').hidden = !failed && !conflict;
+  control('retry-save').hidden = !failed;
+  control('work-copies').hidden = !conflict;
+  if (workPanel.contains(focused) && focused.closest('[hidden]')) control('work-status').focus({preventScroll:true});
+  workPanel.classList.toggle('needs-attention',failed || conflict);
+  if (versions.dataset.ids !== work.copies.map(c=>c.id).join()) {
+    const selected = versions.value;
+    versions.replaceChildren(...work.copies.map(c=>new Option(versionLabel(c),c.id)));
+    if (work.copies.some(c=>c.id===selected)) versions.value = selected;
+    versions.dataset.ids = work.copies.map(c=>c.id).join();
+    displayCopy();
   }
+  const completion = document.getElementById('completion-note');
+  if (completion) completion.textContent = failed ? 'Work is only in this tab until saving succeeds.' : 'Progress is stored in this browser.';
+  if (work.dirty) addEventListener('beforeunload',warnUnload);
+  else removeEventListener('beforeunload',warnUnload);
 }
+versions.addEventListener('change',displayCopy);
+control('retry-save').onclick = () => work.flush();
+control('export-work').onclick = () => download('cuda-python-learner-work.json',JSON.stringify(work.backup(),null,2),'application/json');
+control('remove-copy').onclick = () => {
+  if (confirm('Remove the selected recovery copy from this browser? Export learner work first to keep a file.')) work.removeCopy(versions.value);
+};
+await work.load();
+work.migrate(legacyReadingWork(), clearLegacyReadingWork);
 
 const escape = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
@@ -366,7 +421,7 @@ function showLesson(slug) {
       <p><a href="#gpu">Appendix A · GPU setup and tools</a></p>
     </div></details>
     </section>
-    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note" role="status">Saved in this browser.</p></section>
+    <section class="lesson-completion" aria-label="Lesson completion"><label class="completion-label"><input type="checkbox" id="complete" ${state.completed[slug]?"checked":""}> Mark lesson complete</label><p id="completion-note"></p></section>
     <nav class="lesson-footer" aria-label="Lesson sequence">
       <a class="lesson-card" href="${index>0?lessonURL(order[index-1]):'#course'}"><span class="lesson-direction">${index>0?'← Previous lesson':'Course overview'}</span><strong>${index>0?escape(lessons[order[index-1]].title):'Choose a lesson'}</strong></a>
       <a class="lesson-card lesson-next" href="${index<order.length-1?lessonURL(order[index+1]):'#course'}"><span class="lesson-direction">${index<order.length-1?'Next lesson →':'Course overview'}</span><strong>${index<order.length-1?escape(lessons[order[index+1]].title):'Choose a lesson'}</strong></a>
@@ -379,24 +434,26 @@ function showLesson(slug) {
   const input = find("case");
   const draftNote = find("draft-note");
   const targetNote = find("target-note");
-  const programDrafts = state.programs[slug] ??= {};
-  const restoredPrograms = state.restoredPrograms[slug] ??= {};
-  input.value = lesson.cases[state.cases[slug]] ? state.cases[slug] : 0;
+
+  const readingCase = savedReadingState()?.controls.find(([id]) => id === 'case')?.[1];
+  const selectedCase = readingCase ?? state.cases[slug];
+  input.value = lesson.cases[selectedCase] ? selectedCase : 0;
   let caseIndex = Number(input.value);
   let fixture = lesson.cases[caseIndex];
   let starter = standaloneProgram(starters[slug], fixture);
 
   function caseSource() {
     const kernel = state.drafts[slug] ?? starters[slug];
-    const previous = programDrafts[caseIndex];
+    const previous = state.programs[slug]?.[caseIndex];
     if (previous === undefined) return standaloneProgram(kernel, fixture);
+    if (state.drafts[slug] === undefined) return previous;
     const parts = splitProgram(previous);
     return parts && parts.kernel.trimEnd() !== kernel.trimEnd() ? joinProgram(kernel, parts.host) : previous;
   }
 
   function restoredSource() {
     const legacyKernel = state.restoredDrafts[slug];
-    return restoredPrograms[caseIndex] ?? (legacyKernel === undefined ? undefined : standaloneProgram(legacyKernel, fixture));
+    return state.restoredPrograms[slug]?.[caseIndex] ?? (legacyKernel === undefined ? undefined : standaloneProgram(legacyKernel, fixture));
   }
 
   function updateRestore(message = "") {
@@ -411,12 +468,14 @@ function showLesson(slug) {
     targetNote.hidden = true;
   }
 
+  let shownSource = caseSource();
   function saveEditor(message) {
     const source = editor.source;
     const parts = splitProgram(source);
-    if (parts) state.drafts[slug] = parts.kernel;
-    programDrafts[caseIndex] = source;
-    persist();
+    const before = splitProgram(shownSource);
+    if (parts && parts.kernel !== before?.kernel) work.change(['drafts',slug],parts.kernel);
+    work.change(['programs',slug,String(caseIndex)],source,{displayed:shownSource,hostChanged:!parts || parts.host !== before?.host});
+    shownSource = source;
     updateRestore(message);
     runner.reset();
   }
@@ -426,7 +485,7 @@ function showLesson(slug) {
     getSource: () => editor.source,
     filename: `${slug}.py`,
     getResult: () => state.results[slug]?.[caseIndex],
-    saveResult: result => { (state.results[slug]??={})[caseIndex]=result;persist(); },
+    saveResult: result => work.change(["results",slug,String(caseIndex)],result),
   });
   activeRunner = runner;
   activeEditor = editor;
@@ -434,8 +493,7 @@ function showLesson(slug) {
 
   find("prediction").value = state.predictions[slug] ?? "";
   find("prediction").addEventListener("input", (event) => {
-    state.predictions[slug] = event.target.value;
-    persist();
+    work.change(["predictions",slug],event.target.value);
   });
 
   function showLine(text, options) {
@@ -454,15 +512,15 @@ function showLesson(slug) {
     updateRestore('CUDA imports updated. Your other edits are kept. Ctrl/⌘ + Z restores the previous code.');
   });
   find("restore").addEventListener("click", () => {
-    restoredPrograms[caseIndex] = editor.source;
+    work.change(['restoredPrograms',slug,String(caseIndex)],editor.source);
     find("editor-tools").open = false;
     editor.reset(starter);
     saveEditor("The starter is open. Use Undo restore in Editor tools to recover your edit.");
   });
   find("undo-restore").addEventListener("click", () => {
     const source = restoredSource();
-    if (Object.hasOwn(restoredPrograms, caseIndex)) delete restoredPrograms[caseIndex];
-    else delete state.restoredDrafts[slug];
+    if (Object.hasOwn(state.restoredPrograms[slug] ?? {}, caseIndex)) work.change(['restoredPrograms',slug,String(caseIndex)],undefined);
+    else work.change(['restoredDrafts',slug],undefined);
     find("editor-tools").open = false;
     editor.reset(source);
     saveEditor("Your previous edit is open.");
@@ -470,13 +528,14 @@ function showLesson(slug) {
 
   input.addEventListener("change", () => {
     caseIndex = Number(input.value);
+    work.refresh(['drafts','programs','restoredDrafts','restoredPrograms','results']);
     fixture = lesson.cases[caseIndex];
     starter = standaloneProgram(starters[slug], fixture);
-    state.cases[slug] = caseIndex;
-    editor.reset(caseSource(), { focus: false });
+    work.change(['cases',slug],caseIndex);
+    shownSource = caseSource();
+    editor.reset(shownSource, { focus: false });
     updateRestore(editor.source === starter ? "" : "A saved edit is open.");
     runner.reset();
-    persist();
   });
 
   find("download-notebook").addEventListener("click", () => {
@@ -488,10 +547,7 @@ function showLesson(slug) {
     download(`${slug}.py`, migrateCudaImports(editor.source), "text/x-python");
   });
   find("complete").addEventListener("change", () => {
-    state.completed[slug] = find("complete").checked;
-    completionChanges.set(slug,state.completed[slug]);
-    persist();
-    find("completion-note").textContent=storageSaved?"Saved in this browser.":"This mark is kept in this tab. Browser storage is unavailable.";
+    work.change(['completed',slug],find("complete").checked);
     updateNav(slug);
   });
 }
@@ -521,6 +577,7 @@ function route(moveFocus = false) {
   activeEditor = null;
   activeRunner?.dispose();
   activeRunner = null;
+  work.refresh();
   activePage=page;
   updateNav(page);
   if (page === "course") showCourse();
@@ -530,6 +587,8 @@ function route(moveFocus = false) {
     document.querySelector("#download-compiler-notebook").addEventListener("click",()=>download("first-launch-mlir.ipynb",JSON.stringify(compilerNotebook(),null,2),"application/json"));
   }
   else showLesson(page);
+  (main.querySelector('.prediction') ?? main).append(workPanel);
+  updateSaveStatus();
   document.title = page === "course" ? "CUDA Python Lab" : `${lessons[page]?.title ?? (page === "compiler" ? "First-launch compiler lab" : "Appendix A")} · CUDA Python Lab`;
   if (moveFocus) {
     courseNav.open = false;
@@ -550,21 +609,22 @@ try {
   if (!response.ok) throw new Error("Could not load the starter kernels.");
   starters = await response.json();
   route();
-  registerReadingState({save:()=>state});
+  registerReadingState({flush:async () => {
+    do { await work.flush(); } while (work.saving && !work.error);
+    if (work.error || work.dirty) throw Error('Learner work could not be saved. Export it or retry.');
+  }});
   restoreReadingState();
   window.addEventListener("hashchange", () => route(true));
 } catch (error) {
   main.textContent = error.message;
 }
 
-addEventListener('cuda-python-lab:before-restart',event=>{
-  persist();
-  if(!storageSaved) event.detail.reason='This window could not save its work. Allow browser storage before restarting.';
-});
-
 addEventListener('storage',event=>{
- if(event.key!==storageKey)return;
- try{const durable=JSON.parse(event.newValue||'{}');state.completed={...(durable.completed??{}),...Object.fromEntries(completionChanges)};if(activePage)updateNav(activePage);const mark=main.querySelector('#complete');if(mark)mark.checked=Boolean(state.completed[activePage]);}catch{}
+  if (event.key !== workKey && event.key !== null) return;
+  work.observe();
+  if (activePage) updateNav(activePage);
+  const mark=main.querySelector('#complete');
+  if(mark)mark.checked=Boolean(state.completed[activePage]);
 });
 const header=document.querySelector('.site-header');
 new ResizeObserver(()=>document.documentElement.style.setProperty('--course-header-height',header.getBoundingClientRect().height+'px')).observe(header);
